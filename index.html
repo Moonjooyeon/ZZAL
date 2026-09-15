@@ -54,48 +54,7 @@
 <section id="upload" hidden><div class="pageintro"><h1>나만 갖고 있긴 아까운 짤</h1><p>언제 쓰는 짤인지 한 줄만 적어주세요.<br>이 시안에서는 서버 업로드 없이 내 브라우저에만 보관합니다.</p></div><form id="uploadform" class="uploadform"><button type="button" class="drop" id="drop" onclick="document.getElementById('file').click()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></svg><strong>짤을 끌어놓거나 파일 선택</strong><small>JPG, PNG, GIF · 최대 10MB</small></button><input id="file" type="file" accept="image/jpeg,image/png,image/gif" hidden><div id="draft" hidden><img id="preview" class="preview" alt="선택한 짤 미리보기"><button type="button" onclick="cancelDraft()">다른 파일 선택</button></div><label class="field" for="desc">언제 쓰는 짤인가요?</label><input class="textinput" id="desc" maxlength="80" placeholder="예: 갑자기 일을 떠넘길 때" required><label class="check"><input type="checkbox" id="rights" required>직접 만들었거나 공유할 권한이 있는 이미지입니다.</label><button class="primary" id="submit" disabled>내 짤에 추가</button></form></section>
 <footer class="note"><span>이짤이이짤 · 말보다 짤이 빠를 때</span><span id="footcount">검색은 키워드 기준</span></footer></main>
 <nav class="mobile" aria-label="모바일 메뉴"><button data-page="explore" class="active" onclick="navigate('explore')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>둘러보기</button><button onclick="navigate('explore');document.getElementById('q').focus()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>찾기</button><button data-page="saved" onclick="navigate('saved')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>내 짤 <span class="count" hidden></span></button></nav>
-<dialog id="ask" aria-labelledby="asktitle"><form method="dialog"><h3 id="asktitle"></h3><p class="askdesc" id="askdesc"></p><div class="reasons" id="askreasons" hidden></div><div class="askrow"><button value="cancel">취소</button><button value="ok" class="go" id="askgo">확인</button></div></form></dialog><dialog id="modal"><button class="close" onclick="document.getElementById('modal').close()" aria-label="상세 닫기">×</button><div id="detail"></div></dialog><div class="toast" id="toast" role="status" aria-live="polite"></div><script src="memes-extra.js"></script><script src="memes-extra-2.js"></script><script src="memes-extra-3.js"></script><script src="memes-extra-4.js"></script><script src="memes-extra-5.js"></script><script>const ZZAL=[
- {id:1,name:'"정수리가 싸늘해…" 게임 시민',cat:'게임',tags:['불길','탈모'],kw:['불길','예감','탈모','싸늘','대머리','촉','망함','머리'],
-  art:`<div class="z-game"><div class="fig"></div><div class="sub">정수리가 싸늘해… 뭔가 불길한 예감이 든다…</div></div>`,
-  why:'불길한 예감을 <b>머리숱 개그로 비튼</b> 짤. 오싹한 소식에도, 탈모 농담에도 씁니다.'},
- {id:2,name:'"뽀뽀해요!" 고양이 번역기',cat:'고양이',tags:['애정','애교'],kw:['애정','뽀뽀','애교','귀여','고양이','연애','보고싶'],
-  art:`<div class="z-app"><div class="bar">고양이 번역기 · 오늘 기록 12건</div>
-   <div class="row l"><span>야옹</span></div><div class="row"><span>뽀뽀해요!</span></div>
-   <div class="row l"><span>냐아아</span></div><div class="row"><span>뽀뽀해요!</span></div>
-   <div class="row l"><span>크르릉</span></div><div class="row"><span>뽀뽀해요!</span></div>
-   <div class="row l"><span>먀앙</span></div><div class="row"><span>뽀뽀해요!</span></div></div>`,
-  why:'무슨 소리를 내도 <b>결국 "뽀뽀"로 번역되는</b> 고양이. 끝없는 애정 공세를 받아칠 때.'},
- {id:3,name:'"읽씹 3일차" 트윗 캡처',cat:'트위터',tags:['잠수','답장'],kw:['잠수','읽씹','답장','연락','팀플','조원','기다'],
-  art:`<div class="z-tweet"><div class="hd"><div class="av"></div><div class="nm">밤샘조<i>@teamplay_hell</i></div></div><p>읽씹 3일차. 나는 이제 그 사람의 안부가 아니라 생사가 궁금하다</p></div>`,
-  why:'답을 기다리다 지친 걸 <b>담담하게 적어서 더 웃긴</b> 짤. 잠수 얘기에 그대로 붙습니다.'},
- {id:4,name:'"자고 일어나니 이럼" 커뮤 글',cat:'커뮤짤',tags:['황당','급전개'],kw:['황당','폭탄','갑자기','당황','사건','터짐','발언'],
-  art:`<div class="z-post"><div class="ttl">자고 일어났더니 상황이 이렇게 됐습니다</div><p class="bd">여러분 제가 6시간 잤거든요? 근데 그 사이에 일이 다 끝나있어요 어떻게 된 거죠 저는 분명 아무것도 안 했는데요</p><div class="cm"><b>베댓</b> 님이 잔 게 아니라 세상이 빨리 돌아간 거임</div></div>`,
-  why:'상황이 <b>한순간에 뒤집혔을 때</b>. 갑자기 폭탄 발언 나왔을 때 받아치기 좋아요.'},
- {id:5,name:'"알았다고 했잖아" 대화 로그',cat:'대화 캡처',tags:['잔소리','반복'],kw:['잔소리','짜증','반복','알겠','또','귀찮','재촉'],
-  art:`<div class="z-chat"><div class="m">했어?</div><div class="m me">하고 있어</div><div class="m">언제 해?</div><div class="m me">하고 있다고</div><div class="m">진짜지?</div><div class="m me">……</div></div>`,
-  why:'같은 질문이 <b>계속 돌아올 때의 무표정</b>. 잔소리 받아칠 때 말보다 빠릅니다.'},
- {id:6,name:'"괜찮아요 저는" 무표정 정색',cat:'트위터',tags:['서운','정색'],kw:['괜찮','서운','정색','참','속상','아무렇지'],
-  art:`<div class="z-tweet"><div class="hd"><div class="av"></div><div class="nm">아무렇지않음<i>@im_totally_fine</i></div></div><p>괜찮아요 저는 원래 이런 거 신경 안 써요 (신경 쓰는 중)</p></div>`,
-  why:'안 괜찮은데 <b>괜찮은 척할 때</b>. 진지해지지 않고 서운함을 흘릴 수 있어요.'},
- {id:7,name:'"잔액 1,204원" 텅장 캡처',cat:'텅장',tags:['돈','월급'],kw:['돈','거지','월급','텅장','가난','결제','비싸'],
-  art:`<div class="z-app"><div class="bar">내 계좌 · 잔액 조회</div><div class="row l"><span>잔액</span></div><div class="row"><span>1,204원</span></div><div class="row l"><span>이번 달 쓴 돈</span></div><div class="row"><span>말하지 않겠습니다</span></div></div>`,
-  why:'금액을 <b>굳이 보여주는 게 포인트</b>. 돈 얘기 나왔을 때 웃으면서 빠져나가기.'},
- {id:8,name:'"이걸요? 제가요? 왜요?" 3연타',cat:'대화 캡처',tags:['거절','하기싫'],kw:['거절','왜','업무','귀찮','하기싫','부탁','떠넘'],
-  art:`<div class="z-chat"><div class="m">이거 좀 부탁해</div><div class="m me">이걸요?</div><div class="m me">제가요?</div><div class="m me">왜요?</div></div>`,
-  why:'거절을 <b>세 번에 나눠 치는 리듬</b>. 갑자기 일 떠넘길 때 답장용.'},
- {id:9,name:'"오늘도 정상 영업" 새벽 3시',cat:'트위터',tags:['밤샘','야근'],kw:['밤','새벽','잠','불면','야근','밤샘','졸려'],
-  art:`<div class="z-tweet"><div class="hd"><div class="av"></div><div class="nm">폐업직전<i>@3am_open</i></div></div><p>새벽 3시 정상 영업 중입니다. 손님은 저 혼자고 사장도 저입니다</p></div>`,
-  why:'혼자 <b>안 자고 버티는 시간대</b>의 자조. 밤에 올라온 글에 답글로 붙이기 좋아요.',user:'@night_shift'},
- {id:10,name:'"다들 뭐 하고 사세요" 심야 게시글',cat:'커뮤짤',tags:['공허','심야'],kw:['공허','허무','심야','인생','뭐하지','지침'],
-  art:`<div class="z-post"><div class="ttl">다들 밤에 뭐 하고 사세요</div><p class="bd">자야 하는 건 아는데 자면 내일이 오잖아요</p><div class="cm"><b>베댓</b> 문장 하나로 사람 여럿 잡네</div></div>`,
-  why:'밤에 <b>안 자는 이유를 한 줄로</b> 정리한 짤. 심야 대화에 던지면 반응이 옵니다.',user:'@sleepless_kr'},
- {id:11,name:'"축하해 (진심 30%)" 대화 로그',cat:'대화 캡처',tags:['질투','축하'],kw:['축하','질투','부럽','합격','자랑'],
-  art:`<div class="z-chat"><div class="m">나 붙었어!!</div><div class="m me">헐 축하해</div><div class="m me">진심이야</div><div class="m me">진심 맞아</div></div>`,
-  why:'축하하는데 <b>자꾸 덧붙이는 게</b> 웃긴 짤. 친구 자랑에 받아칠 때.',user:'@congrats_30'},
- {id:12,name:'"그거 제가 했는데요" 정적',cat:'커뮤짤',tags:['민망','정적'],kw:['민망','정적','뒷북','실수','당황','내가'],
-  art:`<div class="z-post"><div class="ttl">단톡방에서 욕먹는 걸 봤는데요</div><p class="bd">그거 제가 한 건데 어떻게 나가야 할까요 지금 읽음 표시도 떴어요</p><div class="cm"><b>베댓</b> 지금 조용히 스크롤 올리지 마세요</div></div>`,
-  why:'말 꺼낸 순간 <b>분위기가 얼어붙는</b> 상황용. 민망한 자폭에 딱.',user:'@quiet_exit'}
-];
+<dialog id="ask" aria-labelledby="asktitle"><form method="dialog"><h3 id="asktitle"></h3><p class="askdesc" id="askdesc"></p><div class="reasons" id="askreasons" hidden></div><div class="askrow"><button value="cancel">취소</button><button value="ok" class="go" id="askgo">확인</button></div></form></dialog><dialog id="modal"><button class="close" onclick="document.getElementById('modal').close()" aria-label="상세 닫기">×</button><div id="detail"></div></dialog><div class="toast" id="toast" role="status" aria-live="polite"></div><script src="memes-extra.js"></script><script src="memes-extra-2.js"></script><script src="memes-extra-3.js"></script><script src="memes-extra-4.js"></script><script src="memes-extra-5.js"></script><script>
 
 
 const $=id=>document.getElementById(id);const icons={save:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>'};
@@ -106,56 +65,56 @@ const EXTRA_MEMES_3=EXTRA_MEME_DATA_3.map(data=>meme(...data));
 const EXTRA_MEMES_4=EXTRA_MEME_DATA_4.map(data=>meme(...data));
 const EXTRA_MEMES_5=EXTRA_MEME_DATA_5.map(data=>meme(...data));
 const MEMES=[
- meme(1,'키스할 것 같음','assets/memes/01-kiss.png','게시글',['키스','설렘'],['연애','분위기','댓글'],'분위기가 묘하게 흘러갈 때 툭 던지기 좋은 짤.'),
- meme(2,'나도 사랑해, 얼만큼이냐면','assets/memes/02-love.png','대화 캡처',['사랑','과몰입'],['연애','나도사랑해','빵때릴건데'],'사랑의 크기를 예상 밖의 방식으로 설명할 때.'),
- meme(3,'선생님 고양이야?','assets/memes/03-teacher-cat.png','대화 캡처',['고양이','엉뚱'],['선생님','사람','당황'],'상대의 정체를 엉뚱하게 의심하고 싶을 때.'),
- meme(4,'천사족 여왕님','assets/memes/04-angel-queen.png','대화 캡처',['여왕님','허술'],['천사족','왕관','취소'],'거창하게 포장했는데 바로 들통났을 때.'),
- meme(5,'오지콤하는 여성들','assets/memes/05-ojicom.png','대화 캡처',['오지콤','취향'],['아저씨','쇼타','파보라'],'취향 토론이 이상한 방향으로 흘러갈 때.'),
- meme(6,'쥐는 계속 춤을 춘다','assets/memes/06-mouse-dance.png','동물',['쥐','춤'],['속춤','계속','신남'],'겉으로는 가만히 있어도 속으로는 신날 때.'),
- meme(7,'가자 막시무스','assets/memes/07-maximus.png','동물',['출발','막시무스'],['가자','말','쥐','출동'],'무작정 어디론가 출발하자고 외칠 때.'),
- meme(8,'와칸나이사우루스','assets/memes/08-wakannai.png','그림',['모르겠어','공룡'],['와칸나이','모름','난감'],'나도 이제 모르겠다고 선언하고 싶을 때.'),
- meme(9,'도시요카나사우루스','assets/memes/09-doshiyo.png','그림',['어쩌지','공룡'],['도시요카나','난감','고민'],'어떻게 해야 할지 막막할 때.'),
- meme(10,'하나님 저 쇼타충','assets/memes/10-shota.png','그림',['고해성사','허락'],['하나님','쇼타충','오케이'],'황당한 부탁도 허락받았다고 우기고 싶을 때.'),
- meme(11,'유사','assets/memes/11-yusa.png','대화 캡처',['유사','황당'],['주문','아니고','자리'],'오해가 너무 자연스럽게 굳어졌을 때.'),
- meme(12,'자세히 봐야 예쁘다','assets/memes/12-look-closely.png','게시글',['예쁘다','반전'],['오래','사랑스럽다','별로'],'칭찬이 바로 반박당했을 때 쓰는 반전 짤.'),
- meme(13,'영문과 토익','assets/memes/13-english-toeic.png','게시글',['토익','영문과'],['점수','공부','우수워'],'전공자에게 기대한 점수가 예상과 다를 때.'),
- meme(14,'화: 173','assets/memes/14-anger-173.png','대화 캡처',['화남','숫자'],['화가머리끝','173','키'],'상대의 말을 숫자로 너무 곧이곧대로 받을 때.'),
- meme(15,'참숯가마','assets/memes/15-charcoal-sauna.png','대화 캡처',['말장난','불사'],['참숯','가마','안받는다'],'대화가 말장난으로 계속 꼬일 때.'),
- meme(16,'개인적인 고민','assets/memes/16-personal-worry.png','대화 캡처',['고민','취중'],['개인적','선배','다음에'],'중요한 말을 꺼내놓고 바로 후퇴할 때.'),
- meme(17,'비둘기야 니 머선 고민 있나','assets/memes/17-pigeon-worry.png','동물',['비둘기','고민'],['눈','발자국','방황'],'생각이 너무 많아 동선까지 꼬였을 때.'),
- meme(18,'저 미친놈이에요','assets/memes/18-crazy-person.png','대화 캡처',['고백','미친놈'],['번호','전과','출소','당황'],'상대보다 한술 더 떠서 상황을 받아칠 때.'),
- meme(19,'그데, 오직 그데많이','assets/memes/19-only-you.png','게시글',['사랑','오타'],['그대','천사랑','꽃사랑'],'달콤한 고백이 댓글 한 줄로 끝났을 때.'),
- meme(20,'후회 없이 사랑했노','assets/memes/20-no-regrets-love.png','게시글',['사랑','당황'],['후회','말해요','물음표'],'진지한 고백이 예상 못 한 말투로 나왔을 때.'),
- meme(21,'심심해 뒤지기 일보직전','assets/memes/21-bored.png','게시글',['심심','무료함'],['놀자','잠','일보직전'],'너무 심심해서 아무 말이라도 걸고 싶을 때.'),
- meme(22,'홍대 유모차','assets/memes/22-hongdae-stroller.png','게시글',['홍대','유모차'],['천천히','차','사람'],'느리게 가는 상황에 황당한 이름을 붙일 때.'),
- meme(23,'재밌어하는 거 같구만','assets/memes/23-seems-fun.png','게시글',['재미','긁힘'],['재밌다','화남','반응'],'화났다면서 누구보다 즐기고 있는 사람에게.'),
- meme(24,'전기기사 시험 요약','assets/memes/24-electrician-exam.png','대화 캡처',['시험','요약'],['전기기사','기출','조용'],'시험 직후 분위기를 한 장으로 요약할 때.'),
- meme(25,'뭔 말인지 모르겠떠염','assets/memes/25-dont-understand.png','게시글',['모르겠음','설명'],['과학','AI','기사','뭔말'],'설명이 너무 어려워 하나도 이해하지 못했을 때.'),
- meme(26,'왜.. 거짓말 했어요?','assets/memes/26-why-lie.png','게시글',['거짓말','서운'],['사랑','눈물','왜'],'믿었던 말과 결과가 달라 서운할 때.'),
- meme(27,'남미새도 외모 봄?','assets/memes/27-looks-matter.png','게시글',['외모','질문'],['남미새','사람','새'],'단어를 너무 문자 그대로 받아쳐 웃길 때.'),
- meme(28,'그니까.. 지금 내가 벼락치기 하는 내용을','assets/memes/28-cramming.png','게시글',['벼락치기','시험'],['수업','교수','출제','분노'],'시험 직전 뒤늦게 진실을 깨달았을 때.'),
- meme(29,'빽다방 죄수','assets/memes/29-paik-prisoner.png','게시글',['카페','번호표'],['빽다방','죄수','손님','200번'],'호칭 하나 때문에 사소한 일에 발끈했을 때.'),
- meme(30,'친한 오빠 한의사','assets/memes/30-doctor-friend.png','게시글',['한의사','팩폭'],['진맥','성격','젊은친구'],'전문가의 진단이 너무 개인적일 때.'),
- meme(31,'말랑이','assets/memes/31-mallang.png','동물',['햄스터','말랑'],['푹신','귀여움','파티'],'작고 말랑한 존재가 화면을 가릴 때.'),
- meme(32,'봉투 드릴까요','assets/memes/32-bag.png','동물',['여우','봉투'],['필요없어','장보기','당근'],'필요 없다는 말을 온몸으로 보여줄 때.'),
- meme(33,'쌔비지','assets/memes/33-savage.png','동물',['햄스터','가로채기'],['당근','쌔비지','냉큼'],'남의 것을 순식간에 낚아챌 때.'),
- meme(34,'냉큼몽땅이','assets/memes/34-naengkeum.png','동물',['강아지','냉큼'],['짜장면','먹고','잠'],'먹을 것만 챙기고 바로 편하게 누울 때.'),
- meme(35,'눈썹 시술 어디서 했어','assets/memes/35-eyebrows.png','동물',['강아지','눈썹'],['시술','쌍댕이','어디서'],'과하게 또렷한 눈썹을 발견했을 때.'),
- meme(36,'쿠션 사이에 낑겨 잔 강아지','assets/memes/36-dog-cushion.png','동물',['강아지','쿠션'],['낑김','자고','얼굴'],'이상한 자세로 자고 일어난 얼굴을 보여줄 때.'),
- meme(37,'정신이 드세요? 제가 수술하다 실수로 나이프를','assets/memes/37-surgery-mistake.png','동물',['강아지','수술'],['정신','실수','나이프','죄송'],'큰 실수를 너무 태연하게 고백하는 상황.'),
- meme(38,'어리둥절한 인생이다','assets/memes/38-confused-life.png','동물',['어리둥절','인생'],['햄스터','마요네즈','혼란'],'상황 파악이 전혀 되지 않을 때.'),
- meme(39,'요즘 잘 자 쿨냥이','assets/memes/39-sleeping-cat.png','동물',['고양이','숙면'],['쿨냥이','이불','잘자'],'누구보다 편안하게 푹 자고 있을 때.'),
- meme(40,'너네 냥이도 이렇게 자냐','assets/memes/40-cat-sleeps.png','동물',['고양이','수면'],['얼굴','심장소리','붙이고'],'반려동물의 독특한 잠버릇을 자랑할 때.'),
- meme(41,'고영이 윙크 사진 많음','assets/memes/41-cat-wink.png','동물',['고양이','윙크'],['간식','한쪽눈','사진'],'뜻밖의 사연이 귀여운 특징으로 남았을 때.'),
- meme(42,'직업 만족도 200% 수리기사님','assets/memes/42-repairman.png','동물',['고양이','수리기사'],['뽀뽀','미세먼지필터','직업만족'],'일보다 뜻밖의 보너스에 더 진심일 때.'),
- meme(43,'주둥이 부풀리지 마','assets/memes/43-dont-puff.png','동물',['고양이','기대'],['고기','주둥이','부풀림'],'먹을 것 앞에서 기대를 감추지 못할 때.'),
- meme(44,'FAT','assets/memes/44-fat.png','동물',['토끼','체중계'],['뚱뚱','몸무게','fat'],'체중계가 너무 솔직한 평가를 내렸을 때.'),
- meme(45,'커피 더 필요해','assets/memes/45-need-coffee.png','동물',['커피','피곤'],['필요','카페인','졸림'],'카페인이 모자라 정신이 아직 안 들었을 때.'),
- meme(46,'일본도 진검','assets/memes/46-japanese-sword.png','게시글',['일본도','진검'],['가품','찔러','아프면','말'],'확인 방법이 너무 과격하고 단순할 때.'),
- meme(47,'시간 가는 줄 알고 봤습니다','assets/memes/47-time-waste.png','게시글',['리뷰','시간'],['별점','알고','봤습니다'],'시간 낭비였다는 말을 정중하게 남길 때.'),
- meme(48,'그건 아마 우리의 잘못은 아닐 거야','assets/memes/48-not-our-fault.png','게시글',['잘못','책임회피'],['니잘못','아닐거야','핑계'],'우리라고 해놓고 자연스럽게 책임을 넘길 때.'),
- meme(49,'작심 원데이 클래스다','assets/memes/49-one-day-class.png','그림',['작심삼일','포기'],['원데이클래스','결심','하루'],'결심이 하루도 못 가볍게 끝났을 때.'),
- meme(50,'유종애미','assets/memes/50-yujong-mom.png','대화 캡처',['말장난','응원'],['유종의미','엄마','화이팅'],'좋은 뜻의 말을 엉뚱한 가족 이야기로 받아칠 때.')
+ meme(1,'키스할 것 같음','assets/memes/01-kiss.png','게시글',['키스','설렘'],['연애','분위기','댓글','게시글','글','사랑','유튜브','커뮤'],'분위기가 묘하게 흘러갈 때 툭 던지기 좋은 짤.'),
+ meme(2,'나도 사랑해, 얼만큼이냐면','assets/memes/02-love.png','대화 캡처',['사랑','과몰입'],['연애','나도사랑해','빵때릴건데','대화','메신저','문자','카톡','캡처'],'사랑의 크기를 예상 밖의 방식으로 설명할 때.'),
+ meme(3,'선생님 고양이야?','assets/memes/03-teacher-cat.png','대화 캡처',['고양이','엉뚱'],['선생님','사람','당황','냥이','대화','동물','메신저','문자','반려동물','야옹','카톡','캡처'],'상대의 정체를 엉뚱하게 의심하고 싶을 때.'),
+ meme(4,'천사족 여왕님','assets/memes/04-angel-queen.png','대화 캡처',['여왕님','허술'],['천사족','왕관','취소','대화','메신저','문자','술','음주','카톡','캡처'],'거창하게 포장했는데 바로 들통났을 때.'),
+ meme(5,'오지콤하는 여성들','assets/memes/05-ojicom.png','대화 캡처',['오지콤','취향'],['아저씨','쇼타','파보라','대화','메신저','문자','카톡','캡처'],'취향 토론이 이상한 방향으로 흘러갈 때.'),
+ meme(6,'쥐는 계속 춤을 춘다','assets/memes/06-mouse-dance.png','동물',['쥐','춤'],['속춤','계속','신남','동물'],'겉으로는 가만히 있어도 속으로는 신날 때.'),
+ meme(7,'가자 막시무스','assets/memes/07-maximus.png','동물',['출발','막시무스'],['가자','말','쥐','출동','동물'],'무작정 어디론가 출발하자고 외칠 때.'),
+ meme(8,'와칸나이사우루스','assets/memes/08-wakannai.png','그림',['모르겠어','공룡'],['와칸나이','모름','난감','그림','낙서','동물','만화'],'나도 이제 모르겠다고 선언하고 싶을 때.'),
+ meme(9,'도시요카나사우루스','assets/memes/09-doshiyo.png','그림',['어쩌지','공룡'],['도시요카나','난감','고민','그림','낙서','동물','만화'],'어떻게 해야 할지 막막할 때.'),
+ meme(10,'하나님 저 쇼타충','assets/memes/10-shota.png','그림',['고해성사','허락'],['하나님','쇼타충','오케이','그림','낙서','만화'],'황당한 부탁도 허락받았다고 우기고 싶을 때.'),
+ meme(11,'유사','assets/memes/11-yusa.png','대화 캡처',['유사','황당'],['주문','아니고','자리','대화','메신저','문자','카톡','캡처'],'오해가 너무 자연스럽게 굳어졌을 때.'),
+ meme(12,'자세히 봐야 예쁘다','assets/memes/12-look-closely.png','게시글',['예쁘다','반전'],['오래','사랑스럽다','별로','게시글','귀여운','귀여움','글','사랑','연애','커뮤'],'칭찬이 바로 반박당했을 때 쓰는 반전 짤.'),
+ meme(13,'영문과 토익','assets/memes/13-english-toeic.png','게시글',['토익','영문과'],['점수','공부','우수워','게시글','글','커뮤'],'전공자에게 기대한 점수가 예상과 다를 때.'),
+ meme(14,'화: 173','assets/memes/14-anger-173.png','대화 캡처',['화남','숫자'],['화가머리끝','173','키','대화','동물','메신저','문자','분노','빡침','카톡','캡처'],'상대의 말을 숫자로 너무 곧이곧대로 받을 때.'),
+ meme(15,'참숯가마','assets/memes/15-charcoal-sauna.png','대화 캡처',['말장난','불사'],['참숯','가마','안받는다','대화','동물','메신저','문자','카톡','캡처'],'대화가 말장난으로 계속 꼬일 때.'),
+ meme(16,'개인적인 고민','assets/memes/16-personal-worry.png','대화 캡처',['고민','취중'],['개인적','선배','다음에','대화','동물','메신저','문자','카톡','캡처'],'중요한 말을 꺼내놓고 바로 후퇴할 때.'),
+ meme(17,'비둘기야 니 머선 고민 있나','assets/memes/17-pigeon-worry.png','동물',['비둘기','고민'],['눈','발자국','방황','동물','새'],'생각이 너무 많아 동선까지 꼬였을 때.'),
+ meme(18,'저 미친놈이에요','assets/memes/18-crazy-person.png','대화 캡처',['고백','미친놈'],['번호','전과','출소','당황','대화','메신저','문자','사랑','술','연애','음주','카톡','캡처'],'상대보다 한술 더 떠서 상황을 받아칠 때.'),
+ meme(19,'그데, 오직 그데많이','assets/memes/19-only-you.png','게시글',['사랑','오타'],['그대','천사랑','꽃사랑','게시글','글','댓글','연애','유튜브','커뮤'],'달콤한 고백이 댓글 한 줄로 끝났을 때.'),
+ meme(20,'후회 없이 사랑했노','assets/memes/20-no-regrets-love.png','게시글',['사랑','당황'],['후회','말해요','물음표','게시글','글','동물','연애','커뮤'],'진지한 고백이 예상 못 한 말투로 나왔을 때.'),
+ meme(21,'심심해 뒤지기 일보직전','assets/memes/21-bored.png','게시글',['심심','무료함'],['놀자','잠','일보직전','게시글','글','동물','커뮤'],'너무 심심해서 아무 말이라도 걸고 싶을 때.'),
+ meme(22,'홍대 유모차','assets/memes/22-hongdae-stroller.png','게시글',['홍대','유모차'],['천천히','차','사람','게시글','글','커뮤'],'느리게 가는 상황에 황당한 이름을 붙일 때.'),
+ meme(23,'재밌어하는 거 같구만','assets/memes/23-seems-fun.png','게시글',['재미','긁힘'],['재밌다','화남','반응','게시글','글','분노','빡침','커뮤'],'화났다면서 누구보다 즐기고 있는 사람에게.'),
+ meme(24,'전기기사 시험 요약','assets/memes/24-electrician-exam.png','대화 캡처',['시험','요약'],['전기기사','기출','조용','공부','대화','메신저','문자','카톡','캡처','학교'],'시험 직후 분위기를 한 장으로 요약할 때.'),
+ meme(25,'뭔 말인지 모르겠떠염','assets/memes/25-dont-understand.png','게시글',['모르겠음','설명'],['과학','AI','기사','뭔말','게시글','글','동물','커뮤'],'설명이 너무 어려워 하나도 이해하지 못했을 때.'),
+ meme(26,'왜.. 거짓말 했어요?','assets/memes/26-why-lie.png','게시글',['거짓말','서운'],['사랑','눈물','왜','게시글','글','동물','슬픔','연애','우울','커뮤'],'믿었던 말과 결과가 달라 서운할 때.'),
+ meme(27,'남미새도 외모 봄?','assets/memes/27-looks-matter.png','게시글',['외모','질문'],['남미새','사람','새','게시글','글','대화','메신저','문자','지식인','카톡','커뮤'],'단어를 너무 문자 그대로 받아쳐 웃길 때.'),
+ meme(28,'그니까.. 지금 내가 벼락치기 하는 내용을','assets/memes/28-cramming.png','게시글',['벼락치기','시험'],['수업','교수','출제','분노','게시글','공부','글','빡침','커뮤','학교','화남'],'시험 직전 뒤늦게 진실을 깨달았을 때.'),
+ meme(29,'빽다방 죄수','assets/memes/29-paik-prisoner.png','게시글',['카페','번호표'],['빽다방','죄수','손님','200번','게시글','글','커뮤'],'호칭 하나 때문에 사소한 일에 발끈했을 때.'),
+ meme(30,'친한 오빠 한의사','assets/memes/30-doctor-friend.png','게시글',['한의사','팩폭'],['진맥','성격','젊은친구','게시글','글','커뮤'],'전문가의 진단이 너무 개인적일 때.'),
+ meme(31,'말랑이','assets/memes/31-mallang.png','동물',['햄스터','말랑'],['푹신','귀여움','파티','귀여운','동물','설치류'],'작고 말랑한 존재가 화면을 가릴 때.'),
+ meme(32,'봉투 드릴까요','assets/memes/32-bag.png','동물',['여우','봉투'],['필요없어','장보기','당근','동물'],'필요 없다는 말을 온몸으로 보여줄 때.'),
+ meme(33,'쌔비지','assets/memes/33-savage.png','동물',['햄스터','가로채기'],['당근','쌔비지','냉큼','동물','설치류'],'남의 것을 순식간에 낚아챌 때.'),
+ meme(34,'냉큼몽땅이','assets/memes/34-naengkeum.png','동물',['강아지','냉큼'],['짜장면','먹고','잠','개','댕댕이','동물','멍멍이','반려동물'],'먹을 것만 챙기고 바로 편하게 누울 때.'),
+ meme(35,'눈썹 시술 어디서 했어','assets/memes/35-eyebrows.png','동물',['강아지','눈썹'],['시술','쌍댕이','어디서','개','댕댕이','동물','멍멍이','반려동물','술','음주'],'과하게 또렷한 눈썹을 발견했을 때.'),
+ meme(36,'쿠션 사이에 낑겨 잔 강아지','assets/memes/36-dog-cushion.png','동물',['강아지','쿠션'],['낑김','자고','얼굴','개','댕댕이','동물','멍멍이','반려동물'],'이상한 자세로 자고 일어난 얼굴을 보여줄 때.'),
+ meme(37,'정신이 드세요? 제가 수술하다 실수로 나이프를','assets/memes/37-surgery-mistake.png','동물',['강아지','수술'],['정신','실수','나이프','죄송','개','댕댕이','동물','멍멍이','반려동물','사랑','술','연애','음주'],'큰 실수를 너무 태연하게 고백하는 상황.'),
+ meme(38,'어리둥절한 인생이다','assets/memes/38-confused-life.png','동물',['어리둥절','인생'],['햄스터','마요네즈','혼란','동물','설치류'],'상황 파악이 전혀 되지 않을 때.'),
+ meme(39,'요즘 잘 자 쿨냥이','assets/memes/39-sleeping-cat.png','동물',['고양이','숙면'],['쿨냥이','이불','잘자','냥이','동물','반려동물','야옹'],'누구보다 편안하게 푹 자고 있을 때.'),
+ meme(40,'너네 냥이도 이렇게 자냐','assets/memes/40-cat-sleeps.png','동물',['고양이','수면'],['얼굴','심장소리','붙이고','냥이','동물','반려동물','야옹'],'반려동물의 독특한 잠버릇을 자랑할 때.'),
+ meme(41,'고영이 윙크 사진 많음','assets/memes/41-cat-wink.png','동물',['고양이','윙크'],['간식','한쪽눈','사진','귀여운','귀여움','냥이','동물','반려동물','야옹'],'뜻밖의 사연이 귀여운 특징으로 남았을 때.'),
+ meme(42,'직업 만족도 200% 수리기사님','assets/memes/42-repairman.png','동물',['고양이','수리기사'],['뽀뽀','미세먼지필터','직업만족','냥이','동물','반려동물','사랑','야옹','연애'],'일보다 뜻밖의 보너스에 더 진심일 때.'),
+ meme(43,'주둥이 부풀리지 마','assets/memes/43-dont-puff.png','동물',['고양이','기대'],['고기','주둥이','부풀림','냥이','동물','반려동물','야옹'],'먹을 것 앞에서 기대를 감추지 못할 때.'),
+ meme(44,'FAT','assets/memes/44-fat.png','동물',['토끼','체중계'],['뚱뚱','몸무게','fat','동물'],'체중계가 너무 솔직한 평가를 내렸을 때.'),
+ meme(45,'커피 더 필요해','assets/memes/45-need-coffee.png','동물',['커피','피곤'],['필요','카페인','졸림','동물','지침'],'카페인이 모자라 정신이 아직 안 들었을 때.'),
+ meme(46,'일본도 진검','assets/memes/46-japanese-sword.png','게시글',['일본도','진검'],['가품','찔러','아프면','말','게시글','글','동물','커뮤'],'확인 방법이 너무 과격하고 단순할 때.'),
+ meme(47,'시간 가는 줄 알고 봤습니다','assets/memes/47-time-waste.png','게시글',['리뷰','시간'],['별점','알고','봤습니다','게시글','글','동물','커뮤'],'시간 낭비였다는 말을 정중하게 남길 때.'),
+ meme(48,'그건 아마 우리의 잘못은 아닐 거야','assets/memes/48-not-our-fault.png','게시글',['잘못','책임회피'],['니잘못','아닐거야','핑계','게시글','글','커뮤'],'우리라고 해놓고 자연스럽게 책임을 넘길 때.'),
+ meme(49,'작심 원데이 클래스다','assets/memes/49-one-day-class.png','그림',['작심삼일','포기'],['원데이클래스','결심','하루','그림','낙서','만화'],'결심이 하루도 못 가볍게 끝났을 때.'),
+ meme(50,'유종애미','assets/memes/50-yujong-mom.png','대화 캡처',['말장난','응원'],['유종의미','엄마','화이팅','대화','동물','메신저','문자','카톡','캡처'],'좋은 뜻의 말을 엉뚱한 가족 이야기로 받아칠 때.')
 ];
 let saved=new Set(),mine=[],reported={},cat='전체',current='explore',draft=null;
 try{saved=new Set(JSON.parse(localStorage.getItem('zzal.saved')||'[]'));mine=JSON.parse(localStorage.getItem('zzal.mine')||'[]');reported=JSON.parse(localStorage.getItem('zzal.reported')||'{}')}catch{}
@@ -176,7 +135,25 @@ const ADS=[
 function adCard(i){let a=ADS[i%ADS.length];return `<aside class="pin ad-pin" aria-label="광고 자리"><div class="ad-card"><div class="ad-visual ${a.tone}"><span class="ad-label">광고</span><div class="ad-copy"><small>${a.brand}</small><strong>${a.headline}</strong><span>${a.cta}</span></div></div></div><div class="ad-meta"><strong>${a.brand}</strong><p>${a.note}</p></div></aside>`}
 function feedCards(rows){let out=[];rows.forEach((z,i)=>{out.push(card(z));if(i>=5&&(i-5)%12===0)out.push(adCard(Math.floor((i-5)/12)))});return out.join('')}
 function empty(t,p){return `<div class="empty"><h3>${t}</h3><p>${p}</p><button onclick="resetFeed();navigate('explore')">짤 둘러보기</button></div>`}
-function render(){let q=$('q').value.trim().toLowerCase();let rows=visible().filter(z=>cat==='전체'||z.cat===cat);if(q){let terms=q.split(/\s+/);rows=rows.map(z=>({z,n:z.kw.reduce((n,k)=>n+(q.includes(k)?2:0),0)+terms.reduce((n,t)=>n+((z.name+z.tags.join(' ')).includes(t)?1:0),0)})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n).map(x=>x.z)}$('heading').textContent=q?'“'+$('q').value.trim()+'” 검색 결과':cat==='전체'?'오늘, 이 짤 어때요?':cat+' 모아보기';$('summary').textContent=q?rows.length+'개의 짤 · 키워드가 겹치는 순서로 보여드려요':'말로 하기 애매할 때 꺼내 쓰기 좋은 짤 · '+rows.length+'개';$('reset').hidden=!q;$('board').classList.toggle('board',!!rows.length);$('board').innerHTML=rows.length?feedCards(rows):empty('아직 맞는 짤이 없어요','“잠수”, “야근”처럼 짧은 말로 다시 찾아보세요.');let ss=visible().filter(z=>saved.has(z.id));renderReported();renderCount();$('savedheading').textContent='저장한 짤 '+ss.length;$('savedboard').classList.toggle('board',!!ss.length);$('savedboard').innerHTML=ss.length?ss.map(card).join(''):empty('다시 보고 싶은 짤을 저장해보세요','짤 아래 책갈피 버튼을 누르면 여기에 모여요.');document.querySelectorAll('.count').forEach(e=>e.textContent=saved.size||'');document.querySelectorAll('#filters button').forEach(e=>{e.classList.toggle('active',e.textContent===cat);e.setAttribute('aria-pressed',e.textContent===cat)})}
+const GENERIC=['짤','밈','움짤','사진','이미지','짤방','움짤들'];
+const SYN={'웃긴':['웃김','웃기','개그'],'웃김':['웃긴'],'웃기는':['웃김'],'귀여운':['귀여움','귀여'],'슬픈':['슬픔','우울'],'우울한':['우울'],'화난':['화남','분노','빡침'],'빡친':['빡침','분노'],'짜증나는':['짜증'],'피곤한':['피곤','지침'],'힘든':['힘듦','힘들'],'댕댕이':['강아지'],'멍멍이':['강아지'],'강쥐':['강아지'],'냥이':['고양이'],'고양이':['냥'],'기분좋은':['기분좋음'],'설레는':['설렘'],'황당한':['황당'],'억울한':['억울']};
+const STOP=['있어','있나','있는','없나','없어','없는','찾아줘','찾아','보여줘','알려줘','해줘','주세요','같은','관련','느낌','뭐가','뭔가','그런','이런','저런','하는','되는','에서','좀','거','것','때','나오는','나오는거','추천'];
+function stem(t){let s=t.replace(/(이랑|에서|으로|한테|에게|처럼|보다|까지|부터|랑|은|는|이|가|을|를|의|에|도|만|야|아|와|과)$/,'');return s.length>=2&&s!==t?s:null}
+function searchTerms(q){let toks=q.split(/\s+/).filter(Boolean).filter(t=>!GENERIC.includes(t)&&!STOP.includes(t));
+ if(toks.length>1)toks=toks.filter(t=>t.length>1);
+ let out=[];toks.forEach(t=>{let b=t.replace(/(짤|밈|짤방)$/,'');let base=b.length>=2?b:t;out.push(base);
+  let st=stem(base);if(st)out.push(st);
+  [t,b,base,st].forEach(k=>(SYN[k]||[]).forEach(x=>out.push(x)))});
+ return [...new Set(out.filter(Boolean))]}
+function score(z,q,terms){let n=z.kw.reduce((s,k)=>s+(k.length>1&&q.includes(k)?2:0),0);
+ let name=z.name.toLowerCase(),why=String(z.why||'').replace(/<[^>]*>/g,'').toLowerCase();
+ terms.forEach(t=>{if(name.includes(t))n+=4;
+  if(z.tags.some(x=>x.toLowerCase().includes(t)))n+=3;
+  if(z.kw.some(k=>k.toLowerCase().includes(t)))n+=2;
+  if(why.includes(t))n+=1;
+  if(z.cat.toLowerCase().includes(t))n+=1});
+ return n}
+function render(){let q=$('q').value.trim().toLowerCase();let rows=visible().filter(z=>cat==='전체'||z.cat===cat);if(q){let terms=searchTerms(q);if(terms.length)rows=rows.map(z=>({z,n:score(z,q,terms)})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n).map(x=>x.z)}$('heading').textContent=q?'“'+$('q').value.trim()+'” 검색 결과':cat==='전체'?'오늘, 이 짤 어때요?':cat+' 모아보기';$('summary').textContent=q?rows.length+'개의 짤 · 키워드가 겹치는 순서로 보여드려요':'말로 하기 애매할 때 꺼내 쓰기 좋은 짤 · '+rows.length+'개';$('reset').hidden=!q;$('board').classList.toggle('board',!!rows.length);$('board').innerHTML=rows.length?feedCards(rows):empty('아직 맞는 짤이 없어요','“잠수”, “야근”처럼 짧은 말로 다시 찾아보세요.');let ss=visible().filter(z=>saved.has(z.id));renderReported();renderCount();$('savedheading').textContent='저장한 짤 '+ss.length;$('savedboard').classList.toggle('board',!!ss.length);$('savedboard').innerHTML=ss.length?ss.map(card).join(''):empty('다시 보고 싶은 짤을 저장해보세요','짤 아래 책갈피 버튼을 누르면 여기에 모여요.');document.querySelectorAll('.count').forEach(e=>e.textContent=saved.size||'');document.querySelectorAll('#filters button').forEach(e=>{e.classList.toggle('active',e.textContent===cat);e.setAttribute('aria-pressed',e.textContent===cat)})}
 function toggle(id){saved.has(id)?saved.delete(id):saved.add(id);let ok=persist();render();if($('modal').open)detail(id);if(ok)toast(saved.has(id)?'내 짤에 저장했어요':'저장을 취소했어요')}
 function query(q){$('q').value=q;cat='전체';navigate('explore')}
 function resetFeed(){$('q').value='';cat='전체';render()}
