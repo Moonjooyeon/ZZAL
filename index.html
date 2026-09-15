@@ -28,9 +28,9 @@
 <main><section id="explore"><div class="hero"><div><div class="eyebrow">말 대신, 이 짤</div><h1>이럴 때 쓰는 짤,<br><mark>여기 다 있네.</mark></h1><p>웃긴 것도, 묘하게 내 마음 같은 것도.<br>지금 보내고 싶은 짤을 찾아보세요.</p></div><div class="searchside"><form class="search" id="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="q" aria-label="짤 검색" placeholder="상황이나 기억나는 대사를 적어보세요" autocomplete="off"><button>찾기</button></form><div class="suggestions"><span>이럴 때</span><button onclick="query('사랑')">사랑한다고 할 때</button><button onclick="query('고민')">고민이 있을 때</button><button onclick="query('당황')">당황했을 때</button></div></div></div><div class="filters" id="filters" aria-label="짤 종류"></div><div class="sectionhead"><div><h2 id="heading">오늘, 이 짤 어때요?</h2><p id="summary">말로 하기 애매할 때 꺼내 쓰기 좋은 짤</p></div><button id="reset" onclick="resetFeed()" hidden>검색 지우기 ×</button></div><div id="board" class="board"></div></section>
 <section id="saved" hidden><div class="pageintro"><h1>내 짤</h1><p>다시 쓰고 싶은 짤을 한곳에.<br>이 브라우저에 저장되어 다음에 와도 꺼내 볼 수 있어요.</p></div><div class="sectionhead"><h2 id="savedheading">저장한 짤</h2></div><div id="savedboard" class="board"></div></section>
 <section id="upload" hidden><div class="pageintro"><h1>나만 갖고 있긴 아까운 짤</h1><p>언제 쓰는 짤인지 한 줄만 적어주세요.<br>이 시안에서는 서버 업로드 없이 내 브라우저에만 보관합니다.</p></div><form id="uploadform" class="uploadform"><button type="button" class="drop" id="drop" onclick="document.getElementById('file').click()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></svg><strong>짤을 끌어놓거나 파일 선택</strong><small>JPG, PNG, GIF · 최대 10MB</small></button><input id="file" type="file" accept="image/jpeg,image/png,image/gif" hidden><div id="draft" hidden><img id="preview" class="preview" alt="선택한 짤 미리보기"><button type="button" onclick="cancelDraft()">다른 파일 선택</button></div><label class="field" for="desc">언제 쓰는 짤인가요?</label><input class="textinput" id="desc" maxlength="80" placeholder="예: 갑자기 일을 떠넘길 때" required><label class="check"><input type="checkbox" id="rights" required>직접 만들었거나 공유할 권한이 있는 이미지입니다.</label><button class="primary" id="submit" disabled>내 짤에 추가</button></form></section>
-<footer class="note"><span>이짤이이짤 · 말보다 짤이 빠를 때</span><span>임시 콘텐츠 130개 · 검색은 키워드 기준</span></footer></main>
+<footer class="note"><span>이짤이이짤 · 말보다 짤이 빠를 때</span><span>임시 콘텐츠 160개 · 검색은 키워드 기준</span></footer></main>
 <nav class="mobile" aria-label="모바일 메뉴"><button data-page="explore" class="active" onclick="navigate('explore')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>둘러보기</button><button onclick="navigate('explore');document.getElementById('q').focus()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>찾기</button><button data-page="saved" onclick="navigate('saved')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>내 짤 <span class="count" hidden></span></button></nav>
-<dialog id="modal"><button class="close" onclick="document.getElementById('modal').close()" aria-label="상세 닫기">×</button><div id="detail"></div></dialog><div class="toast" id="toast" role="status" aria-live="polite"></div><script src="memes-extra.js"></script><script src="memes-extra-2.js"></script><script>const ZZAL=[
+<dialog id="modal"><button class="close" onclick="document.getElementById('modal').close()" aria-label="상세 닫기">×</button><div id="detail"></div></dialog><div class="toast" id="toast" role="status" aria-live="polite"></div><script src="memes-extra.js"></script><script src="memes-extra-2.js"></script><script src="memes-extra-3.js"></script><script>const ZZAL=[
  {id:1,name:'"정수리가 싸늘해…" 게임 시민',cat:'게임',tags:['불길','탈모'],kw:['불길','예감','탈모','싸늘','대머리','촉','망함','머리'],
   art:`<div class="z-game"><div class="fig"></div><div class="sub">정수리가 싸늘해… 뭔가 불길한 예감이 든다…</div></div>`,
   why:'불길한 예감을 <b>머리숱 개그로 비튼</b> 짤. 오싹한 소식에도, 탈모 농담에도 씁니다.'},
@@ -78,6 +78,7 @@ const $=id=>document.getElementById(id);const icons={save:'<svg viewBox="0 0 24 
 const meme=(id,name,file,cat,tags,kw,why)=>({id,name,filename:file.split('/').pop(),src:file,cat,tags,kw:[name,...tags,...kw],why,art:`<img src="${file}" alt="${name}" loading="lazy">`});
 const EXTRA_MEMES=EXTRA_MEME_DATA.map(data=>meme(...data));
 const EXTRA_MEMES_2=EXTRA_MEME_DATA_2.map(data=>meme(...data));
+const EXTRA_MEMES_3=EXTRA_MEME_DATA_3.map(data=>meme(...data));
 const MEMES=[
  meme(1,'키스할 것 같음','assets/memes/01-kiss.png','게시글',['키스','설렘'],['연애','분위기','댓글'],'분위기가 묘하게 흘러갈 때 툭 던지기 좋은 짤.'),
  meme(2,'나도 사랑해, 얼만큼이냐면','assets/memes/02-love.png','대화 캡처',['사랑','과몰입'],['연애','나도사랑해','빵때릴건데'],'사랑의 크기를 예상 밖의 방식으로 설명할 때.'),
@@ -133,7 +134,7 @@ const MEMES=[
 let saved=new Set(),mine=[],cat='전체',current='explore',draft=null;
 try{saved=new Set(JSON.parse(localStorage.getItem('zzal.saved')||'[]'));mine=JSON.parse(localStorage.getItem('zzal.mine')||'[]')}catch{}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const all=()=>[...MEMES,...EXTRA_MEMES,...EXTRA_MEMES_2,...mine];
+const all=()=>[...MEMES,...EXTRA_MEMES,...EXTRA_MEMES_2,...EXTRA_MEMES_3,...mine];
 const title=z=>z.name;
 function toast(s){$('toast').textContent=s;clearTimeout(window.tt);window.tt=setTimeout(()=>$('toast').textContent='',2600)}
 function persist(){try{localStorage.setItem('zzal.saved',JSON.stringify([...saved]));return true}catch{toast('브라우저에 저장할 수 없어요. 이 화면에서만 유지됩니다.');return false}}
