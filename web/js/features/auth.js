@@ -16,6 +16,9 @@ const CARET = '<svg class="caret" viewBox="0 0 24 24" aria-hidden="true"><path d
  * 로그인 후에는 아바타 칩 하나로 줄이고 나머지는 펼침 메뉴로 넣습니다.
  */
 export function renderMe() {
+  // 로그인 전 안내는 로그인하면 더 볼 이유가 없습니다
+  $('signup').hidden = !!state.session;
+
   if (!state.session) {
     $('me').innerHTML = '<button class="signin" onclick="openLogin()">로그인</button>';
     return;

@@ -6,6 +6,11 @@
   border-bottom: 1px solid var(--line);
   padding: 18px 0 23px;
   overflow: auto;
+  scrollbar-width: none;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
 }
 
 .filters button {

@@ -53,6 +53,16 @@
           <button onclick="query('고민')">고민이 있을 때</button>
           <button onclick="query('당황')">당황했을 때</button>
         </div>
+        <!-- 로그인 전에만 보입니다. renderMe()가 켜고 끕니다 -->
+        <aside class="signup" id="signup" hidden>
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg></span>
+          <div class="copy">
+            <strong class="full">마음에 든 짤, 담아뒀다 꺼내 쓰세요</strong>
+            <strong class="brief">로그인하면 짤을 담아둘 수 있어요</strong>
+            <p>계정에 저장하면 폰에서도 PC에서도 그대로 있어요.</p>
+          </div>
+          <button class="go" onclick="openLogin()">시작하기</button>
+        </aside>
       </div>
     </div>
 

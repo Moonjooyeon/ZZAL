@@ -244,3 +244,73 @@
   line-height: 1.8;
   margin: 0 0 20px;
 }
+
+/* ── 로그인 전 안내 ─────────────────────────────────────────────────────
+   히어로 검색창 아래. 로그인 버튼만 있고 '왜 눌러야 하는지'가 없어서
+   비어 있던 자리에 답을 둡니다. 로그인하면 사라집니다.          */
+.signup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 30px;
+  padding: 15px 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.signup .ic {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--yellow);
+  color: #46400f;
+}
+
+.signup .ic svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+  stroke: none;
+}
+
+.signup .copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.signup .brief {
+  display: none;   /* 좁은 화면에서만 씁니다 (responsive.css) */
+}
+
+.signup strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -.04em;
+}
+
+.signup p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.signup .go {
+  flex: none;
+  padding: 11px 16px;
+  border: 1px solid #e8d94a;
+  border-radius: 9px;
+  background: var(--yellow);
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.signup .go:hover {
+  filter: brightness(.95);
+}

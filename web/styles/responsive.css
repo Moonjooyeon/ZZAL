@@ -24,6 +24,16 @@
   }
 }
 
+@media(max-width:1000px) {
+  .signup .full,
+  .signup p {
+    display: none;
+  }
+  .signup .brief {
+    display: block;
+  }
+}
+
 @media(max-width:760px) {
   header {
     height: 68px;
@@ -64,6 +74,24 @@
     margin-right: -18px;
     padding: 12px 18px 18px 0;
     gap: 6px;
+  }
+  /* 로그인 전 안내 — 첫 화면을 덜 먹도록 한 줄로 */
+  .signup {
+    margin-top: 22px;
+    padding: 11px 12px;
+    gap: 10px;
+  }
+  .signup .ic {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  .signup .brief {
+    font-size: 12.5px;
+  }
+  .signup .go {
+    padding: 9px 12px;
+    font-size: 12px;
   }
   .filters button {
     padding: 8px 13px;
