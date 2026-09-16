@@ -137,14 +137,14 @@ function adCard(i){let a=ADS[i%ADS.length];return `<aside class="pin ad-pin" ari
 function feedCards(rows){let out=[];rows.forEach((z,i)=>{out.push(card(z));if(i>=5&&(i-5)%12===0)out.push(adCard(Math.floor((i-5)/12)))});return out.join('')}
 function empty(t,p){return `<div class="empty"><h3>${t}</h3><p>${p}</p><button onclick="resetFeed();navigate('explore')">짤 둘러보기</button></div>`}
 const GENERIC=['짤','밈','움짤','사진','이미지','짤방','움짤들'];
-const SYN={'웃긴':['웃김','웃기','개그'],'웃김':['웃긴'],'웃기는':['웃김'],'귀여운':['귀여움','귀여'],'슬픈':['슬픔','우울'],'우울한':['우울'],'화난':['화남','분노','빡침'],'빡친':['빡침','분노'],'짜증나는':['짜증'],'피곤한':['피곤','지침'],'힘든':['힘듦','힘들'],'댕댕이':['강아지'],'멍멍이':['강아지'],'강쥐':['강아지'],'냥이':['고양이'],'고양이':['냥'],'기분좋은':['기분좋음'],'설레는':['설렘'],'황당한':['황당'],'억울한':['억울']};
+const SYN={'웃긴':['웃김','웃기','개그'],'웃김':['웃긴'],'웃기는':['웃김'],'귀여운':['귀여움','귀여'],'슬픈':['슬픔','우울'],'우울한':['우울'],'화난':['화남','분노','빡침'],'빡친':['빡침','분노'],'짜증나는':['짜증'],'피곤한':['피곤','지침'],'힘든':['힘듦','힘들','고생'],'고된':['고생','고단','힘듦','노동'],'서러운':['서러움','서러','눈물'],'부러운':['부러움','질투'],'배고픈':['배고픔','먹방','음식'],'외로운':['외로움','고독'],'무서운':['무서움','공포'],'괴로운':['괴로움','고통'],'그리운':['그리움','보고싶'],'즐거운':['즐거움','신남'],'아픈':['아픔','고통'],'기쁜':['기쁨','신남'],'바쁜':['바쁨','정신없'],'졸린':['졸림','잠'],'지친':['지침','피곤'],'신난':['신남','텐션'],'댕댕이':['강아지'],'멍멍이':['강아지'],'강쥐':['강아지'],'냥이':['고양이'],'고양이':['냥'],'기분좋은':['기분좋음'],'설레는':['설렘'],'황당한':['황당'],'억울한':['억울'],'민망한':['민망','부끄러움'],'뿌듯한':['뿌듯','만족'],'불안한':['불안','걱정'],'심심한':['심심','무료']};
 const STOP=['있어','있나','있는','없나','없어','없는','찾아줘','찾아','보여줘','알려줘','해줘','주세요','같은','관련','느낌','뭐가','뭔가','그런','이런','저런','하는','되는','에서','좀','거','것','때','나오는','나오는거','추천'];
-function stem(t){let s=t.replace(/(이랑|에서|으로|한테|에게|처럼|보다|까지|부터|랑|은|는|이|가|을|를|의|에|도|만|야|아|와|과)$/,'');return s.length>=2&&s!==t?s:null}
+function stem(t){let out=[];let s=t.replace(/(이랑|에서|으로|한테|에게|처럼|보다|까지|부터|랑|은|는|이|가|을|를|의|에|도|만|야|아|와|과)$/,'');if(s.length>=2&&s!==t)out.push(s);if(/[은는운픈한던된난린인긴쁜른][\s]*$/.test(t)&&t.length>=3)out.push(t.slice(0,-1));if(/운$/.test(t)&&t.length>=3)out.push(t.slice(0,-1)+'움');if(/픈$/.test(t)&&t.length>=3)out.push(t.slice(0,-1)+'픔');if(/쁜$/.test(t)&&t.length>=3)out.push(t.slice(0,-1)+'쁨');if(/난$/.test(t)&&t.length>=3)out.push(t.slice(0,-1)+'남');return out.filter(x=>x.length>=2)}
 function searchTerms(q){let toks=q.split(/\s+/).filter(Boolean).filter(t=>!GENERIC.includes(t)&&!STOP.includes(t));
  if(toks.length>1)toks=toks.filter(t=>t.length>1);
  let out=[];toks.forEach(t=>{let b=t.replace(/(짤|밈|짤방)$/,'');let base=b.length>=2?b:t;out.push(base);
-  let st=stem(base);if(st)out.push(st);
-  [t,b,base,st].forEach(k=>(SYN[k]||[]).forEach(x=>out.push(x)))});
+  let st=stem(base);st.forEach(x=>out.push(x));
+  [t,b,base,...st].forEach(k=>(SYN[k]||[]).forEach(x=>out.push(x)))});
  return [...new Set(out.filter(Boolean))]}
 function score(z,q,terms){let n=z.kw.reduce((s,k)=>s+(k.length>1&&q.includes(k)?2:0),0);
  let name=z.name.toLowerCase(),why=String(z.why||'').replace(/<[^>]*>/g,'').toLowerCase();
