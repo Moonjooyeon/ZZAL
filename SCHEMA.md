@@ -1,88 +1,45 @@
-# 데이터베이스 설계
+# 데이터 설계
 
-지금은 프론트엔드만 있고 브라우저에만 저장합니다. 백엔드가 붙으면
-`index.html`의 `store` 객체 본문만 API 호출로 바꾸면 되고, 화면 코드는
-그대로 둡니다. 아래는 그때 만들 테이블입니다.
+테이블 정의는 [`server/src/db/schema.sql`](server/src/db/schema.sql) 이 정본입니다.
+이 문서는 왜 그렇게 잡았는지와, 지금 프론트의 어느 부분에 대응하는지를 적습니다.
 
-## users
+## 한눈에
 
-소셜 로그인만 받으므로 비밀번호 컬럼이 없습니다.
-
-| 컬럼 | 타입 | 비고 |
+| 테이블 | 지금 프론트의 어디 | 비고 |
 |---|---|---|
-| `id` | uuid PK | |
-| `provider` | text | `kakao` \| `google` |
-| `provider_uid` | text | 공급자가 준 고유 ID |
-| `email` | text | 공급자가 안 줄 수도 있어 nullable |
-| `name` | text | 표시 이름 |
-| `avatar_url` | text | |
-| `created_at` / `last_seen_at` | timestamptz | |
+| `users` | `state.session` | 소셜 로그인만 받아서 비밀번호 컬럼이 없습니다 |
+| `memes` | `web/js/data/*.js` 806개 | 기본 카탈로그 + 사용자가 올린 것 |
+| `saves` | `zzal.u.<uid>.saved` | |
+| `reports` | `zzal.u.<uid>.reported` | |
 
-`unique (provider, provider_uid)` — 같은 계정 중복 가입 방지.
+업로드는 따로 테이블을 두지 않고 `memes.owner_id` 로 구분합니다.
+"내가 올린 짤"도 결국 짤이고, 저장·공유·신고가 전부 똑같이 걸리기 때문입니다.
 
-## memes
+## 결정한 것들
 
-지금 `memes-extra*.js`에 하드코딩된 806개가 들어갈 자리입니다.
+**숨은 키워드를 따로 둡니다.** `tags` 는 카드에 `#`로 보이는 2개고,
+`keywords` 는 검색에만 쓰는 평균 23개입니다. API 응답에 절대 담지 않습니다.
+"연성소재", "ㄱㅇㅇ" 같은 말로 찾아도 걸리게 하려고 넣은 것이라
+화면에 나오면 오히려 방해가 됩니다.
 
-| 컬럼 | 타입 | 비고 |
-|---|---|---|
-| `id` | bigint PK | 현재 JS의 id를 그대로 씁니다 |
-| `name` | text | 제목 |
-| `image_path` | text | 오브젝트 스토리지 키 |
-| `category` | text | 리액션 / 동물 / 그림 / 대화·SNS / 글·댓글 / 방송·자막 |
-| `tags` | text[] | 카드에 `#`로 보이는 2개 |
-| `keywords` | text[] | 검색용 숨은 키워드 (평균 23개) |
-| `description` | text | 언제 쓰는 짤인지 |
-| `uploader_id` | uuid FK → users | 운영진이 넣은 건 null |
-| `visibility` | text | `public` \| `private` \| `hidden` |
-| `created_at` | timestamptz | |
+**검색 인덱스는 제목·태그·키워드·설명을 한 덩어리로 묶습니다.**
+`to_tsvector('simple', ...)` 에 GIN을 겁니다. 한국어라 형태소 사전
+(`pg_bigm` 또는 `mecab-ko`)을 쓰면 더 낫지만, 지금 프론트가 하는
+조사·어미 처리를 옮기는 게 먼저입니다.
 
-검색은 `keywords`와 `name`에 GIN 인덱스를 걸면 지금 프론트에서 하는
-점수 계산을 그대로 SQL로 옮길 수 있습니다.
+**신고는 `(user_id, meme_id)` 를 PK로 잡습니다.** 같은 사람이 같은 짤을
+여러 번 신고하지 못하게 하고, 신고 즉시 그 사람 피드에서만 숨깁니다.
+누적 신고로 전체 공개를 내리는 건 `status` 컬럼을 보고 따로 처리합니다.
 
-## saves
-
-| 컬럼 | 타입 |
-|---|---|
-| `user_id` | uuid FK → users |
-| `meme_id` | bigint FK → memes |
-| `created_at` | timestamptz |
-
-PK는 `(user_id, meme_id)`. 지금의 `zzal.u.<uid>.saved`에 해당합니다.
-
-## uploads
-
-사용자가 올린 짤. 지금은 data URL을 통째로 브라우저에 넣고 있어서
-용량 제한에 걸리는데, 실제로는 파일을 스토리지에 올리고 경로만 저장합니다.
-
-| 컬럼 | 타입 | 비고 |
-|---|---|---|
-| `id` | bigint PK | |
-| `user_id` | uuid FK → users | |
-| `image_path` | text | 스토리지 키 |
-| `name` | text | 사용자가 적은 한 줄 |
-| `rights_confirmed` | boolean | 업로드 폼의 권리 확인 체크 |
-| `status` | text | `pending` \| `approved` \| `rejected` |
-| `created_at` | timestamptz | |
-
-## reports
-
-| 컬럼 | 타입 | 비고 |
-|---|---|---|
-| `id` | bigint PK | |
-| `user_id` | uuid FK → users | |
-| `meme_id` | bigint FK → memes | |
-| `reason` | text | 부적절 / 저작권 / 스팸 / 제목불일치 / 기타 |
-| `created_at` | timestamptz | |
-| `resolved_at` | timestamptz | 운영진 처리 시각 |
-
-`unique (user_id, meme_id)` — 같은 사람이 같은 짤을 여러 번 신고하지 않게.
-지금은 신고하면 그 사람 피드에서만 숨는데, 서버가 생기면 누적 신고 수로
-`memes.visibility`를 `hidden`으로 내리는 처리를 붙일 수 있습니다.
+**세션에 사용자 정보를 담지 않습니다.** 서명 쿠키에는 사용자 id와 만료
+시각만 들어 있고, 이름·아바타는 매 요청마다 DB에서 읽습니다.
+쿠키를 위조하거나 오래된 이름이 남는 상황을 피하려는 것입니다.
 
 ## 남은 일
 
-- 카카오·구글 OAuth 앱 등록 후 리다이렉트 URI에 회사 도메인 추가
-- 이미지 132MB를 레포에서 오브젝트 스토리지로 이전
-- `store`의 각 메서드를 API 호출로 교체
-- 세션은 httpOnly 쿠키 권장 (지금 데모는 localStorage)
+- 카카오·구글 OAuth 앱 등록 후 회사 도메인을 리다이렉트 URI에 추가
+- 배포 시 `DEMO_AUTH=0`, `SESSION_SECRET` 교체, `COOKIE_SECURE=1`
+- `assets/` 132MB와 업로드 이미지를 오브젝트 스토리지로 이전
+- 기본 카탈로그 806개를 `memes` 테이블로 옮기는 시드 스크립트
+  (지금은 `server/src/db/json.js` 가 `web/js/data` 를 그대로 읽습니다)
+- 서버 검색 점수를 `web/js/features/search.js` 와 맞추기

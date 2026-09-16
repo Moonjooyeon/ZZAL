@@ -1,0 +1,83 @@
+/* ads.css — 피드 사이에 끼는 광고 자리 */
+
+.ad-card {
+  overflow: hidden;
+  border: 1px solid #e1e2d9;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.ad-visual {
+  min-height: 250px;
+  padding: 23px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(155deg,#e9ecdf,#f7e981 72%,#fff8b8);
+}
+
+.ad-visual.cool {
+  min-height: 315px;
+  background: linear-gradient(155deg,#dfeaec,#cadcd7 58%,#f7f5eb);
+}
+
+.ad-visual.ink {
+  min-height: 225px;
+  background: linear-gradient(145deg,#292c26,#454b3d);
+  color: #fff;
+}
+
+.ad-label {
+  align-self: flex-start;
+  padding: 4px 7px;
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .08em;
+  opacity: .68;
+}
+
+.ad-copy small {
+  display: block;
+  font-size: 11px;
+  opacity: .68;
+  margin-bottom: 8px;
+}
+
+.ad-copy strong {
+  display: block;
+  max-width: 230px;
+  font-size: 23px;
+  line-height: 1.25;
+  letter-spacing: -.055em;
+}
+
+.ad-copy span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 18px;
+  padding: 9px 12px;
+  border-radius: 20px;
+  background: #fff;
+  color: #292c26;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 2px 9px #0001;
+}
+
+.ad-meta {
+  padding: 12px 2px 0;
+}
+
+.ad-meta strong {
+  font-size: 13px;
+}
+
+.ad-meta p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}

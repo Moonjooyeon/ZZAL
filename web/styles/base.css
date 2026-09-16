@@ -1,0 +1,82 @@
+/* base.css — 기본 토큰 · 리셋 · 타이포그래피 · 공통 유틸 */
+
+:root {
+  --bg: #faf9f6;
+  --ink: #242621;
+  --muted: #777970;
+  --line: #e7e7df;
+  --yellow: #f6e76a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  letter-spacing: -.035em;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  border: 0;
+  background: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #a99927;
+  outline-offset: 4px;
+}
+
+svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: white;
+  border-radius: 10px;
+  padding: 14px 22px;
+  font-size: 13px;
+  z-index: 5;
+  max-width: 90%;
+  box-shadow: 0 5px 25px #0002;
+}
+
+.toast:empty {
+  display: none;
+}
+
+[hidden] {
+  display: none!important;
+}

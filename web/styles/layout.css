@@ -1,0 +1,111 @@
+/* layout.css — 헤더 · 내비게이션 · 본문 골격 · 푸터 · 모바일 탭 */
+
+header {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  max-width: 1392px;
+  margin: auto;
+  padding: 0 48px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  font-weight: 900;
+  font-size: 23px;
+  letter-spacing: -1.6px;
+  white-space: nowrap;
+}
+
+.brand .bmark {
+  display: inline-grid;
+  place-items: center;
+  background: var(--yellow);
+  width: 33px;
+  height: 33px;
+  border-radius: 10px;
+  transform: rotate(-8deg);
+  margin-right: 9px;
+  font-size: 20px;
+  letter-spacing: -2px;
+}
+
+nav {
+  display: flex;
+  gap: 30px;
+  height: 100%;
+  align-items: center;
+}
+
+nav button {
+  height: 100%;
+  font-size: 14px;
+  color: var(--muted);
+  position: relative;
+}
+
+nav button.active {
+  font-weight: 750;
+  color: var(--ink);
+}
+
+nav button.active:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ink);
+}
+
+.upload {
+  border: 1px solid #d9dad1;
+  border-radius: 9px;
+  padding: 11px 17px;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  flex: none;
+}
+
+.upload:hover {
+  background: #efeee7;
+}
+
+main {
+  max-width: 1392px;
+  margin: auto;
+  padding: 0 48px 60px;
+}
+
+.note {
+  margin-top: 35px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.pageintro {
+  padding-top: 44px;
+}
+
+.pageintro h1 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.pageintro p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.mobile {
+  display: none;
+}

@@ -1,0 +1,137 @@
+/* moderation.css — 확인 다이얼로그 · 신고해서 숨긴 짤 목록 */
+
+#ask {
+  width: min(420px,calc(100% - 32px));
+  padding: 26px 24px 20px;
+}
+
+#ask h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+#ask p.askdesc {
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+#ask .reasons {
+  display: grid;
+  gap: 2px;
+  margin-bottom: 20px;
+}
+
+#ask .reasons label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+  padding: 10px 11px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+#ask .reasons label:hover {
+  background: #f1f1ea;
+}
+
+#ask .reasons input {
+  accent-color: #383a31;
+  margin: 0;
+}
+
+#ask .askrow {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+#ask .askrow button {
+  border: 1px solid #d9dbcf;
+  background: #fff;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 13px;
+}
+
+#ask .askrow button.go {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+#ask .askrow button.go.danger {
+  background: #a33a3a;
+  border-color: #a33a3a;
+  color: #fff;
+}
+
+.reportedbox {
+  margin-top: 34px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.reportedbox h3 {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.reportedbox p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 14px;
+  line-height: 1.7;
+}
+
+.reportedlist {
+  display: grid;
+  gap: 8px;
+}
+
+.reportedrow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.reportedrow div {
+  flex: 1;
+  min-width: 0;
+}
+
+.reportedrow strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reportedrow small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.reportedrow button {
+  flex: none;
+  border: 1px solid #d9dbcf;
+  background: #fff;
+  border-radius: 7px;
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+.reportedrow button:hover {
+  background: #f1f1ea;
+}

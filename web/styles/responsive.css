@@ -1,0 +1,259 @@
+/* responsive.css — 화면 폭별 조정 — 좁은 화면이 뒤에 오도록 유지 */
+
+@media(min-width:1450px) {
+  .hero {
+    padding-top: 70px;
+    padding-bottom: 48px;
+  }
+}
+
+@media(max-width:1100px) {
+  .board {
+    columns: 3;
+  }
+  .hero {
+    gap: 30px;
+  }
+  .hero h1 {
+    font-size: 36px;
+  }
+  header,
+  main {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+@media(max-width:760px) {
+  header {
+    height: 68px;
+    padding: 0 20px;
+    gap: 14px;
+  }
+  header nav {
+    display: none;
+  }
+  .brand {
+    font-size: 21px;
+  }
+  .upload {
+    padding: 9px 12px;
+  }
+  main {
+    padding: 0 18px 100px;
+  }
+  .hero {
+    display: block;
+    padding: 32px 0 18px;
+  }
+  .hero h1 {
+    font-size: 32px;
+    letter-spacing: -1.5px;
+  }
+  .hero p {
+    font-size: 13px;
+  }
+  .searchside {
+    margin-top: 25px;
+  }
+  .eyebrow {
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+  .filters {
+    margin-right: -18px;
+    padding: 12px 18px 18px 0;
+    gap: 6px;
+  }
+  .filters button {
+    padding: 8px 13px;
+    font-size: 12px;
+  }
+  .board {
+    columns: 2;
+    column-gap: 12px;
+  }
+  .art {
+    padding: 10px;
+    min-height: 145px;
+  }
+  .pin:nth-child(3n+2) .art {
+    min-height: 190px;
+  }
+  .pin:nth-child(4n) .art {
+    min-height: 165px;
+  }
+  .meta h3 {
+    font-size: 12px;
+  }
+  .save {
+    width: 30px;
+    height: 30px;
+  }
+  .pin {
+    margin-bottom: 20px;
+  }
+  .ad-visual {
+    min-height: 210px;
+    padding: 17px;
+  }
+  .ad-visual.cool {
+    min-height: 255px;
+  }
+  .ad-visual.ink {
+    min-height: 190px;
+  }
+  .ad-copy strong {
+    font-size: 18px;
+  }
+  .sectionhead {
+    margin: 23px 0 17px;
+  }
+  .sectionhead h2 {
+    font-size: 17px;
+  }
+  .note {
+    line-height: 1.7;
+    display: block;
+  }
+  .mobile {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(62px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: #faf9f6f5;
+    border-top: 1px solid var(--line);
+    z-index: 3;
+    gap: 0;
+    justify-content: space-around;
+  }
+  .mobile button {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+  .mobile button.active:after {
+    display: none;
+  }
+  .mobile button.active svg {
+    stroke-width: 2.5;
+  }
+  .toast {
+    bottom: 82px;
+    width: max-content;
+    max-width: 90%;
+    text-align: center;
+  }
+  .detail {
+    display: block;
+  }
+  .detail .art {
+    min-height: 210px;
+    padding: 30px;
+  }
+  .detailcopy {
+    padding: 24px;
+  }
+  .detailcopy h2 {
+    font-size: 20px;
+  }
+  dialog {
+    max-height: 85dvh;
+  }
+  .z-tweet p {
+    font-size: 12px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  * {
+    transition: none!important;
+  }
+}
+
+@media(max-width:760px) {
+  #ask .askrow button {
+    flex: 1;
+  }
+}
+
+@media(max-width:760px) {
+  #share {
+    padding: 20px 16px 16px;
+  }
+  .sharerow {
+    gap: 10px;
+  }
+  .sharebtn {
+    width: 64px;
+    font-size: 11px;
+  }
+  .sharebtn i {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+@media(max-width:760px) {
+  .me .who {
+    display: none;
+  }
+  .me {
+    gap: 7px;
+  }
+  .signin {
+    padding: 9px 11px;
+    font-size: 12px;
+  }
+  .me button.out {
+    padding: 8px 10px;
+  }
+}
+
+@media(max-width:520px) {
+  .ulabel {
+    display: none;
+  }
+  .upload {
+    padding: 9px 13px;
+    font-size: 16px;
+    line-height: 1;
+  }
+}
+
+@media(max-width:400px) {
+  .brand {
+    font-size: 18px;
+  }
+  .brand .bmark {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    margin-right: 6px;
+  }
+  .signin,
+  .me button.out {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+@media(max-width:380px) {
+  .bword {
+    display: none;
+  }
+  .brand .bmark {
+    margin-right: 0;
+  }
+  header {
+    gap: 10px;
+    padding: 0 14px;
+  }
+}

@@ -1,0 +1,161 @@
+/* auth.css — 로그인 시트 · 헤더 프로필 · 로그인 유도 영역 */
+
+#login {
+  width: min(400px,calc(100% - 32px));
+  padding: 30px 26px 22px;
+  text-align: center;
+}
+
+#login h3 {
+  margin: 0 0 8px;
+  font-size: 19px;
+  font-weight: 780;
+  letter-spacing: -.6px;
+}
+
+#login p.sub {
+  margin: 0 0 24px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.pvbtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 11px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 650;
+  margin-bottom: 9px;
+}
+
+.pvbtn:hover {
+  filter: brightness(.97);
+}
+
+.pvbtn i {
+  font-style: normal;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.pv-kakao {
+  background: #fae100;
+  border-color: #fae100;
+  color: #181600;
+}
+
+.pv-kakao i {
+  background: #181600;
+  color: #fae100;
+  font-size: 9px;
+}
+
+.pv-google i {
+  background: #fff;
+  color: #4285f4;
+  border: 1px solid var(--line);
+  font-size: 13px;
+}
+
+#login .cancel {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 8px;
+}
+
+#login .mocknote {
+  margin: 18px 0 0;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+  background: #f3f3ec;
+  border-radius: 9px;
+  padding: 11px 12px;
+  text-align: left;
+}
+
+.me {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+.me .avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--yellow);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #3a3512;
+}
+
+.me .who {
+  font-size: 13px;
+  font-weight: 650;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.me button.out {
+  border: 1px solid #d9dad1;
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.me button.out:hover {
+  background: #efeee7;
+}
+
+.signin {
+  border: 1px solid #d9dad1;
+  border-radius: 9px;
+  padding: 11px 17px;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.signin:hover {
+  background: #efeee7;
+}
+
+.gate {
+  text-align: center;
+  padding: 56px 20px;
+  border: 1px dashed #d8d9ce;
+  border-radius: 14px;
+}
+
+.gate h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.gate p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 0 0 20px;
+}
