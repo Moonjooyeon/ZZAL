@@ -4,16 +4,43 @@
 // 실제 연동은 server/src/auth/ 의 OAuth 라우트로 리다이렉트하도록 store만 바꾸면 됩니다.
 import { $, esc, toast } from '../core/dom.js';
 import { state } from '../core/state.js';
-import { store, reloadData, mergeGuest, PROVIDERS } from '../core/api.js';
+import { store, reloadData, mergeGuest, PROVIDERS, PROVIDER_NAME } from '../core/api.js';
 import { render, navigate } from './feed.js';
 
 const DEFAULT_SUB = '저장한 짤과 올린 짤을 어느 기기에서든 그대로 꺼내 볼 수 있어요.';
 
-/** 헤더 오른쪽: 로그인 버튼 또는 프로필 */
+const CARET = '<svg class="caret" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+
+/**
+ * 헤더 맨 오른쪽. 로그인 전에는 버튼 하나,
+ * 로그인 후에는 아바타 칩 하나로 줄이고 나머지는 펼침 메뉴로 넣습니다.
+ */
 export function renderMe() {
-  $('me').innerHTML = state.session
-    ? `<span class="avatar" aria-hidden="true">${esc(state.session.name.slice(0, 1))}</span><span class="who">${esc(state.session.name)}</span><button class="out" onclick="signOut()">로그아웃</button>`
-    : '<button class="signin" onclick="openLogin()">로그인</button>';
+  if (!state.session) {
+    $('me').innerHTML = '<button class="signin" onclick="openLogin()">로그인</button>';
+    return;
+  }
+  const name = esc(state.session.name);
+  const provider = esc(PROVIDER_NAME[state.session.provider] || state.session.provider);
+  $('me').innerHTML = `<details class="acct" id="acct"><summary aria-label="내 계정 메뉴"><span class="avatar" aria-hidden="true">${name.slice(0, 1)}</span><span class="who">${name}</span>${CARET}</summary><div class="acctmenu"><span class="name"><b>${name}</b>${provider} 계정</span><button onclick="closeAcct();navigate('saved')">내 짤</button><button class="out" onclick="closeAcct();signOut()">로그아웃</button></div></details>`;
+}
+
+export function closeAcct() {
+  const el = $('acct');
+  if (el) el.open = false;
+}
+
+/** 바깥을 누르거나 ESC를 누르면 계정 메뉴를 닫습니다 */
+export function initAuth() {
+  document.addEventListener('click', e => {
+    const el = $('acct');
+    if (el && el.open && !el.contains(e.target)) el.open = false;
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const el = $('acct');
+    if (el && el.open) { el.open = false; el.querySelector('summary').focus(); }
+  });
 }
 
 /** 로그인 시트를 엽니다. msg를 주면 왜 로그인이 필요한지 알려줍니다. */

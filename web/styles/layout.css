@@ -68,6 +68,8 @@ nav button.active:after {
   font-weight: 650;
   white-space: nowrap;
   flex: none;
+  margin-left: auto;   /* 여기서부터 오른쪽 묶음 (짤 올리기 → 계정) */
+  margin-right: 18px;
 }
 
 .upload:hover {

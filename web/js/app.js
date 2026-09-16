@@ -2,7 +2,7 @@
 import { store, reloadData, migrateLegacy } from './core/api.js';
 import { state } from './core/state.js';
 
-import { renderMe, openLogin, signIn, signOut } from './features/auth.js';
+import { renderMe, openLogin, signIn, signOut, closeAcct, initAuth } from './features/auth.js';
 import { render, navigate, query, resetFeed, initFeed } from './features/feed.js';
 import { openDetail, openFromUrl, download, copyText, initDetail } from './features/detail.js';
 import { toggle } from './features/saves.js';
@@ -20,12 +20,13 @@ Object.assign(window, {
   toggle,
   openShare, openWin, nativeShare, copyShareUrl,
   askDelete, askReport, unreport,
-  openLogin, signIn, signOut,
+  openLogin, signIn, signOut, closeAcct,
   cancelDraft,
 });
 
 // ── 부팅 ──────────────────────────────────────────────────────────────────
 migrateLegacy();
+initAuth();
 initFeed();
 initDetail();
 initUpload();

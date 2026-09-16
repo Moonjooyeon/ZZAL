@@ -87,15 +87,61 @@
   text-align: left;
 }
 
+/* ── 헤더 계정 영역 ──────────────────────────────────────────────────────
+   헤더의 맨 오른쪽 끝. 로그인 전에는 진한 '로그인' 버튼, 로그인 후에는
+   아바타 칩 하나로 줄이고 로그아웃은 칩을 눌러 나오는 메뉴에 둡니다.    */
 .me {
-  margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 10px;
   flex: none;
+  padding-left: 18px;
+  border-left: 1px solid var(--line);   /* 여기부터 내 계정 */
 }
 
-.me .avatar {
+/* 로그인 전 — 이 화면에서 가장 진한 버튼 */
+.signin {
+  background: var(--ink);
+  color: #fff;
+  border: 1px solid var(--ink);
+  border-radius: 9px;
+  padding: 11px 19px;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.signin:hover {
+  background: #3a3d34;
+  border-color: #3a3d34;
+}
+
+/* 로그인 후 — 아바타 칩 + 펼침 메뉴 */
+.acct {
+  position: relative;
+}
+
+.acct > summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 9px 5px 5px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.acct > summary::-webkit-details-marker {
+  display: none;
+}
+
+.acct > summary:hover,
+.acct[open] > summary {
+  background: #efeee7;
+  border-color: #e2e2d8;
+}
+
+.acct .avatar {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -105,40 +151,79 @@
   font-size: 13px;
   font-weight: 800;
   color: #3a3512;
+  flex: none;
 }
 
-.me .who {
+.acct .who {
   font-size: 13px;
   font-weight: 650;
-  max-width: 120px;
+  max-width: 110px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.me button.out {
-  border: 1px solid #d9dad1;
-  border-radius: 9px;
-  padding: 9px 12px;
+.acct .caret {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.2;
+  color: var(--muted);
+  flex: none;
+}
+
+.acct[open] .caret {
+  transform: rotate(180deg);
+}
+
+.acctmenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 10;
+  min-width: 172px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px #0000001f;
+}
+
+.acctmenu .name {
+  display: block;
+  padding: 9px 11px 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--line);
   font-size: 12px;
+  line-height: 1.5;
   color: var(--muted);
 }
 
-.me button.out:hover {
-  background: #efeee7;
-}
-
-.signin {
-  border: 1px solid #d9dad1;
-  border-radius: 9px;
-  padding: 11px 17px;
+.acctmenu .name b {
+  display: block;
   font-size: 13px;
-  font-weight: 650;
-  white-space: nowrap;
+  font-weight: 700;
+  color: var(--ink);
 }
 
-.signin:hover {
-  background: #efeee7;
+.acctmenu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 11px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.acctmenu button:hover {
+  background: #f1f1ea;
+}
+
+.acctmenu button.out {
+  color: #a33a3a;
+}
+
+.acctmenu button.out:hover {
+  background: #fbeeee;
 }
 
 .gate {

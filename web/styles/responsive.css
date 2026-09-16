@@ -202,18 +202,22 @@
 }
 
 @media(max-width:760px) {
-  .me .who {
+  .acct .who {
     display: none;
   }
   .me {
-    gap: 7px;
+    padding-left: 12px;
+  }
+  .upload {
+    margin-right: 12px;
   }
   .signin {
-    padding: 9px 11px;
+    padding: 10px 14px;
     font-size: 12px;
   }
-  .me button.out {
-    padding: 8px 10px;
+  .acct > summary {
+    gap: 4px;
+    padding: 4px 5px 4px 4px;
   }
 }
 
@@ -238,10 +242,15 @@
     font-size: 16px;
     margin-right: 6px;
   }
-  .signin,
-  .me button.out {
-    padding: 8px 10px;
+  .signin {
+    padding: 9px 12px;
     font-size: 12px;
+  }
+  .me {
+    padding-left: 9px;
+  }
+  .upload {
+    margin-right: 9px;
   }
 }
 
