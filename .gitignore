@@ -3,3 +3,4 @@
 server/.env
 server/data/
 server/node_modules/
+backups/

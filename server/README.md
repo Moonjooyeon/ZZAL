@@ -12,7 +12,7 @@ npm start          # http://localhost:8080
 | `DB_DRIVER` | 쓰는 곳 | 필요한 것 |
 |---|---|---|
 | `json` (기본) | 개발·시연 | 없음. `DB_FILE` 경로에 JSON 한 장 |
-| `postgres` | 실서비스 | `npm i pg`, `DATABASE_URL`, `schema.sql` 적용 |
+| `postgres` | 실서비스 | `npm i pg`, `DATABASE_URL`, 첫 설치에 `schema.sql`, 이후 자동 마이그레이션 |
 
 두 어댑터는 같은 인터페이스(`users` / `memes` / `saves` / `reports`)를
 구현하므로 라우트 코드는 어느 쪽인지 몰라도 됩니다.

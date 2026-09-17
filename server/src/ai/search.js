@@ -40,6 +40,7 @@ export async function assistSearch(query) {
   if (!q) return null;
 
   const out = await askJson({
+    feature: 'search_assist',
     system: SYSTEM,
     content: [{ type: 'text', text: `사용자가 찾는 것: ${q}` }],
     schema: SCHEMA,

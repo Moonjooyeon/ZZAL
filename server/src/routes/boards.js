@@ -10,6 +10,7 @@
 //   DELETE /api/me/saves/:memeId               어디에 담겼든 전부 빼기
 import { ok, created, noContent, notFound, badRequest, unauthorized, readJson } from '../http/respond.js';
 import { currentUser } from '../auth/session.js';
+import { recordAudit } from '../db/audit.js';
 
 const MAX_NAME = 30;
 const MAX_BOARDS = 200;
@@ -48,19 +49,24 @@ export function boardRoutes(router) {
     if ((await db.boards.list(u.id)).length >= MAX_BOARDS) {
       throw badRequest(`저장함은 ${MAX_BOARDS}개까지 만들 수 있어요`);
     }
-    created(res, { board: await db.boards.create(u.id, { name, isPrivate: body.private }) });
+    const board = await db.boards.create(u.id, { name, isPrivate: body.private });
+    await recordAudit(db, { userId: u.id, action: 'board.create', targetType: 'board', targetId: board.id,
+      metadata: { private: !!body.private } });
+    created(res, { board });
   });
 
   router.patch('/api/me/boards/:id', async (req, res, { db, params }) => {
     const u = await requireUser(req, db);
     const name = cleanName((await readJson(req)).name);
     if (!await db.boards.rename(Number(params.id), u.id, name)) throw notFound('내 저장함이 아니에요');
+    await recordAudit(db, { userId: u.id, action: 'board.rename', targetType: 'board', targetId: params.id });
     noContent(res);
   });
 
   router.delete('/api/me/boards/:id', async (req, res, { db, params }) => {
     const u = await requireUser(req, db);
     if (!await db.boards.remove(Number(params.id), u.id)) throw notFound('내 저장함이 아니에요');
+    await recordAudit(db, { userId: u.id, action: 'board.delete', targetType: 'board', targetId: params.id });
     noContent(res);
   });
 
@@ -72,6 +78,8 @@ export function boardRoutes(router) {
     if (!await db.memes.byId(memeId)) throw notFound('그런 짤이 없어요');
     await db.saves.add(u.id, boardId, memeId);
     await db.boards.touch(boardId);
+    await recordAudit(db, { userId: u.id, action: 'save.add', targetType: 'meme', targetId: memeId,
+      metadata: { board_id: boardId } });
     noContent(res);
   });
 
@@ -81,6 +89,8 @@ export function boardRoutes(router) {
     await myBoard(db, boardId, u.id);
     await db.saves.remove(u.id, boardId, Number(params.memeId));
     await db.boards.touch(boardId);
+    await recordAudit(db, { userId: u.id, action: 'save.remove', targetType: 'meme', targetId: params.memeId,
+      metadata: { board_id: boardId } });
     noContent(res);
   });
 
@@ -90,12 +100,14 @@ export function boardRoutes(router) {
     const memeId = Number(params.memeId);
     if (!await db.memes.byId(memeId)) throw notFound('그런 짤이 없어요');
     await db.saves.add(u.id, null, memeId);
+    await recordAudit(db, { userId: u.id, action: 'save.add', targetType: 'meme', targetId: memeId });
     noContent(res);
   });
 
   router.delete('/api/me/pins/:memeId', async (req, res, { db, params }) => {
     const u = await requireUser(req, db);
     await db.saves.remove(u.id, null, Number(params.memeId));
+    await recordAudit(db, { userId: u.id, action: 'save.remove', targetType: 'meme', targetId: params.memeId });
     noContent(res);
   });
 
@@ -103,6 +115,7 @@ export function boardRoutes(router) {
   router.delete('/api/me/saves/:memeId', async (req, res, { db, params }) => {
     const u = await requireUser(req, db);
     await db.saves.clear(u.id, Number(params.memeId));
+    await recordAudit(db, { userId: u.id, action: 'save.clear', targetType: 'meme', targetId: params.memeId });
     noContent(res);
   });
 }

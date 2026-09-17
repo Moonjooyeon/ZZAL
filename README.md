@@ -103,12 +103,26 @@ Certbot 자동 갱신 후 Nginx가 새 인증서를 읽도록
 `https://zzal.ashwoodfriends.com/api/auth/google/callback`입니다.
 
 첫 실행 때 PostgreSQL이 `server/src/db/schema.sql`을 적용하고 기본 짤
-카탈로그를 자동으로 심습니다. 사용자·저장함·업로드는 `postgres_data` 볼륨에
-남습니다. 업데이트는 `git pull --ff-only` 후 `docker compose up -d --build`로
-적용합니다. `docker compose down -v`는 DB 볼륨까지 지우므로 사용하지 마세요.
+카탈로그를 자동으로 심습니다. 백엔드는 시작할 때 아직 적용되지 않은
+`server/src/db/migrations/*.sql`을 트랜잭션으로 한 번씩 적용합니다.
+사용자·저장함·업로드는 `postgres_data` 볼륨에 남습니다.
+전체 테이블 구조는 [ERD](docs/ERD.md)에 있습니다.
+`docker compose down -v`는 DB 볼륨까지 지우므로 사용하지 마세요.
 
-백업은 서버에서 `docker compose exec -T db pg_dump -U zzal -d zzal -Fc > zzal.dump`
-로 만들고, 생성된 파일을 서버 외부에도 보관하세요.
+운영 DB 변경 전에는 서버에서 아래 순서대로 백업과 업데이트를 실행합니다.
+백업 파일은 저장소의 `backups/`에 만들며 Git에는 포함되지 않습니다. 생성된
+파일을 서버 외부에도 보관하세요.
+
+```sh
+cd ~/ZZAL
+mkdir -p backups
+docker compose exec -T db pg_dump -U zzal -d zzal -Fc > "backups/zzal-$(date +%Y%m%d-%H%M%S).dump"
+ls -lh backups/*.dump
+git pull --ff-only
+docker compose up -d --build --wait backend
+docker compose exec -T db psql -U zzal -d zzal -Atc "SELECT name FROM schema_migrations ORDER BY name"
+docker compose exec -T db psql -U zzal -d zzal -Atc "SELECT count(*) FROM memes"
+```
 
 ## 담긴 기능
 

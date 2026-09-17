@@ -5,8 +5,10 @@
 //
 // 지금은 이미지를 data URL 그대로 보관합니다. 실서비스에서는 여기서
 // 오브젝트 스토리지(S3/R2)에 올리고 그 키만 image_path에 넣으세요.
+import crypto from 'node:crypto';
 import { ok, created, noContent, notFound, badRequest, tooLarge, unauthorized, readJson } from '../http/respond.js';
 import { currentUser } from '../auth/session.js';
+import { recordAudit } from '../db/audit.js';
 
 const MAX_BYTES = 10 * 1024 * 1024;
 const MAX_REQUEST_BYTES = Math.ceil(MAX_BYTES * 4 / 3) + 1024 * 1024;
@@ -36,7 +38,8 @@ export function uploadRoutes(router) {
     const m = /^data:([\w/+-]+);base64,(.+)$/.exec(String(body.image || ''));
     if (!m) throw badRequest('이미지를 읽을 수 없습니다');
     if (!ALLOWED.includes(m[1])) throw badRequest('JPG, PNG, GIF 파일을 올려주세요');
-    if (Buffer.byteLength(m[2], 'base64') > MAX_BYTES) throw tooLarge('10MB 이하의 이미지를 올려주세요');
+    const bytes = Buffer.from(m[2], 'base64');
+    if (bytes.length > MAX_BYTES) throw tooLarge('10MB 이하의 이미지를 올려주세요');
 
     // 먼저 규칙으로 임시 분류해 바로 응답합니다.
     // 이미지를 보고 제대로 나누고 숨은 키워드를 붙이는 일은
@@ -51,13 +54,19 @@ export function uploadRoutes(router) {
       owner_id: u.id,
       visibility: 'private',
       enriched_at: null,
+      image_mime: m[1],
+      image_bytes: bytes.length,
+      image_sha256: crypto.createHash('sha256').update(bytes).digest('hex'),
     });
+    await recordAudit(db, { userId: u.id, action: 'meme.upload', targetType: 'meme', targetId: meme.id,
+      metadata: { image_mime: m[1], image_bytes: bytes.length } });
     created(res, { meme: { id: Number(meme.id), name: meme.name, src: meme.image_path, cat: meme.cat, tags: meme.tags, why: meme.why, mine: true } });
   });
 
   router.delete('/api/me/uploads/:id', async (req, res, { db, params }) => {
     const u = await requireUser(req, db);
     if (!await db.memes.remove(Number(params.id), u.id)) throw notFound('내가 올린 짤이 아니에요');
+    await recordAudit(db, { userId: u.id, action: 'meme.delete', targetType: 'meme', targetId: params.id });
     noContent(res);
   });
 }

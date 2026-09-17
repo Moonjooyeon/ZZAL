@@ -7,6 +7,7 @@ import { ok, redirect, noContent, notFound, badRequest } from '../http/respond.j
 import { setSession, clearSession, currentUser } from '../auth/session.js';
 import { PROVIDERS, isConfigured, authorizeUrl, makeState, exchange, demoProfile } from '../auth/providers.js';
 import { config } from '../config.js';
+import { recordAudit } from '../db/audit.js';
 
 const publicUser = u => u && ({ id: u.id, name: u.name, provider: u.provider, avatarUrl: u.avatar_url });
 
@@ -23,7 +24,9 @@ export function authRoutes(router) {
       if (!config.auth.demo) throw badRequest(`${p} 앱 키가 설정되지 않았습니다`);
       // 키가 없을 때: 바로 임시 계정으로 로그인시켜 프론트를 끝까지 볼 수 있게 합니다
       const user = await db.users.findOrCreate(demoProfile(p));
-      setSession(res, user.id);
+      await setSession(res, db, user.id);
+      await recordAudit(db, { userId: user.id, action: 'auth.login', targetType: 'user', targetId: user.id,
+        metadata: { provider: p, demo: true } });
       return redirect(res, '/?login=demo');
     }
 
@@ -45,12 +48,17 @@ export function authRoutes(router) {
 
     const profile = await exchange(p, code);
     const user = await db.users.findOrCreate(profile);
-    setSession(res, user.id);
+    await setSession(res, db, user.id);
+    await recordAudit(db, { userId: user.id, action: 'auth.login', targetType: 'user', targetId: user.id,
+      metadata: { provider: p } });
     redirect(res, '/');
   });
 
-  router.post('/api/auth/logout', async (req, res) => {
-    clearSession(res);
+  router.post('/api/auth/logout', async (req, res, { db }) => {
+    const user = await currentUser(req, db);
+    await clearSession(req, res, db);
+    if (user) await recordAudit(db, { userId: user.id, action: 'auth.logout',
+      targetType: 'user', targetId: user.id });
     noContent(res);
   });
 }

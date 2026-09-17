@@ -62,6 +62,7 @@ export async function classify({ name, image }) {
   content.push({ type: 'text', text: `올린 사람이 적은 한 줄: ${String(name || '').slice(0, 100)}` });
 
   const out = await askJson({
+    feature: 'meme_enrichment',
     system: SYSTEM,
     content,
     schema: SCHEMA,

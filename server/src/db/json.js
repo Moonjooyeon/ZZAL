@@ -14,6 +14,10 @@ export function createJsonDb(file) {
     try { data = JSON.parse(fs.readFileSync(abs, 'utf8')); } catch {}
   }
   data.boards = data.boards || [];
+  data.sessions = data.sessions || [];
+  data.meme_revisions = data.meme_revisions || [];
+  data.audit_events = data.audit_events || [];
+  data.ai_requests = data.ai_requests || [];
   data.seq.boards = data.seq.boards || 1;
 
   // 기본 카탈로그 심기 (한 번만)
@@ -59,6 +63,22 @@ export function createJsonDb(file) {
       async byId(id) { return data.users.find(u => u.id === id) || null; },
     },
 
+    sessions: {
+      async create(tokenHash, userId, expiresAt) {
+        data.sessions = data.sessions.filter(s => Date.parse(s.expires_at) > Date.now());
+        data.sessions.push({ token_hash: tokenHash, user_id: userId, expires_at: expiresAt.toISOString() });
+        save();
+      },
+      async userId(tokenHash) {
+        const session = data.sessions.find(s => s.token_hash === tokenHash && Date.parse(s.expires_at) > Date.now());
+        return session?.user_id ?? null;
+      },
+      async remove(tokenHash) {
+        data.sessions = data.sessions.filter(s => s.token_hash !== tokenHash);
+        save();
+      },
+    },
+
     memes: {
       async list({ cat, q, limit = 200, offset = 0, userId = null } = {}) {
         let rows = data.memes.filter(m => m.owner_id === null || m.owner_id === userId);
@@ -82,6 +102,14 @@ export function createJsonDb(file) {
         const m = data.memes.find(x => x.id === id);
         if (!m) return false;
         if (out) {
+          const beforeState = { name: m.name, cat: m.cat, tags: m.tags,
+            keywords: m.keywords, why: m.why };
+          const afterState = { name: out.name, cat: out.cat, tags: out.tags,
+            keywords: out.keywords, why: out.why };
+          if (JSON.stringify(beforeState) !== JSON.stringify(afterState)) {
+            data.meme_revisions.push({ meme_id: id, actor_type: 'ai',
+              before_state: beforeState, after_state: afterState, created_at: new Date().toISOString() });
+          }
           m.name = out.name;
           m.cat = out.cat;
           m.tags = out.tags;
@@ -89,6 +117,7 @@ export function createJsonDb(file) {
           m.why = out.why;
         }
         m.enriched_at = new Date().toISOString();
+        m.updated_at = m.enriched_at;
         save();
         return true;
       },
@@ -179,12 +208,27 @@ export function createJsonDb(file) {
       },
       async add(userId, memeId, reason) {
         const found = data.reports.find(r => r.user_id === userId && r.meme_id === memeId);
-        if (found) { found.reason = reason; }
+        if (found) { found.reason = reason; found.status = 'open'; found.updated_at = new Date().toISOString(); }
         else data.reports.push({ user_id: userId, meme_id: memeId, reason, status: 'open', created_at: new Date().toISOString() });
         save();
       },
       async remove(userId, memeId) {
         data.reports = data.reports.filter(r => !(r.user_id === userId && r.meme_id === memeId));
+        save();
+      },
+    },
+
+    audit: {
+      async record({ userId = null, action, targetType, targetId = null, metadata = {} }) {
+        data.audit_events.push({ actor_user_id: userId, action, target_type: targetType,
+          target_id: targetId == null ? null : String(targetId), metadata, created_at: new Date().toISOString() });
+        save();
+      },
+    },
+
+    aiRequests: {
+      async record(row) {
+        data.ai_requests.push({ ...row, created_at: new Date().toISOString() });
         save();
       },
     },

@@ -2,6 +2,7 @@
 //
 // OpenAI 호환 SDK는 여기서만, 키가 있을 때만 지연 import합니다.
 import { config } from '../config.js';
+import { getDb } from '../db/index.js';
 
 let clientPromise = null;
 
@@ -33,12 +34,18 @@ async function getClient() {
  * @param {Array}  o.content     user 콘텐츠 블록 (텍스트/이미지)
  * @param {object} o.schema      JSON Schema
  * @param {string} [o.effort]    low | medium | high
+ * @param {string} o.feature     search_assist | meme_enrichment
  * @returns {Promise<?object>}   실패하면 null — 호출한 쪽은 AI 없이도 동작해야 합니다
  */
-export async function askJson({ system, content, schema, effort = 'low', maxTokens = 2000 }) {
+export async function askJson({ system, content, schema, feature, effort = 'low', maxTokens = 2000 }) {
   const client = await getClient();
   if (!client) return null;
 
+  const started = Date.now();
+  let status = 'error';
+  let inputTokens = null;
+  let outputTokens = null;
+  let errorCode = null;
   try {
     const userContent = content.map(block => block.type === 'image'
       ? { type: 'image_url', image_url: { url: `data:${block.source.media_type};base64,${block.source.data}` } }
@@ -52,11 +59,28 @@ export async function askJson({ system, content, schema, effort = 'low', maxToke
         json_schema: { name: 'zzal_result', strict: true, schema },
       },
     });
+    inputTokens = res.usage?.prompt_tokens ?? null;
+    outputTokens = res.usage?.completion_tokens ?? null;
+    if (res.choices?.[0]?.message?.refusal) {
+      status = 'refusal';
+      return null;
+    }
     const text = res.choices?.[0]?.message?.content;
     if (!text) return null;
-    return JSON.parse(text);
+    const result = JSON.parse(text);
+    status = 'success';
+    return result;
   } catch (e) {
+    errorCode = String(e?.code || e?.name || 'unknown').slice(0, 80);
     console.error('[ai] 호출 실패:', e && e.message ? e.message : e);
     return null;
+  } finally {
+    try {
+      const db = await getDb();
+      await db.aiRequests.record({ feature, model: config.ai.model, status, inputTokens,
+        outputTokens, latencyMs: Date.now() - started, errorCode });
+    } catch (error) {
+      console.warn('[ai] 사용량 기록 실패:', error?.message || error);
+    }
   }
 }

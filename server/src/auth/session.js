@@ -1,4 +1,4 @@
-// auth/session.js — 서명된 httpOnly 쿠키 세션. 토큰 본문은 사용자 id 뿐입니다.
+// auth/session.js — 서명된 httpOnly 쿠키 + DB에 저장한 토큰 해시.
 import crypto from 'node:crypto';
 import { config } from '../config.js';
 
@@ -6,11 +6,13 @@ const COOKIE = 'zzal_session';
 const MAX_AGE = 60 * 60 * 24 * 30;   // 30일
 
 const b64 = buf => Buffer.from(buf).toString('base64url');
+const hash = token => crypto.createHash('sha256').update(token).digest('hex');
 const sign = payload =>
   crypto.createHmac('sha256', config.sessionSecret).update(payload).digest('base64url');
 
 export function makeToken(userId) {
-  const payload = b64(JSON.stringify({ uid: userId, exp: Date.now() + MAX_AGE * 1000 }));
+  const payload = b64(JSON.stringify({ uid: userId, exp: Date.now() + MAX_AGE * 1000,
+    jti: crypto.randomBytes(16).toString('hex') }));
   return `${payload}.${sign(payload)}`;
 }
 
@@ -32,22 +34,29 @@ const parseCookies = header => Object.fromEntries(
   (header || '').split(';').map(p => p.trim()).filter(Boolean)
     .map(p => { const i = p.indexOf('='); return [p.slice(0, i), decodeURIComponent(p.slice(i + 1))]; }));
 
-export function setSession(res, userId) {
+export async function setSession(res, db, userId) {
+  const token = makeToken(userId);
+  await db.sessions.create(hash(token), userId, new Date(Date.now() + MAX_AGE * 1000));
   const bits = [
-    `${COOKIE}=${makeToken(userId)}`,
+    `${COOKIE}=${token}`,
     'Path=/', 'HttpOnly', 'SameSite=Lax', `Max-Age=${MAX_AGE}`,
   ];
   if (config.cookieSecure) bits.push('Secure');
   res.setHeader('set-cookie', bits.join('; '));
 }
 
-export function clearSession(res) {
+export async function clearSession(req, res, db) {
+  const token = parseCookies(req.headers.cookie)[COOKIE];
+  if (token) await db.sessions.remove(hash(token));
   res.setHeader('set-cookie', `${COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`);
 }
 
 /** 요청에서 로그인한 사용자를 꺼냅니다. 없으면 null. */
 export async function currentUser(req, db) {
-  const uid = readToken(parseCookies(req.headers.cookie)[COOKIE]);
+  const token = parseCookies(req.headers.cookie)[COOKIE];
+  const uid = readToken(token);
   if (uid == null) return null;
+  const sessionUserId = await db.sessions.userId(hash(token));
+  if (sessionUserId == null || Number(sessionUserId) !== Number(uid)) return null;
   return db.users.byId(uid);
 }

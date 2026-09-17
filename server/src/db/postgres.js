@@ -1,7 +1,8 @@
 // db/postgres.js — 운영용 저장소. json.js와 같은 인터페이스를 구현합니다.
 // 쓰려면: npm i pg  + DB_DRIVER=postgres + DATABASE_URL
-// 테이블은 schema.sql 로 먼저 만들어 두세요.
+// 첫 설치는 schema.sql, 이후 변경은 migrations/*.sql 을 부팅 시 적용합니다.
 import { MEME_ROWS } from '../../../web/js/data/index.js';
+import { migrate } from './migrate.js';
 
 async function seedCatalog(pool) {
   const client = await pool.connect();
@@ -32,6 +33,7 @@ export async function createPostgresDb(url) {
   const pool = new pg.Pool({ connectionString: url });
   await pool.query('SELECT 1');
   await seedCatalog(pool);
+  await migrate(pool);
   const one = async (sql, args) => (await pool.query(sql, args)).rows[0] || null;
   const many = async (sql, args) => (await pool.query(sql, args)).rows;
 
@@ -49,6 +51,21 @@ export async function createPostgresDb(url) {
           RETURNING *`, [provider, providerId, name, email || null, avatarUrl || null]);
       },
       async byId(id) { return one('SELECT * FROM users WHERE id = $1', [id]); },
+    },
+
+    sessions: {
+      async create(tokenHash, userId, expiresAt) {
+        await pool.query('DELETE FROM auth_sessions WHERE expires_at <= now()');
+        await pool.query('INSERT INTO auth_sessions (token_hash, user_id, expires_at) VALUES ($1,$2,$3)',
+          [tokenHash, userId, expiresAt]);
+      },
+      async userId(tokenHash) {
+        const row = await one('SELECT user_id FROM auth_sessions WHERE token_hash = $1 AND expires_at > now()', [tokenHash]);
+        return row?.user_id ?? null;
+      },
+      async remove(tokenHash) {
+        await pool.query('DELETE FROM auth_sessions WHERE token_hash = $1', [tokenHash]);
+      },
     },
 
     memes: {
@@ -73,9 +90,12 @@ export async function createPostgresDb(url) {
       async byId(id) { return one('SELECT * FROM memes WHERE id = $1', [id]); },
       async create(row) {
         return one(`
-          INSERT INTO memes (name, image_path, cat, tags, keywords, why, owner_id, visibility)
-          VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
-          [row.name, row.image_path, row.cat, row.tags, row.keywords, row.why, row.owner_id, row.visibility || 'private']);
+          INSERT INTO memes (name, image_path, cat, tags, keywords, why, owner_id, visibility,
+                             image_mime, image_bytes, image_sha256)
+          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+          [row.name, row.image_path, row.cat, row.tags, row.keywords, row.why, row.owner_id,
+            row.visibility || 'private', row.image_mime || null, row.image_bytes || null,
+            row.image_sha256 || null]);
       },
       /** 아직 AI가 손대지 않은, 사용자가 올린 짤 */
       async needEnrich(limit = 3) {
@@ -85,12 +105,35 @@ export async function createPostgresDb(url) {
       },
       /** out이 null이면 '해봤지만 실패' 표시만 남깁니다 */
       async markEnriched(id, out) {
-        const r = out
-          ? await pool.query(`UPDATE memes SET name=$2, cat=$3, tags=$4, keywords=$5, why=$6,
-                              enriched_at = now() WHERE id = $1`,
-              [id, out.name, out.cat, out.tags, out.keywords, out.why])
-          : await pool.query('UPDATE memes SET enriched_at = now() WHERE id = $1', [id]);
-        return r.rowCount > 0;
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          const before = (await client.query('SELECT * FROM memes WHERE id = $1 FOR UPDATE', [id])).rows[0];
+          if (!before) { await client.query('COMMIT'); return false; }
+          if (out) {
+            const beforeState = { name: before.name, cat: before.cat, tags: before.tags,
+              keywords: before.keywords, why: before.why };
+            const afterState = { name: out.name, cat: out.cat, tags: out.tags,
+              keywords: out.keywords, why: out.why };
+            if (JSON.stringify(beforeState) !== JSON.stringify(afterState)) {
+              await client.query(`INSERT INTO meme_revisions
+                (meme_id, actor_type, before_state, after_state) VALUES ($1,'ai',$2,$3)`,
+                [id, JSON.stringify(beforeState), JSON.stringify(afterState)]);
+            }
+            await client.query(`UPDATE memes SET name=$2, cat=$3, tags=$4, keywords=$5, why=$6,
+              enriched_at=now(), updated_at=now() WHERE id=$1`,
+              [id, out.name, out.cat, out.tags, out.keywords, out.why]);
+          } else {
+            await client.query('UPDATE memes SET enriched_at=now() WHERE id=$1', [id]);
+          }
+          await client.query('COMMIT');
+          return true;
+        } catch (error) {
+          await client.query('ROLLBACK');
+          throw error;
+        } finally {
+          client.release();
+        }
       },
       async remove(id, ownerId) {
         const r = await pool.query('DELETE FROM memes WHERE id = $1 AND owner_id = $2', [id, ownerId]);
@@ -130,7 +173,7 @@ export async function createPostgresDb(url) {
         return (await many(
           `SELECT meme_id, board_id, created_at AS at FROM saves
            WHERE user_id = $1 ORDER BY created_at DESC`, [userId]))
-          .map(r => ({ meme_id: Number(r.meme_id), board_id: Number(r.board_id), at: r.at }));
+          .map(r => ({ meme_id: Number(r.meme_id), board_id: r.board_id == null ? null : Number(r.board_id), at: r.at }));
       },
       /** boardId가 null이면 저장함 없이 저장 */
       async add(userId, boardId, memeId) {
@@ -162,11 +205,30 @@ export async function createPostgresDb(url) {
       async add(userId, memeId, reason) {
         await pool.query(`
           INSERT INTO reports (user_id, meme_id, reason) VALUES ($1,$2,$3)
-          ON CONFLICT (user_id, meme_id) DO UPDATE SET reason = EXCLUDED.reason`,
+          ON CONFLICT (user_id, meme_id) DO UPDATE
+            SET reason = EXCLUDED.reason, status = 'open', updated_at = now()`,
           [userId, memeId, reason]);
       },
       async remove(userId, memeId) {
         await pool.query('DELETE FROM reports WHERE user_id = $1 AND meme_id = $2', [userId, memeId]);
+      },
+    },
+
+    audit: {
+      async record({ userId = null, action, targetType, targetId = null, metadata = {} }) {
+        await pool.query(`INSERT INTO audit_events
+          (actor_user_id, action, target_type, target_id, metadata) VALUES ($1,$2,$3,$4,$5)`,
+          [userId, action, targetType, targetId == null ? null : String(targetId), JSON.stringify(metadata)]);
+      },
+    },
+
+    aiRequests: {
+      async record({ feature, model, status, inputTokens, outputTokens, latencyMs, errorCode }) {
+        await pool.query(`INSERT INTO ai_requests
+          (feature, model, status, input_tokens, output_tokens, latency_ms, error_code)
+          VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+          [feature, model, status, inputTokens ?? null, outputTokens ?? null,
+            latencyMs ?? null, errorCode ?? null]);
       },
     },
   };

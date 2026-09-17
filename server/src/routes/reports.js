@@ -4,6 +4,7 @@
 //   DELETE /api/me/reports/:memeId   (숨김 해제)
 import { ok, noContent, notFound, badRequest, unauthorized, readJson } from '../http/respond.js';
 import { currentUser } from '../auth/session.js';
+import { recordAudit } from '../db/audit.js';
 
 const REASONS = [
   '부적절하거나 불쾌한 콘텐츠',
@@ -33,12 +34,15 @@ export function reportRoutes(router) {
     const { reason } = await readJson(req);
     if (reason && !REASONS.includes(reason)) throw badRequest('알 수 없는 신고 사유입니다');
     await db.reports.add(u.id, id, reason || '기타');
+    await recordAudit(db, { userId: u.id, action: 'report.create', targetType: 'meme', targetId: id,
+      metadata: { reason: reason || '기타' } });
     noContent(res);
   });
 
   router.delete('/api/me/reports/:memeId', async (req, res, { db, params }) => {
     const u = await requireUser(req, db);
     await db.reports.remove(u.id, Number(params.memeId));
+    await recordAudit(db, { userId: u.id, action: 'report.remove', targetType: 'meme', targetId: params.memeId });
     noContent(res);
   });
 }
