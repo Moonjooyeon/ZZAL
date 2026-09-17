@@ -95,6 +95,9 @@ sh deploy/start-on-lightsail.sh
 [`deploy/nginx/zzal.conf`](deploy/nginx/zzal.conf)로 교체합니다. 인증서 발급 전에
 443 블록을 활성화하면 Nginx가 시작되지 않습니다. 공용 Nginx 컨테이너는
 `levelup-net`에 연결되어 있어야 합니다.
+Certbot 자동 갱신 후 Nginx가 새 인증서를 읽도록
+`sudo install -m 755 deploy/reload-nginx-after-renewal.sh /etc/letsencrypt/renewal-hooks/deploy/reload-levelup-nginx.sh`
+를 한 번 실행합니다.
 카카오·구글 개발자 콘솔의 redirect URI는 각각
 `https://zzal.ashwoodfriends.com/api/auth/kakao/callback`,
 `https://zzal.ashwoodfriends.com/api/auth/google/callback`입니다.
