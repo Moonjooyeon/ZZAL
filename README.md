@@ -90,10 +90,11 @@ sh deploy/start-on-lightsail.sh
 소셜 로그인만 비활성화됩니다. 키를 넣은 뒤에는 `docker compose up -d`를
 다시 실행합니다.
 
-공용 Nginx에 [`deploy/nginx/zzal.conf`](deploy/nginx/zzal.conf)를 추가하고
-`zzal.ashwoodfriends.com` 인증서를 발급한 뒤 설정을 적용합니다. 인증서 발급 전에는
-443 블록을 활성화하면 Nginx가 시작되지 않으므로 먼저 HTTP challenge 경로를
-설정하세요. Nginx가 컨테이너라면 `levelup-net`에 연결되어 있어야 합니다.
+공용 Nginx에는 먼저 [`deploy/nginx/zzal.bootstrap.conf`](deploy/nginx/zzal.bootstrap.conf)를
+추가합니다. `zzal.ashwoodfriends.com` 인증서를 발급한 다음
+[`deploy/nginx/zzal.conf`](deploy/nginx/zzal.conf)로 교체합니다. 인증서 발급 전에
+443 블록을 활성화하면 Nginx가 시작되지 않습니다. 공용 Nginx 컨테이너는
+`levelup-net`에 연결되어 있어야 합니다.
 카카오·구글 개발자 콘솔의 redirect URI는 각각
 `https://zzal.ashwoodfriends.com/api/auth/kakao/callback`,
 `https://zzal.ashwoodfriends.com/api/auth/google/callback`입니다.
