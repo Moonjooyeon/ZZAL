@@ -23,5 +23,5 @@ while [ "$attempt" -lt 20 ]; do
   sleep 3
 done
 
-echo 'API did not become ready. Check: docker compose logs --tail=100 app db' >&2
+echo 'API did not become ready. Check: docker compose logs --tail=100 web backend db' >&2
 exit 1

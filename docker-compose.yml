@@ -1,31 +1,55 @@
+name: zzal
+
 services:
-  app:
-    container_name: zzal-app
-    build: .
+  web:
+    container_name: zzal-web
+    build:
+      context: .
+      target: web
     restart: unless-stopped
     ports:
-      - "127.0.0.1:${ZZAL_HTTP_PORT:-19120}:8080"
+      - "127.0.0.1:${ZZAL_HTTP_PORT:-19120}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - default
+      - levelup-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/ && wget -q -O /dev/null http://127.0.0.1/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    container_name: zzal-backend
+    build:
+      context: .
+      target: backend
+    restart: unless-stopped
     env_file:
       - path: .env
         required: false
     environment:
       DB_DRIVER: postgres
       DATABASE_URL: postgres://zzal:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@db:5432/zzal
-      SERVE_WEB: "1"
+      SERVE_WEB: "0"
       PORT: "8080"
+    expose:
+      - "8080"
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - default
-      - levelup-net
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 15s
       timeout: 5s
       retries: 5
       start_period: 30s
+
   db:
+    container_name: zzal-db
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
@@ -40,6 +64,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
 volumes:
   postgres_data:
 

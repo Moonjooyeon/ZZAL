@@ -73,9 +73,10 @@ npm start                        # 의존성 없이 그대로 뜹니다 (Node 18
 ## Docker로 운영 배포
 
 SAJU-M과 같은 Lightsail 서버의 공용 `levelup-net`과 외부 Nginx를 사용합니다.
-ZZAL의 PostgreSQL은 별도 컨테이너·볼륨으로 둡니다. 도메인은
-`zzal.ashwoodfriends.com`, 앱의 서버 내부 이름은 `zzal-app:8080`,
-서버에서만 열리는 확인용 포트는 `127.0.0.1:19120`입니다.
+ZZAL은 `zzal-web`(정적 화면·API 프록시), `zzal-backend`(Node API),
+`zzal-db`(PostgreSQL)의 세 컨테이너입니다. DB는 별도 볼륨에 저장합니다.
+도메인은 `zzal.ashwoodfriends.com`, 외부 Nginx가 연결할 이름은
+`zzal-web:80`, 서버에서만 열리는 확인용 포트는 `127.0.0.1:19120`입니다.
 
 서버에 저장소를 가져온 후 저장소 루트에서:
 
