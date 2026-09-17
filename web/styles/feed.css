@@ -156,6 +156,8 @@
   padding: 70px 20px;
   border: 1px dashed #d8d9ce;
   border-radius: 14px;
+  max-width: 640px;     /* 넓은 화면에서 내용 대비 폭만 커지던 것 */
+  margin-inline: auto;
 }
 
 .empty p {

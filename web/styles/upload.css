@@ -1,8 +1,17 @@
 /* upload.css — 짤 올리기 폼 */
 
-.uploadform {
+/* 올리기는 한 가지 일에 집중하는 화면이라 가운데 한 줄로 세웁니다.
+   제목만 본문 왼쪽 끝에 남아 폼과 300px 넘게 어긋나 있었습니다. */
+.uploadform,
+#upload .pageintro {
   max-width: 650px;
-  margin: 30px auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.uploadform {
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .drop {

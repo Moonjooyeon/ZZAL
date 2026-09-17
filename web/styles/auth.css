@@ -234,6 +234,8 @@
   padding: 56px 20px;
   border: 1px dashed #d8d9ce;
   border-radius: 14px;
+  max-width: 640px;
+  margin-inline: auto;
 }
 
 .gate h3 {
