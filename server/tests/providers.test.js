@@ -21,7 +21,8 @@ test('Apple code exchange signs its client secret and verifies the identity toke
   let identity = jwt(claims);
   try {
     Object.assign(config.auth.apple, { id: 'com.example.zzal', teamId: 'TEAM123456', keyId: 'KEY123456', privateKeyPem: '',
-      privateKeyPath: '', privateKeyBase64: Buffer.from(signing.privateKey.export({ type: 'pkcs8', format: 'pem' })).toString('base64') });
+      privateKeyPath: '/missing/apple-signin.p8',
+      privateKeyBase64: Buffer.from(signing.privateKey.export({ type: 'pkcs8', format: 'pem' })).toString('base64') });
     assert.equal(isConfigured('apple'), true);
     const authorization = new URL(authorizeUrl('apple', 'state-value'));
     assert.equal(authorization.searchParams.get('response_mode'), 'form_post');

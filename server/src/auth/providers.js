@@ -32,8 +32,8 @@ export function authorizeUrl(provider, state) {
 function appleClientSecret() {
   const { id, teamId, keyId, privateKeyPem, privateKeyPath, privateKeyBase64 } = config.auth.apple;
   const key = privateKeyPem ? privateKeyPem.replace(/\\n/g, '\n')
-    : privateKeyPath ? fs.readFileSync(privateKeyPath, 'utf8')
-      : Buffer.from(privateKeyBase64, 'base64').toString('utf8');
+    : privateKeyBase64 ? Buffer.from(privateKeyBase64, 'base64').toString('utf8')
+      : fs.readFileSync(privateKeyPath, 'utf8');
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'ES256', kid: keyId, typ: 'JWT' };
   const payload = { iss: teamId, iat: now, exp: now + 3600, aud: appleIssuer, sub: id };

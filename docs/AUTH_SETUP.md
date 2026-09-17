@@ -40,7 +40,8 @@ APPLE_PRIVATE_KEY_PATH=/run/secrets/apple-signin.p8
 
 이미 `.p8` 내용을 `.env`에 넣었다면 `APPLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"`
 형식도 지원합니다. 실제 파일의 줄바꿈을 `\n`으로 쓴 **한 줄의 큰따옴표 값**이어야
-합니다. `APPLE_PRIVATE_KEY`가 있으면 `APPLE_PRIVATE_KEY_PATH`보다 우선합니다.
+합니다. 키 설정 우선순위는 `APPLE_PRIVATE_KEY`, `APPLE_PRIVATE_KEY_BASE64`,
+`APPLE_PRIVATE_KEY_PATH` 순서입니다.
 운영에서는 파일 방식이 더 안전합니다. 환경 변수의 키는 컨테이너 환경 설정을
 읽을 권한이 있는 사람에게 노출될 수 있습니다.
 
