@@ -31,7 +31,10 @@ export function memeRoutes(router) {
 
   router.get('/api/memes/:id', async (req, res, { db, params }) => {
     const m = await db.memes.byId(Number(params.id));
-    if (!m) throw notFound('그런 짤이 없어요');
+    const user = await currentUser(req, db);
+    if (!m || (m.owner_id !== null && Number(m.owner_id) !== Number(user?.id))) {
+      throw notFound('그런 짤이 없어요');
+    }
     ok(res, { meme: publicMeme(m) });
   });
 }

@@ -4,16 +4,27 @@
 import { MEME_ROWS } from '../../../web/js/data/index.js';
 
 async function seedCatalog(pool) {
-  const { rows } = await pool.query('SELECT count(*)::int AS n FROM memes');
-  if (rows[0].n !== 0) return;
-  for (const [id, name, image_path, cat, tags, keywords, why] of MEME_ROWS) {
-    await pool.query(`INSERT INTO memes
-      (id, name, image_path, cat, tags, keywords, why, owner_id, visibility)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,'public')`,
-      [id, name, image_path, cat, tags, keywords, why]);
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const { rows } = await client.query('SELECT count(*)::int AS n FROM memes');
+    if (rows[0].n === 0) {
+      for (const [id, name, image_path, cat, tags, keywords, why] of MEME_ROWS) {
+        await client.query(`INSERT INTO memes
+          (id, name, image_path, cat, tags, keywords, why, owner_id, visibility)
+          VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,'public')`,
+          [id, name, image_path, cat, tags, keywords, why]);
+      }
+      await client.query(`SELECT setval(pg_get_serial_sequence('memes','id'),
+        GREATEST((SELECT max(id) FROM memes), 1), true)`);
+    }
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
   }
-  await pool.query(`SELECT setval(pg_get_serial_sequence('memes','id'),
-    GREATEST((SELECT max(id) FROM memes), 1), true)`);
 }
 
 export async function createPostgresDb(url) {
@@ -125,7 +136,7 @@ export async function createPostgresDb(url) {
       async add(userId, boardId, memeId) {
         await pool.query(
           `INSERT INTO saves (user_id, board_id, meme_id) VALUES ($1,$2,$3)
-           ON CONFLICT (user_id, meme_id, COALESCE(board_id, 0)) DO NOTHING`,
+           ON CONFLICT DO NOTHING`,
           [userId, boardId, memeId]);
       },
       /** 그 자리에서만 빼기 — boardId가 null이면 '저장함 없이' 자리 */

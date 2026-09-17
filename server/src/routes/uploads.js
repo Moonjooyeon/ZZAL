@@ -9,6 +9,7 @@ import { ok, created, noContent, notFound, badRequest, tooLarge, unauthorized, r
 import { currentUser } from '../auth/session.js';
 
 const MAX_BYTES = 10 * 1024 * 1024;
+const MAX_REQUEST_BYTES = Math.ceil(MAX_BYTES * 4 / 3) + 1024 * 1024;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/gif'];
 
 async function requireUser(req, db) {
@@ -26,7 +27,7 @@ export function uploadRoutes(router) {
 
   router.post('/api/me/uploads', async (req, res, { db }) => {
     const u = await requireUser(req, db);
-    const body = await readJson(req, MAX_BYTES + 1024 * 1024);
+    const body = await readJson(req, MAX_REQUEST_BYTES);
 
     const name = String(body.name || '').trim();
     if (!name) throw badRequest('언제 쓰는 짤인지 한 줄 적어주세요');

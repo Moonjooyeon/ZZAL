@@ -33,10 +33,10 @@ CREATE TABLE IF NOT EXISTS memes (
 CREATE INDEX IF NOT EXISTS memes_enrich_idx ON memes (created_at)
   WHERE owner_id IS NOT NULL AND enriched_at IS NULL;
 
--- 검색: 제목·태그·키워드·설명을 한 덩어리로 묶어 GIN 인덱스
-CREATE INDEX IF NOT EXISTS memes_search_idx ON memes
-  USING GIN (to_tsvector('simple',
-    name || ' ' || array_to_string(tags,' ') || ' ' || array_to_string(keywords,' ') || ' ' || why));
+-- array_to_string은 STABLE이라 검색식을 그대로 표현식 인덱스로 만들 수 없습니다.
+-- 현재 카탈로그 규모에서는 검색 시 순회하고, 태그·키워드 배열은 별도 GIN 인덱스로 둡니다.
+CREATE INDEX IF NOT EXISTS memes_tags_idx ON memes USING GIN (tags);
+CREATE INDEX IF NOT EXISTS memes_keywords_idx ON memes USING GIN (keywords);
 CREATE INDEX IF NOT EXISTS memes_cat_idx   ON memes (cat);
 CREATE INDEX IF NOT EXISTS memes_owner_idx ON memes (owner_id);
 

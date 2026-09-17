@@ -72,19 +72,38 @@ npm start                        # 의존성 없이 그대로 뜹니다 (Node 18
 
 ## Docker로 운영 배포
 
-PostgreSQL까지 함께 띄우려면 Docker가 설치된 서버에서 실행합니다.
+SAJU-M과 같은 Lightsail 서버의 공용 `levelup-net`과 외부 Nginx를 사용합니다.
+ZZAL의 PostgreSQL은 별도 컨테이너·볼륨으로 둡니다. 도메인은
+`zzal.ashwoodfriends.com`, 앱의 서버 내부 이름은 `zzal-app:8080`,
+서버에서만 열리는 확인용 포트는 `127.0.0.1:19120`입니다.
+
+서버에 저장소를 가져온 후 저장소 루트에서:
 
 ```sh
-cp .env.docker.example .env
-# .env에서 POSTGRES_PASSWORD, SESSION_SECRET, PUBLIC_ORIGIN과 OAuth/AI 키를 입력
-docker compose up -d --build
-docker compose logs -f app
+sh deploy/start-on-lightsail.sh
 ```
 
-첫 실행 때 PostgreSQL이 `server/src/db/schema.sql`을 적용하고, 비어 있는 경우
-프론트 카탈로그를 자동으로 심습니다. 데이터는 `postgres_data` 볼륨에 남으므로
-컨테이너를 다시 만들어도 유지됩니다. 도메인의 HTTPS 프록시를 8080 포트에 연결하고,
-`PUBLIC_ORIGIN`은 실제 HTTPS 주소로 지정하세요.
+이 명령이 `.env`를 만들며 DB·세션 비밀값을 자동 생성하고, 공용 네트워크와
+컨테이너를 시작한 뒤 로컬 API를 확인합니다. Cafe24 키와 카카오/구글 OAuth 키는
+서버의 `.env`에 직접 입력하세요. 키가 없어도 짤 열람과 DB는 동작하며, AI와
+소셜 로그인만 비활성화됩니다. 키를 넣은 뒤에는 `docker compose up -d`를
+다시 실행합니다.
+
+공용 Nginx에 [`deploy/nginx/zzal.conf`](deploy/nginx/zzal.conf)를 추가하고
+`zzal.ashwoodfriends.com` 인증서를 발급한 뒤 설정을 적용합니다. 인증서 발급 전에는
+443 블록을 활성화하면 Nginx가 시작되지 않으므로 먼저 HTTP challenge 경로를
+설정하세요. Nginx가 컨테이너라면 `levelup-net`에 연결되어 있어야 합니다.
+카카오·구글 개발자 콘솔의 redirect URI는 각각
+`https://zzal.ashwoodfriends.com/api/auth/kakao/callback`,
+`https://zzal.ashwoodfriends.com/api/auth/google/callback`입니다.
+
+첫 실행 때 PostgreSQL이 `server/src/db/schema.sql`을 적용하고 기본 짤
+카탈로그를 자동으로 심습니다. 사용자·저장함·업로드는 `postgres_data` 볼륨에
+남습니다. 업데이트는 `git pull --ff-only` 후 `docker compose up -d --build`로
+적용합니다. `docker compose down -v`는 DB 볼륨까지 지우므로 사용하지 마세요.
+
+백업은 서버에서 `docker compose exec -T db pg_dump -U zzal -d zzal -Fc > zzal.dump`
+로 만들고, 생성된 파일을 서버 외부에도 보관하세요.
 
 ## 담긴 기능
 

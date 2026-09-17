@@ -1,0 +1,7 @@
+.git
+.env
+.env.production
+server/.env
+server/data
+server/node_modules
+**/.DS_Store
