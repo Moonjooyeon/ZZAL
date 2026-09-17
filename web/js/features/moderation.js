@@ -15,7 +15,7 @@ const REASONS = [
 ];
 
 /** 공용 확인 다이얼로그. reasons:true면 신고 사유 라디오를 함께 보여줍니다. */
-function ask({ title, desc, reasons, go, danger, onOk }) {
+export function ask({ title, desc, reasons, go, danger, onOk }) {
   $('asktitle').textContent = title;
   $('askdesc').textContent = desc;
   $('askreasons').hidden = !reasons;
