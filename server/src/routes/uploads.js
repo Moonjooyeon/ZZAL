@@ -52,7 +52,7 @@ export function uploadRoutes(router) {
       visibility: 'private',
       enriched_at: null,
     });
-    created(res, { meme: { id: meme.id, name: meme.name, src: meme.image_path, cat: meme.cat, tags: meme.tags, why: meme.why, mine: true } });
+    created(res, { meme: { id: Number(meme.id), name: meme.name, src: meme.image_path, cat: meme.cat, tags: meme.tags, why: meme.why, mine: true } });
   });
 
   router.delete('/api/me/uploads/:id', async (req, res, { db, params }) => {

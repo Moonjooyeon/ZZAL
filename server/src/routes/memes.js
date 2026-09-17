@@ -7,7 +7,7 @@ import { ok, notFound } from '../http/respond.js';
 import { currentUser } from '../auth/session.js';
 
 const publicMeme = m => ({
-  id: m.id,
+  id: Number(m.id),
   name: m.name,
   src: m.image_path,
   cat: m.cat,

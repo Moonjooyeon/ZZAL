@@ -271,7 +271,7 @@ const toBoard = b => ({
 
 /** 서버 응답 → 화면이 쓰는 짤 객체 */
 const toMeme = m => ({
-  id: m.id,
+  id: Number(m.id),
   name: m.name,
   src: m.src || m.image_path,
   filename: String(m.src || m.image_path || '').split('/').pop(),
