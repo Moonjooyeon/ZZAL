@@ -108,8 +108,25 @@ export function renderBoardDetail() {
     : `${rows.length}개 · ${ago(b.updatedAt)} 전에 담음` + (b.private ? ' · 나만 보기' : '');
   $('boardboard').classList.toggle('board', !!rows.length);
   $('boardboard').innerHTML = rows.length
-    ? rows.map(card).join('')
+    ? rows.map(z => card(z, { removable: b.id !== MINE })).join('')
     : '<div class="empty"><h3>아직 비어 있어요</h3><p>둘러보다 마음에 드는 짤의 책갈피를 누르면<br>여기에 담을 수 있어요.</p><button class="primary" onclick="navigate(\'explore\')">짤 둘러보기</button></div>';
+}
+
+/** 열린 저장함에서만 짤을 빼고, 다른 저장함의 복사본은 유지합니다. */
+export async function removeFromOpenBoard(memeId) {
+  const boardId = state.openBoard;
+  if (!boardId || boardId === MINE) return;
+  const pinBoardId = boardId === LOOSE ? null : boardId;
+  if (!state.pins.some(p => p.m === memeId && p.b === pinBoardId)) return;
+  try {
+    if (!await store.removePin(memeId, pinBoardId)) throw new Error('removePin failed');
+    state.pins = state.pins.filter(p => !(p.m === memeId && p.b === pinBoardId));
+    refreshSaved();
+    render();
+    toast('저장함에서 뺐어요');
+  } catch {
+    toast('저장함에서 빼지 못했어요. 다시 시도해 주세요.');
+  }
 }
 
 // ── 저장함 만들기 / 이름 바꾸기 ───────────────────────────────────────────

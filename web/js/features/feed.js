@@ -8,10 +8,11 @@ import { adCard, adSlot, adIndex } from './ads.js';
 import { renderBoards, renderBoardDetail } from './boards.js';
 
 // ── 카드 ──────────────────────────────────────────────────────────────────
-export function card(z) {
+export function card(z, { removable = false } = {}) {
   const t = esc(title(z));
   const on = state.saved.has(z.id);
-  return `<article class="pin"><button class="shot" onclick="openDetail(${z.id})" aria-label="${t} 자세히 보기"><div class="art">${z.art}</div></button><div class="meta"><h3>${t}</h3><button class="save" aria-label="${t} ${on ? '저장 취소' : '저장'}" aria-pressed="${on}" onclick="toggle(${z.id})">${icons.save}</button></div><p class="tags">${z.tags.map(x => '#' + esc(x)).join(' &nbsp; ')}</p></article>`;
+  const remove = removable ? `<button class="remove-from-board" aria-label="${t} 이 저장함에서 빼기" onclick="removeFromOpenBoard(${z.id})">빼기</button>` : '';
+  return `<article class="pin"><button class="shot" onclick="openDetail(${z.id})" aria-label="${t} 자세히 보기"><div class="art">${z.art}</div></button><div class="meta"><h3>${t}</h3>${remove}<button class="save" aria-label="${t} 저장 위치 선택" aria-pressed="${on}" onclick="toggle(${z.id})">${icons.save}</button></div><p class="tags">${z.tags.map(x => '#' + esc(x)).join(' &nbsp; ')}</p></article>`;
 }
 
 function feedCards(rows) {
