@@ -68,8 +68,16 @@ nav button.active:after {
   font-weight: 650;
   white-space: nowrap;
   flex: none;
-  margin-left: auto;   /* 여기서부터 오른쪽 묶음 (짤 올리기 → 계정) */
-  margin-right: 18px;
+}
+
+/* 헤더 오른쪽 묶음 (짤 올리기 + 계정).
+   header의 gap(48px)이 이 둘 사이에도 끼는 것을 막으려고 따로 감쌉니다. */
+.headend {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: none;
 }
 
 .upload:hover {

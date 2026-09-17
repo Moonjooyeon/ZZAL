@@ -94,7 +94,7 @@
   display: flex;
   align-items: center;
   flex: none;
-  padding-left: 18px;
+  padding-left: 16px;                   /* .headend의 gap과 같은 값 — 구분선 좌우 대칭 */
   border-left: 1px solid var(--line);   /* 여기부터 내 계정 */
 }
 
@@ -118,6 +118,9 @@
 /* 로그인 후 — 아바타 칩 + 펼침 메뉴 */
 .acct {
   position: relative;
+  /* summary가 가진 좌측 여백(5px)만큼 당겨, 아바타가 구분선에서
+     반대편 버튼과 같은 거리에 놓이게 합니다 */
+  margin-left: -5px;
 }
 
 .acct > summary {

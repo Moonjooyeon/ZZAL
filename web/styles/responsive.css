@@ -234,10 +234,10 @@
     display: none;
   }
   .me {
-    padding-left: 12px;
+    padding-left: 11px;
   }
-  .upload {
-    margin-right: 12px;
+  .headend {
+    gap: 11px;
   }
   .signin {
     padding: 10px 14px;
@@ -277,8 +277,8 @@
   .me {
     padding-left: 9px;
   }
-  .upload {
-    margin-right: 9px;
+  .headend {
+    gap: 9px;
   }
 }
 
