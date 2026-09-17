@@ -6,9 +6,10 @@
   "description": "이짤이이짤 API 서버",
   "engines": { "node": ">=18" },
   "dependencies": {
-    "openai": "^6.27.0"
+    "openai": "^6.27.0",
+    "pg": "^8.16.3"
   },
-  "comment": "의존성은 AI 기능에만 필요합니다. 설치하지 않아도 서버는 그대로 뜹니다.",
+  "comment": "pg는 PostgreSQL 운영 저장소, openai는 Cafe24 LLM Router 연동에 사용합니다.",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js"

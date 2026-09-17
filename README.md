@@ -70,6 +70,22 @@ npm start                        # 의존성 없이 그대로 뜹니다 (Node 18
 
 자세한 건 [server/README.md](server/README.md).
 
+## Docker로 운영 배포
+
+PostgreSQL까지 함께 띄우려면 Docker가 설치된 서버에서 실행합니다.
+
+```sh
+cp .env.docker.example .env
+# .env에서 POSTGRES_PASSWORD, SESSION_SECRET, PUBLIC_ORIGIN과 OAuth/AI 키를 입력
+docker compose up -d --build
+docker compose logs -f app
+```
+
+첫 실행 때 PostgreSQL이 `server/src/db/schema.sql`을 적용하고, 비어 있는 경우
+프론트 카탈로그를 자동으로 심습니다. 데이터는 `postgres_data` 볼륨에 남으므로
+컨테이너를 다시 만들어도 유지됩니다. 도메인의 HTTPS 프록시를 8080 포트에 연결하고,
+`PUBLIC_ORIGIN`은 실제 HTTPS 주소로 지정하세요.
+
 ## 담긴 기능
 
 - 상황·대사·유행어로 검색 (조사와 형용사 어미를 떼고 찾습니다)

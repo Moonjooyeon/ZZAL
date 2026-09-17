@@ -1,10 +1,26 @@
 // db/postgres.js — 운영용 저장소. json.js와 같은 인터페이스를 구현합니다.
 // 쓰려면: npm i pg  + DB_DRIVER=postgres + DATABASE_URL
 // 테이블은 schema.sql 로 먼저 만들어 두세요.
+import { MEME_ROWS } from '../../../web/js/data/index.js';
+
+async function seedCatalog(pool) {
+  const { rows } = await pool.query('SELECT count(*)::int AS n FROM memes');
+  if (rows[0].n !== 0) return;
+  for (const [id, name, image_path, cat, tags, keywords, why] of MEME_ROWS) {
+    await pool.query(`INSERT INTO memes
+      (id, name, image_path, cat, tags, keywords, why, owner_id, visibility)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,'public')`,
+      [id, name, image_path, cat, tags, keywords, why]);
+  }
+  await pool.query(`SELECT setval(pg_get_serial_sequence('memes','id'),
+    GREATEST((SELECT max(id) FROM memes), 1), true)`);
+}
 
 export async function createPostgresDb(url) {
   const { default: pg } = await import('pg');
   const pool = new pg.Pool({ connectionString: url });
+  await pool.query('SELECT 1');
+  await seedCatalog(pool);
   const one = async (sql, args) => (await pool.query(sql, args)).rows[0] || null;
   const many = async (sql, args) => (await pool.query(sql, args)).rows;
 

@@ -21,6 +21,9 @@ npm start          # http://localhost:8080
 psql "$DATABASE_URL" -f src/db/schema.sql
 ```
 
+Docker 배포는 저장소 루트의 `docker compose up -d --build`를 사용하세요.
+PostgreSQL 컨테이너가 준비되면 스키마와 기본 짤 카탈로그를 자동으로 초기화합니다.
+
 ## 로그인
 
 `KAKAO_CLIENT_ID` / `GOOGLE_CLIENT_ID` 가 비어 있으면 `DEMO_AUTH=1` 로
