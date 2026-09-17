@@ -15,6 +15,10 @@ export const state = {
   mine: [],
   /** @type {Object<number,{reason:string,at:number}>} 신고해서 숨긴 짤 */
   reported: {},
+  /** @type {?{q:string,terms:string[],cats:string[],note:string}} AI가 옮겨준 검색어 */
+  assist: null,
+  /** AI에게 물어보는 중 */
+  assisting: false,
   /** 현재 카테고리 필터 */
   cat: '전체',
   /** 현재 화면: explore | saved | upload */

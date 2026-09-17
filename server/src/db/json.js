@@ -73,6 +73,25 @@ export function createJsonDb(file) {
         save();
         return m;
       },
+      /** 아직 AI가 손대지 않은, 사용자가 올린 짤 */
+      async needEnrich(limit = 3) {
+        return data.memes.filter(m => m.owner_id !== null && !m.enriched_at).slice(0, limit);
+      },
+      /** out이 null이면 '해봤지만 실패' 표시만 남깁니다 */
+      async markEnriched(id, out) {
+        const m = data.memes.find(x => x.id === id);
+        if (!m) return false;
+        if (out) {
+          m.name = out.name;
+          m.cat = out.cat;
+          m.tags = out.tags;
+          m.keywords = out.keywords;
+          m.why = out.why;
+        }
+        m.enriched_at = new Date().toISOString();
+        save();
+        return true;
+      },
       async remove(id, ownerId) {
         const i = data.memes.findIndex(m => m.id === id && m.owner_id === ownerId);
         if (i < 0) return false;

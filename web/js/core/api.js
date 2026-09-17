@@ -10,6 +10,8 @@
 //   addPin(memeId, boardId)      → 저장함에 담기. boardId가 null이면 저장함 없이 저장
 //   removePin(memeId, boardId)   → 그 자리에서만 빼기 (null이면 '저장함 없이' 자리)
 //   clearPins(memeId)            → 어디에 담겼든 전부 빼기
+//   assistSearch(q)              → 못 찾았을 때 AI에게 검색어를 다시 물어보기.
+//                                  AI가 없으면 null (그냥 '없음'으로 끝납니다)
 //   addUpload({name, image})     → 만들어진 짤. null이면 실패
 //   removeUpload(id)
 //   setReport(id, reason|null)   → 신고/숨김 해제
@@ -139,6 +141,8 @@ const localStore = {
     const u = uid();
     return ls.write('pins', u, ls.read('pins', u, []).filter(p => p.m !== memeId));
   },
+  // 브라우저에만 저장할 때는 AI가 없습니다 (키는 서버에만 둡니다)
+  async assistSearch() { return null; },
   async addUpload(z) {
     const mine = ls.read('mine', uid(), []);
     if (!ls.write('mine', uid(), [...mine, z])) return null;
@@ -233,6 +237,12 @@ const remoteStore = {
   async clearPins(memeId) {
     await send('DELETE', `/api/me/saves/${memeId}`);
     return true;
+  },
+  async assistSearch(q) {
+    try {
+      const r = await send('POST', '/api/search/assist', { q });
+      return r && r.enabled && r.terms.length ? r : null;
+    } catch { return null; }
   },
   async addUpload(z) {
     const r = await send('POST', '/api/me/uploads', { name: z.name, image: z.src });

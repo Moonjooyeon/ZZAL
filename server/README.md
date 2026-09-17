@@ -37,6 +37,30 @@ psql "$DATABASE_URL" -f src/db/schema.sql
 세션은 HMAC으로 서명한 httpOnly 쿠키입니다(`SameSite=Lax`, 30일).
 `SESSION_SECRET` 은 배포 전에 반드시 바꾸세요 — `openssl rand -hex 32`.
 
+## AI (곁들임)
+
+`ANTHROPIC_API_KEY` 가 있을 때만 켜집니다. 없으면 검색과 분류는
+규칙만으로 돌아가고 서버는 `npm install` 없이도 그대로 뜹니다.
+SDK는 키가 있을 때만 불러옵니다(지연 import).
+
+```sh
+npm install                 # AI를 쓸 때만 필요
+ANTHROPIC_API_KEY=sk-ant-... npm start
+```
+
+키는 서버에만 둡니다. 브라우저로 내려보내지 않습니다.
+
+**1. 검색 2차 검증** — 1차는 프론트가 우리 짤 안에서 규칙으로 찾습니다.
+거기서 0건일 때만 `POST /api/search/assist` 로 넘어옵니다. AI는 짤을
+고르지 않고 **검색어만 우리 데이터에 있는 말로 옮겨줍니다**. 지어낸 단어가
+섞이면 검색이 다시 0건이 되므로, 카탈로그에 실제로 있는 말만 통과시킵니다.
+
+**2. 올린 짤 자동 분류 · 숨은 키워드** — 업로드는 규칙 분류로 바로 응답하고,
+`ai/enrich.js` 의 주기 작업이 잠시 뒤 이미지를 보고 카테고리·제목·태그·
+숨은 키워드 12~20개·설명을 채웁니다. 업로드를 기다리게 하지 않으려고
+나눠 두었습니다. `memes.enriched_at` 이 NULL인 것만 집어가고, 실패해도
+표시를 남겨 같은 것을 무한히 다시 집지 않습니다.
+
 ## API
 
 인증이 필요한 것은 ★ 표시. 없으면 401과 함께 사람이 읽을 메시지를 돌려줍니다.
@@ -58,6 +82,7 @@ psql "$DATABASE_URL" -f src/db/schema.sql
 | GET ★ | `/api/me/reports` | 신고 목록 + 사유 목록 |
 | PUT ★ | `/api/me/reports/:memeId` | 신고 `{reason}` |
 | DELETE ★ | `/api/me/reports/:memeId` | 숨김 해제 |
+| POST | `/api/search/assist` | 검색 2차 검증 `{q}` → `{terms, cats, note}` |
 
 `keywords`(숨은 키워드)는 검색에만 쓰고 응답에 담지 않습니다.
 
@@ -67,5 +92,6 @@ psql "$DATABASE_URL" -f src/db/schema.sql
 - `assets/` 132MB도 같은 스토리지로 옮기기
 - 검색 점수를 프론트(`web/js/features/search.js`)와 맞추기
   — 지금 서버 쪽은 단순 포함 검색입니다
+- AI 호출에 사용자별 한도 걸기 (지금은 0건 검색마다 한 번씩 나갑니다)
 - 누적 신고 수로 `memes.visibility` 를 내리는 운영 처리
 - 요청 수 제한(rate limit)과 접근 로그

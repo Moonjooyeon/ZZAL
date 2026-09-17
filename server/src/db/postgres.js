@@ -50,6 +50,21 @@ export async function createPostgresDb(url) {
           VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
           [row.name, row.image_path, row.cat, row.tags, row.keywords, row.why, row.owner_id, row.visibility || 'private']);
       },
+      /** 아직 AI가 손대지 않은, 사용자가 올린 짤 */
+      async needEnrich(limit = 3) {
+        return many(`SELECT * FROM memes
+                     WHERE owner_id IS NOT NULL AND enriched_at IS NULL
+                     ORDER BY created_at LIMIT $1`, [limit]);
+      },
+      /** out이 null이면 '해봤지만 실패' 표시만 남깁니다 */
+      async markEnriched(id, out) {
+        const r = out
+          ? await pool.query(`UPDATE memes SET name=$2, cat=$3, tags=$4, keywords=$5, why=$6,
+                              enriched_at = now() WHERE id = $1`,
+              [id, out.name, out.cat, out.tags, out.keywords, out.why])
+          : await pool.query('UPDATE memes SET enriched_at = now() WHERE id = $1', [id]);
+        return r.rowCount > 0;
+      },
       async remove(id, ownerId) {
         const r = await pool.query('DELETE FROM memes WHERE id = $1 AND owner_id = $2', [id, ownerId]);
         return r.rowCount > 0;

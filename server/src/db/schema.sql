@@ -26,8 +26,12 @@ CREATE TABLE IF NOT EXISTS memes (
   owner_id    BIGINT      REFERENCES users(id) ON DELETE CASCADE,  -- NULL이면 기본 카탈로그
   visibility  TEXT        NOT NULL DEFAULT 'public'
               CHECK (visibility IN ('public','private')),
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  -- AI가 분류와 숨은 키워드를 붙인 시각. NULL이면 주기 작업이 집어갑니다.
+  enriched_at TIMESTAMPTZ
 );
+CREATE INDEX IF NOT EXISTS memes_enrich_idx ON memes (created_at)
+  WHERE owner_id IS NOT NULL AND enriched_at IS NULL;
 
 -- 검색: 제목·태그·키워드·설명을 한 덩어리로 묶어 GIN 인덱스
 CREATE INDEX IF NOT EXISTS memes_search_idx ON memes

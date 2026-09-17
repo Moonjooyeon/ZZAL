@@ -14,19 +14,25 @@ import { memeRoutes } from './routes/memes.js';
 import { boardRoutes } from './routes/boards.js';
 import { uploadRoutes } from './routes/uploads.js';
 import { reportRoutes } from './routes/reports.js';
+import { searchRoutes } from './routes/search.js';
+import { startEnricher } from './ai/enrich.js';
+import { aiEnabled } from './ai/client.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.resolve(here, '../..');   // 저장소 루트 (index.html이 있는 곳)
 
 const router = createRouter();
-router.get('/api/health', (req, res) => json(res, 200, { ok: true, db: config.db.driver }));
+router.get('/api/health', (req, res) =>
+  json(res, 200, { ok: true, db: config.db.driver, ai: aiEnabled() }));
 authRoutes(router);
 memeRoutes(router);
 boardRoutes(router);
 uploadRoutes(router);
 reportRoutes(router);
+searchRoutes(router);
 
 const db = await getDb();
+const enriching = startEnricher(db);
 const static_ = config.serveWeb ? serveStatic(webRoot) : null;
 
 const server = http.createServer(async (req, res) => {
@@ -49,4 +55,6 @@ server.listen(config.port, () => {
   console.log(`  저장소: ${db.driver}`);
   console.log(`  프론트 같이 서빙: ${config.serveWeb ? 'on' : 'off'}`);
   if (config.auth.demo) console.log('  로그인: DEMO_AUTH (앱 키가 없어 임시 계정으로 로그인됩니다)');
+  console.log(`  AI: ${aiEnabled() ? config.ai.model : '꺼짐 (ANTHROPIC_API_KEY 없음)'}`
+    + (enriching ? ` · 숨은 키워드 붙이기 ${config.ai.enrich.intervalMs / 1000}초마다` : ''));
 });

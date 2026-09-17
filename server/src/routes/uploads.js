@@ -37,6 +37,9 @@ export function uploadRoutes(router) {
     if (!ALLOWED.includes(m[1])) throw badRequest('JPG, PNG, GIF 파일을 올려주세요');
     if (Buffer.byteLength(m[2], 'base64') > MAX_BYTES) throw tooLarge('10MB 이하의 이미지를 올려주세요');
 
+    // 먼저 규칙으로 임시 분류해 바로 응답합니다.
+    // 이미지를 보고 제대로 나누고 숨은 키워드를 붙이는 일은
+    // ai/enrich.js 의 주기 작업이 잠시 뒤에 이어서 합니다.
     const meme = await db.memes.create({
       name,
       image_path: body.image,          // TODO: 오브젝트 스토리지 키로 바꾸기
@@ -46,6 +49,7 @@ export function uploadRoutes(router) {
       why: name,
       owner_id: u.id,
       visibility: 'private',
+      enriched_at: null,
     });
     created(res, { meme: { id: meme.id, name: meme.name, src: meme.image_path, cat: meme.cat, tags: meme.tags, why: meme.why, mine: true } });
   });

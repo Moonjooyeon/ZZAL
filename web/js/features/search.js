@@ -61,9 +61,12 @@ export function score(z, q, terms) {
   return n;
 }
 
-/** 목록을 검색어로 걸러 점수순으로 */
-export function rank(rows, q) {
-  const terms = searchTerms(q);
+/**
+ * 목록을 검색어로 걸러 점수순으로.
+ * extra를 주면 그 단어들도 같이 대조합니다 (AI가 옮겨준 말).
+ */
+export function rank(rows, q, extra) {
+  const terms = [...new Set([...searchTerms(q), ...(extra || [])])];
   if (!terms.length) return rows;
   return rows
     .map(z => ({ z, n: score(z, q, terms) }))

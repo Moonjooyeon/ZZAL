@@ -1,6 +1,7 @@
 // features/feed.js — 피드 화면. 카드 그리기, 화면 전환, 카테고리 필터, 검색 결과 반영.
 import { $, esc, icons } from '../core/dom.js';
 import { state } from '../core/state.js';
+import { store } from '../core/api.js';
 import { all, visible, title, CATEGORIES } from '../core/catalog.js';
 import { rank } from './search.js';
 import { adCard, adSlot, adIndex } from './ads.js';
@@ -52,6 +53,7 @@ export function query(q) {
 export function resetFeed() {
   $('q').value = '';
   state.cat = '전체';
+  state.assist = null;
   render();
 }
 
@@ -60,18 +62,41 @@ function renderExplore() {
   const raw = $('q').value.trim();
   const q = raw.toLowerCase();
   let rows = visible().filter(z => state.cat === '전체' || z.cat === state.cat);
-  if (q) rows = rank(rows, q);
+  // AI가 옮겨준 말은 그 검색어 그대로일 때만 함께 씁니다
+  const assist = state.assist && state.assist.q === q ? state.assist : null;
+  if (q) rows = rank(rows, q, assist ? assist.terms : null);
 
   $('heading').textContent = q ? `“${raw}” 검색 결과`
     : state.cat === '전체' ? '오늘, 이 짤 어때요?' : state.cat + ' 모아보기';
   $('summary').textContent = q
     ? rows.length + '개의 짤 · 키워드가 겹치는 순서로 보여드려요'
+      + (assist && rows.length ? ` · AI가 “${assist.note || assist.terms.join(', ')}”로 다시 찾았어요` : '')
     : '말로 하기 애매할 때 꺼내 쓰기 좋은 짤 · ' + rows.length + '개';
   $('reset').hidden = !q;
   $('board').classList.toggle('board', !!rows.length);
   $('board').innerHTML = rows.length
     ? feedCards(rows)
-    : empty('아직 맞는 짤이 없어요', '“잠수”, “야근”처럼 짧은 말로 다시 찾아보세요.');
+    : empty(state.assisting ? 'AI가 다시 찾아보는 중이에요' : '아직 맞는 짤이 없어요',
+            state.assisting ? '잠시만요.' : '“잠수”, “야근”처럼 짧은 말로 다시 찾아보세요.');
+
+  // 우리 짤 안에서 못 찾았을 때만 2차로 AI에게 물어봅니다
+  if (q && !rows.length && !assist && !state.assisting) assist2nd(q);
+}
+
+/** 2차 검증 — 규칙 검색이 0건일 때만 부릅니다 */
+async function assist2nd(q) {
+  state.assisting = true;
+  render();
+  try {
+    const out = await store.assistSearch(q);
+    state.assist = out ? { q, terms: out.terms, cats: out.cats, note: out.note } : { q, terms: [] };
+  } catch {
+    state.assist = { q, terms: [] };
+  } finally {
+    state.assisting = false;
+    // 그 사이 사용자가 다른 말을 넣었으면 그 결과를 덮지 않습니다
+    if ($('q').value.trim().toLowerCase() === q) render();
+  }
 }
 
 function renderSaved() {
