@@ -41,7 +41,7 @@ const SCHEMA = {
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-/** data: URL을 Claude에 넘길 이미지 블록으로. 아니면 null */
+/** data: URL을 Router의 이미지 블록으로. 아니면 null */
 function imageBlock(src) {
   const m = /^data:([\w/+-]+);base64,(.+)$/.exec(String(src || ''));
   if (!m || !IMAGE_TYPES.includes(m[1])) return null;

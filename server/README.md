@@ -39,14 +39,19 @@ psql "$DATABASE_URL" -f src/db/schema.sql
 
 ## AI (곁들임)
 
-`ANTHROPIC_API_KEY` 가 있을 때만 켜집니다. 없으면 검색과 분류는
+`CAFE24_LLM_ROUTER_API_KEY` 가 있을 때만 켜집니다. 없으면 검색과 분류는
 규칙만으로 돌아가고 서버는 `npm install` 없이도 그대로 뜹니다.
 SDK는 키가 있을 때만 불러옵니다(지연 import).
 
 ```sh
 npm install                 # AI를 쓸 때만 필요
-ANTHROPIC_API_KEY=sk-ant-... npm start
+CAFE24_LLM_ROUTER_API_KEY=... npm start
 ```
+
+Cafe24 LLM Router는 OpenAI 호환 API입니다. 기본 주소는
+`https://llm-router.cafe24.com/api/v1`이며, `AI_MODEL=cafe24/auto`로
+요청에 맞는 모델을 자동 선택합니다. 특정 모델을 쓰려면 Router의 모델 ID를
+`AI_MODEL`에 지정하세요.
 
 키는 서버에만 둡니다. 브라우저로 내려보내지 않습니다.
 

@@ -1,7 +1,6 @@
-// ai/client.js — Claude 호출 한 군데로.
+// ai/client.js — Cafe24 LLM Router 호출 한 군데로.
 //
-// SDK는 여기서만, 그것도 키가 있을 때만 불러옵니다(지연 import).
-// 그래서 ANTHROPIC_API_KEY 없이도 서버는 npm install 없이 그대로 뜹니다.
+// OpenAI 호환 SDK는 여기서만, 키가 있을 때만 지연 import합니다.
 import { config } from '../config.js';
 
 let clientPromise = null;
@@ -13,13 +12,13 @@ async function getClient() {
   if (!clientPromise) {
     clientPromise = (async () => {
       try {
-        const { default: Anthropic } = await import('@anthropic-ai/sdk');
-        return new Anthropic({
+        const { default: OpenAI } = await import('openai');
+        return new OpenAI({
           apiKey: config.ai.apiKey,
-          ...(config.ai.baseUrl ? { baseURL: config.ai.baseUrl } : {}),
+          baseURL: config.ai.baseUrl,
         });
       } catch (e) {
-        console.error('[ai] @anthropic-ai/sdk를 불러오지 못했습니다. `cd server && npm install` 후 다시 시도하세요.');
+        console.error('[ai] openai SDK를 불러오지 못했습니다. `cd server && npm install` 후 다시 시도하세요.');
         return null;
       }
     })();
@@ -41,23 +40,19 @@ export async function askJson({ system, content, schema, effort = 'low', maxToke
   if (!client) return null;
 
   try {
-    const res = await client.messages.create({
+    const userContent = content.map(block => block.type === 'image'
+      ? { type: 'image_url', image_url: { url: `data:${block.source.media_type};base64,${block.source.data}` } }
+      : block);
+    const res = await client.chat.completions.create({
       model: config.ai.model,
       max_tokens: maxTokens,
-      // 고정 지시문을 캐시해 반복 호출 비용을 줄입니다
-      system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
-      messages: [{ role: 'user', content }],
-      output_config: {
-        effort,
-        format: { type: 'json_schema', schema },
+      messages: [{ role: 'system', content: system }, { role: 'user', content: userContent }],
+      response_format: {
+        type: 'json_schema',
+        json_schema: { name: 'zzal_result', strict: true, schema },
       },
     });
-
-    if (res.stop_reason === 'refusal') {
-      console.warn('[ai] 요청이 거절되었습니다:', res.stop_details?.category);
-      return null;
-    }
-    const text = res.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const text = res.choices?.[0]?.message?.content;
     if (!text) return null;
     return JSON.parse(text);
   } catch (e) {

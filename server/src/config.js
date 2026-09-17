@@ -29,12 +29,11 @@ export const config = {
     url: process.env.DATABASE_URL || '',
   },
 
-  // AI는 곁들임입니다. 키가 없으면 검색·분류는 지금처럼 규칙만으로 돌아갑니다.
+  // Cafe24 LLM Router(OpenAI 호환)는 곁들임입니다. 키가 없으면 규칙만으로 돌아갑니다.
   ai: {
-    apiKey: process.env.ANTHROPIC_API_KEY || '',
-    model: process.env.AI_MODEL || 'claude-opus-5',
-    // 사내 프록시를 거치거나 테스트용 가짜 서버를 붙일 때
-    baseUrl: process.env.AI_BASE_URL || '',
+    apiKey: process.env.CAFE24_LLM_ROUTER_API_KEY || process.env.AI_API_KEY || '',
+    model: process.env.AI_MODEL || 'cafe24/auto',
+    baseUrl: process.env.CAFE24_LLM_ROUTER_BASE_URL || process.env.AI_BASE_URL || 'https://llm-router.cafe24.com/api/v1',
     // 올린 짤에 숨은 키워드를 붙이는 주기 작업
     enrich: {
       on: bool(process.env.AI_ENRICH, true),
