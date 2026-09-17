@@ -86,31 +86,31 @@
   <section id="saved" hidden>
     <div class="pageintro" id="savedintro">
       <h1>내 짤</h1>
-      <p>주제별로 보드를 만들어 짤을 모아보세요.<br>계정에 저장되어 다른 기기에서도 그대로 꺼내 볼 수 있어요.</p>
+      <p>주제별로 저장함을 만들어 짤을 모아보세요.<br>계정에 저장되어 다른 기기에서도 그대로 꺼내 볼 수 있어요.</p>
     </div>
     <!-- 로그인 전 -->
     <div id="boardsgate"></div>
 
-    <!-- 보드 목록 -->
+    <!-- 저장함 목록 -->
     <div id="boardsview" hidden>
       <div class="sectionhead">
-        <div><h2 id="savedheading">보드</h2></div>
-        <button class="primary" onclick="openBoardForm()">＋ 보드 만들기</button>
+        <div><h2 id="savedheading">저장함</h2></div>
+        <button class="primary" onclick="openBoardForm()">＋ 저장함 만들기</button>
       </div>
       <div id="boardgrid" class="boardgrid"></div>
     </div>
 
-    <!-- 보드 하나 -->
+    <!-- 저장함 하나 -->
     <div id="boardview" hidden>
-      <button class="backlink" onclick="closeBoard()">← 보드 전체</button>
+      <button class="backlink" onclick="closeBoard()">← 저장함 전체</button>
       <div class="sectionhead">
         <div>
           <h2 id="boardtitle"></h2>
           <p id="boardmeta"></p>
         </div>
         <div class="boardacts" id="boardacts">
-          <button onclick="openBoardForm({edit:zzalOpenBoard()})">이름 바꾸기</button>
-          <button class="danger" onclick="askDeleteBoard(zzalOpenBoard())">보드 삭제</button>
+          <button onclick="openBoardForm(zzalOpenBoard())">이름 바꾸기</button>
+          <button class="danger" onclick="askDeleteBoard(zzalOpenBoard())">저장함 삭제</button>
         </div>
       </div>
       <div id="boardboard" class="board"></div>
@@ -179,23 +179,31 @@
   <p class="sharenote" id="sharenote"></p>
 </dialog>
 
-<!-- 어디에 담을지 고르기 -->
-<dialog id="pick" aria-labelledby="picktitle">
-  <div class="pickhead">
-    <h3 id="picktitle">어디에 담을까요?</h3>
-    <p id="picksub"></p>
-  </div>
-  <div class="picklist" id="picklist"></div>
-  <button class="newboard" onclick="openBoardForm({pin:zzalPicking()})">＋ 새 보드 만들기</button>
-  <button class="pickclear" id="pickclear" onclick="unpinAll()" hidden></button>
-  <button class="cancel" onclick="document.getElementById('pick').close()">닫기</button>
+<!-- 짤 저장하기 -->
+<dialog id="save" aria-labelledby="savetitle">
+  <form id="saveform">
+    <h3 id="savetitle">어디에 저장할까요?</h3>
+    <p class="sub" id="savesub"></p>
+    <label class="field" for="savepick">저장할 곳</label>
+    <select class="textinput" id="savepick"></select>
+    <div id="newboxrow" hidden>
+      <label class="field" for="boxname">새 저장함 이름</label>
+      <input class="textinput" id="boxname" maxlength="30" placeholder="예: 웃긴 짤, 연성 소재">
+      <label class="check"><input type="checkbox" id="boxprivate">나만 보기</label>
+    </div>
+    <div class="savedin" id="savedin" hidden></div>
+    <div class="askrow">
+      <button type="button" onclick="document.getElementById('save').close()">취소</button>
+      <button type="submit" class="go">저장</button>
+    </div>
+  </form>
 </dialog>
 
-<!-- 보드 만들기 · 이름 바꾸기 -->
+<!-- 저장함 만들기 · 이름 바꾸기 -->
 <dialog id="boardform" aria-labelledby="boardformtitle">
   <form id="boardformform">
-    <h3 id="boardformtitle">새 보드</h3>
-    <label class="field" for="boardname">보드 이름</label>
+    <h3 id="boardformtitle">새 저장함</h3>
+    <label class="field" for="boardname">저장함 이름</label>
     <input class="textinput" id="boardname" maxlength="30" placeholder="예: 웃긴 짤, 연성 소재" required>
     <label class="check" id="boardprivaterow"><input type="checkbox" id="boardprivate">나만 보기</label>
     <div class="askrow">

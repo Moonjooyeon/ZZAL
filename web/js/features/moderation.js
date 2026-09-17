@@ -42,7 +42,7 @@ export function askDelete(id) {
     danger: true,
     onOk: async () => {
       state.mine = state.mine.filter(x => x.id !== id);
-      state.pins = state.pins.filter(p => p.m !== id);   // 담아둔 보드에서도 빠집니다
+      state.pins = state.pins.filter(p => p.m !== id);   // 담아둔 저장함에서도 빠집니다
       refreshSaved();
       await store.removeUpload(id);
       await store.removePin(id, null);

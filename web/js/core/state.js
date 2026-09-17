@@ -3,13 +3,13 @@
 // (import 한 변수는 다른 모듈에서 재할당할 수 없기 때문)
 
 export const state = {
-  /** @type {Array<{id:string,name:string,private:boolean,at:number,updatedAt:number}>} 보드 */
+  /** @type {Array<{id:string,name:string,private:boolean,at:number,updatedAt:number}>} 저장함 */
   boards: [],
-  /** @type {Array<{m:number,b:string,at:number}>} 어느 보드에 어떤 짤을 담았는지 */
+  /** @type {Array<{m:number,b:string,at:number}>} 어느 저장함에 어떤 짤을 담았는지 */
   pins: [],
   /** @type {Set<number>} 한 곳이라도 담긴 짤 id — pins에서 계산합니다 */
   saved: new Set(),
-  /** @type {?string} 지금 열어본 보드. null이면 보드 목록 */
+  /** @type {?string} 지금 열어본 저장함. null이면 저장함 목록 */
   openBoard: null,
   /** @type {Array} 내가 올린 짤 */
   mine: [],

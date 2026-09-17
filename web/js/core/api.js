@@ -4,11 +4,12 @@
 //   signIn(provider)             → 세션. null이면 공급자 화면으로 넘어간 것
 //   signOut()
 //   load()                       → { boards:[], pins:[], mine:[], reported:{} }
-//   createBoard({name,private})  → 만들어진 보드
+//   createBoard({name,private})  → 만들어진 저장함
 //   renameBoard(id, name)
-//   deleteBoard(id)              → 보드와 그 안의 핀을 같이 지웁니다
-//   addPin(memeId, boardId)      → 보드에 담기
-//   removePin(memeId, boardId)   → boardId가 null이면 모든 보드에서 빼기
+//   deleteBoard(id)              → 저장함과 그 안의 핀을 같이 지웁니다
+//   addPin(memeId, boardId)      → 저장함에 담기. boardId가 null이면 저장함 없이 저장
+//   removePin(memeId, boardId)   → 그 자리에서만 빼기 (null이면 '저장함 없이' 자리)
+//   clearPins(memeId)            → 어디에 담겼든 전부 빼기
 //   addUpload({name, image})     → 만들어진 짤. null이면 실패
 //   removeUpload(id)
 //   setReport(id, reason|null)   → 신고/숨김 해제
@@ -52,20 +53,16 @@ const uid = () => (state.session ? state.session.id : 'guest');
 const touchBoard = (u, boardId) => ls.write('boards', u,
   ls.read('boards', u, []).map(b => b.id === boardId ? { ...b, updatedAt: Date.now() } : b));
 
-/** 보드가 없던 시절의 평평한 saved 목록을 기본 보드 하나로 옮깁니다 */
+/** 저장함이 없던 시절의 평평한 saved 목록을 기본 저장함 하나로 옮깁니다 */
 function migrateFlatSaves(u) {
   const old = ls.read('saved', u, null);
   if (!Array.isArray(old)) return;
   if (old.length) {
-    const board = {
-      id: 'b-default', name: '저장한 짤', private: false,
-      at: Date.now(), updatedAt: Date.now(),
-    };
-    const boards = ls.read('boards', u, []);
-    if (!boards.some(b => b.id === board.id)) ls.write('boards', u, [...boards, board]);
+    // 저장함이 없던 시절에 담아둔 것 — '저장함 없이' 자리로 옮깁니다
     const pins = ls.read('pins', u, []);
-    const have = new Set(pins.filter(p => p.b === board.id).map(p => p.m));
-    ls.write('pins', u, [...pins, ...old.filter(m => !have.has(m)).map(m => ({ m, b: board.id, at: Date.now() }))]);
+    const have = new Set(pins.filter(p => p.b === null).map(p => p.m));
+    ls.write('pins', u, [...pins,
+      ...old.filter(m => !have.has(m)).map(m => ({ m, b: null, at: Date.now() }))]);
   }
   try { localStorage.removeItem(ls.key('saved', u)); } catch {}
 }
@@ -128,16 +125,19 @@ const localStore = {
     const pins = ls.read('pins', u, []);
     if (pins.some(p => p.m === memeId && p.b === boardId)) return true;
     if (!ls.write('pins', u, [...pins, { m: memeId, b: boardId, at: Date.now() }])) return false;
-    touchBoard(u, boardId);
+    if (boardId) touchBoard(u, boardId);
     return true;
   },
   async removePin(memeId, boardId) {
     const u = uid();
-    const pins = ls.read('pins', u, []);
-    const left = pins.filter(p => !(p.m === memeId && (boardId === null || p.b === boardId)));
+    const left = ls.read('pins', u, []).filter(p => !(p.m === memeId && p.b === boardId));
     if (!ls.write('pins', u, left)) return false;
     if (boardId) touchBoard(u, boardId);
     return true;
+  },
+  async clearPins(memeId) {
+    const u = uid();
+    return ls.write('pins', u, ls.read('pins', u, []).filter(p => p.m !== memeId));
   },
   async addUpload(z) {
     const mine = ls.read('mine', uid(), []);
@@ -196,7 +196,11 @@ const remoteStore = {
     (reports.reports || []).forEach(r => { reported[r.meme_id] = { reason: r.reason, at: r.at }; });
     return {
       boards: (boards.boards || []).map(toBoard),
-      pins: (boards.pins || []).map(p => ({ m: p.meme_id, b: String(p.board_id), at: p.at })),
+      pins: (boards.pins || []).map(p => ({
+        m: p.meme_id,
+        b: p.board_id == null ? null : String(p.board_id),
+        at: p.at,
+      })),
       mine: (uploads.uploads || []).map(toMeme),
       reported,
     };
@@ -215,13 +219,19 @@ const remoteStore = {
     return true;
   },
   async addPin(memeId, boardId) {
-    await send('PUT', `/api/me/boards/${boardId}/pins/${memeId}`);
+    await (boardId === null
+      ? send('PUT', `/api/me/pins/${memeId}`)
+      : send('PUT', `/api/me/boards/${boardId}/pins/${memeId}`));
     return true;
   },
   async removePin(memeId, boardId) {
     await (boardId === null
       ? send('DELETE', `/api/me/pins/${memeId}`)
       : send('DELETE', `/api/me/boards/${boardId}/pins/${memeId}`));
+    return true;
+  },
+  async clearPins(memeId) {
+    await send('DELETE', `/api/me/saves/${memeId}`);
     return true;
   },
   async addUpload(z) {
@@ -240,7 +250,7 @@ const remoteStore = {
   },
 };
 
-/** 서버 응답 → 화면이 쓰는 보드 객체 */
+/** 서버 응답 → 화면이 쓰는 저장함 객체 */
 const toBoard = b => ({
   id: String(b.id),
   name: b.name,

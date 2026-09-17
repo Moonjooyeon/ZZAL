@@ -9,7 +9,7 @@ import { toggle } from './features/saves.js';
 import { openShare, openWin, nativeShare, copyShareUrl } from './features/share.js';
 import { askDelete, askReport, unreport } from './features/moderation.js';
 import { cancelDraft, initUpload } from './features/upload.js';
-import { openBoard, closeBoard, openBoardForm, askDeleteBoard, openPicker, pinTo, unpinAll, currentPick, initBoards } from './features/boards.js';
+import { openBoard, closeBoard, openBoardForm, askDeleteBoard, openPicker, unpinFrom, unpinAll, onPickChange, currentPick, initBoards } from './features/boards.js';
 
 // ── 인라인 핸들러 다리 ─────────────────────────────────────────────────────
 // 카드·상세·공유 시트는 HTML 문자열로 만들고 onclick="..." 으로 연결합니다.
@@ -23,7 +23,7 @@ Object.assign(window, {
   askDelete, askReport, unreport,
   openLogin, signIn, signOut, closeAcct,
   cancelDraft,
-  openBoard, closeBoard, openBoardForm, askDeleteBoard, openPicker, pinTo, unpinAll,
+  openBoard, closeBoard, openBoardForm, askDeleteBoard, openPicker, unpinFrom, unpinAll, onPickChange,
   // 인라인 핸들러가 지금 상태를 물어볼 때 쓰는 작은 창구
   zzalOpenBoard: () => state.openBoard,
   zzalPicking: currentPick,

@@ -1,4 +1,4 @@
-/* boards.css — 보드 목록 · 보드 하나 · 담을 곳 고르기 */
+/* boards.css — 저장함 목록 · 저장함 하나 · 담을 곳 고르기 */
 
 .boardgrid {
   display: grid;
@@ -6,7 +6,7 @@
   gap: 26px 22px;
 }
 
-/* ── 보드 카드 ─────────────────────────────────────────────────────────── */
+/* ── 저장함 카드 ─────────────────────────────────────────────────────────── */
 .boardcard {
   display: block;
   width: 100%;
@@ -82,7 +82,7 @@ svg.lock {
   color: var(--muted);
 }
 
-/* ── 보드 하나 ─────────────────────────────────────────────────────────── */
+/* ── 저장함 하나 ─────────────────────────────────────────────────────────── */
 .backlink {
   margin-top: 26px;
   padding: 7px 0;
@@ -127,23 +127,19 @@ svg.lock {
   background: #fbeeee;
 }
 
-/* ── 담을 곳 고르기 ────────────────────────────────────────────────────── */
-#pick {
+/* ── 짤 저장하기 ───────────────────────────────────────────────────────── */
+#save {
   width: min(420px, calc(100% - 32px));
-  padding: 24px 20px 18px;
+  padding: 26px 24px 20px;
 }
 
-.pickhead {
-  margin-bottom: 16px;
-}
-
-.pickhead h3 {
+#save h3 {
   margin: 0 0 6px;
   font-size: 17px;
   font-weight: 750;
 }
 
-.pickhead p {
+#save p.sub {
   margin: 0;
   font-size: 12.5px;
   color: var(--muted);
@@ -152,94 +148,77 @@ svg.lock {
   white-space: nowrap;
 }
 
-.picklist {
-  display: grid;
-  gap: 2px;
-  max-height: 46dvh;
-  overflow: auto;
-  margin-bottom: 8px;
+select.textinput {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23777970' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 38px;
+  cursor: pointer;
 }
 
-.pickrow {
+#newboxrow {
+  padding: 2px 0 0;
+}
+
+#save .check {
+  margin: 12px 0 0;
+}
+
+/* 이미 담긴 곳 — 눌러서 뺄 수 있습니다 */
+.savedin {
   display: flex;
   align-items: center;
-  gap: 11px;
-  width: 100%;
-  padding: 8px;
-  border-radius: 10px;
-  text-align: left;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
 }
 
-.pickrow:hover {
-  background: #f1f1ea;
+.savedin .lbl {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-right: 2px;
 }
 
-.pickrow .thumb {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #eeede7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pickrow .thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  max-height: none;
-}
-
-.pickrow .pname {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13.5px;
-  font-weight: 650;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.pickrow .pstate {
-  flex: none;
+.savedin .chip {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 20px;
   font-size: 12px;
-  color: var(--muted);
 }
 
-.pickrow.on .pstate {
-  color: #6b6a2a;
-  font-weight: 700;
+.savedin .chip:hover {
+  background: #fbeeee;
+  border-color: #e4b4b4;
+  color: #a33a3a;
 }
 
-.newboard {
-  width: 100%;
-  margin-top: 6px;
-  padding: 13px;
-  border: 1px dashed #c9cabd;
-  border-radius: 11px;
+#save .askrow {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+
+#save .askrow button {
+  border: 1px solid #d9dbcf;
+  background: #fff;
+  border-radius: 8px;
+  padding: 11px 16px;
   font-size: 13px;
-  font-weight: 650;
 }
 
-.newboard:hover {
-  background: #f1f1ea;
+#save .askrow button.go {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
 }
 
-#pick .cancel {
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-/* ── 보드 만들기 폼 ────────────────────────────────────────────────────── */
+/* ── 저장함 만들기 폼 ────────────────────────────────────────────────────── */
 #boardform {
   width: min(400px, calc(100% - 32px));
   padding: 26px 24px 20px;
@@ -279,15 +258,3 @@ svg.lock {
   color: #fff;
 }
 
-.pickclear {
-  width: 100%;
-  margin-top: 8px;
-  padding: 11px;
-  border-radius: 9px;
-  font-size: 12.5px;
-  color: #a33a3a;
-}
-
-.pickclear:hover {
-  background: #fbeeee;
-}

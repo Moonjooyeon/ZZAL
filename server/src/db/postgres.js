@@ -90,16 +90,24 @@ export async function createPostgresDb(url) {
            WHERE user_id = $1 ORDER BY created_at DESC`, [userId]))
           .map(r => ({ meme_id: Number(r.meme_id), board_id: Number(r.board_id), at: r.at }));
       },
+      /** boardId가 null이면 저장함 없이 저장 */
       async add(userId, boardId, memeId) {
         await pool.query(
           `INSERT INTO saves (user_id, board_id, meme_id) VALUES ($1,$2,$3)
-           ON CONFLICT DO NOTHING`, [userId, boardId, memeId]);
+           ON CONFLICT (user_id, meme_id, COALESCE(board_id, 0)) DO NOTHING`,
+          [userId, boardId, memeId]);
       },
+      /** 그 자리에서만 빼기 — boardId가 null이면 '저장함 없이' 자리 */
       async remove(userId, boardId, memeId) {
         await (boardId === null
-          ? pool.query('DELETE FROM saves WHERE user_id = $1 AND meme_id = $2', [userId, memeId])
+          ? pool.query('DELETE FROM saves WHERE user_id = $1 AND meme_id = $2 AND board_id IS NULL',
+              [userId, memeId])
           : pool.query('DELETE FROM saves WHERE user_id = $1 AND board_id = $2 AND meme_id = $3',
               [userId, boardId, memeId]));
+      },
+      /** 어디에 담겼든 전부 */
+      async clear(userId, memeId) {
+        await pool.query('DELETE FROM saves WHERE user_id = $1 AND meme_id = $2', [userId, memeId]);
       },
     },
 

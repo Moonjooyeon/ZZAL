@@ -113,7 +113,7 @@ export function createJsonDb(file) {
         const i = data.boards.findIndex(b => b.id === id && b.user_id === userId);
         if (i < 0) return false;
         data.boards.splice(i, 1);
-        data.saves = data.saves.filter(s => s.board_id !== id);   // 보드와 함께 핀도
+        data.saves = data.saves.filter(s => s.board_id !== id);   // 저장함과 함께 핀도
         save();
         return true;
       },
@@ -124,11 +124,12 @@ export function createJsonDb(file) {
     },
 
     saves: {
-      /** 이 사람이 담아둔 것 전부 — 어느 보드에 담았는지까지 */
+      /** 이 사람이 담아둔 것 전부 — 어느 저장함에 담았는지까지 */
       async list(userId) {
         return data.saves.filter(s => s.user_id === userId)
           .map(s => ({ meme_id: s.meme_id, board_id: s.board_id, at: s.created_at }));
       },
+      /** boardId가 null이면 저장함 없이 저장 */
       async add(userId, boardId, memeId) {
         if (!data.saves.some(s => s.user_id === userId && s.board_id === boardId && s.meme_id === memeId)) {
           data.saves.push({
@@ -138,11 +139,15 @@ export function createJsonDb(file) {
           save();
         }
       },
-      /** boardId가 null이면 모든 보드에서 뺍니다 */
+      /** 그 자리에서만 빼기 — boardId가 null이면 '저장함 없이' 자리 */
       async remove(userId, boardId, memeId) {
         data.saves = data.saves.filter(s => !(
-          s.user_id === userId && s.meme_id === memeId &&
-          (boardId === null || s.board_id === boardId)));
+          s.user_id === userId && s.meme_id === memeId && s.board_id === boardId));
+        save();
+      },
+      /** 어디에 담겼든 전부 */
+      async clear(userId, memeId) {
+        data.saves = data.saves.filter(s => !(s.user_id === userId && s.meme_id === memeId));
         save();
       },
     },

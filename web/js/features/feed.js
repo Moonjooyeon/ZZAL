@@ -30,7 +30,7 @@ const GATE = '<div class="gate"><h3>로그인하면 여기에 모여요</h3><p>�
 
 // ── 화면 전환 ─────────────────────────────────────────────────────────────
 export function navigate(page) {
-  // 내 짤로 (다시) 들어오면 항상 보드 목록부터. 열어뒀던 보드가 따라오지 않게.
+  // 내 짤로 (다시) 들어오면 항상 저장함 목록부터. 열어뒀던 저장함이 따라오지 않게.
   if (page !== 'saved' || state.page !== 'saved') state.openBoard = null;
   state.page = page;
   ['explore', 'saved', 'upload'].forEach(x => { $(x).hidden = x !== page; });
@@ -84,10 +84,7 @@ function renderSaved() {
 
   if (!state.session) { $('boardsgate').innerHTML = GATE; return; }
   if (inBoard) renderBoardDetail();
-  else {
-    $('savedheading').textContent = '보드 ' + state.boards.length;
-    renderBoards();
-  }
+  else renderBoards();
 }
 
 /** 신고해서 숨긴 짤 — 내 짤 화면 아래에 되돌릴 수 있게 남겨둡니다 */

@@ -36,7 +36,7 @@ CREATE INDEX IF NOT EXISTS memes_search_idx ON memes
 CREATE INDEX IF NOT EXISTS memes_cat_idx   ON memes (cat);
 CREATE INDEX IF NOT EXISTS memes_owner_idx ON memes (owner_id);
 
--- 보드 ─ 사용자가 만드는 짤 묶음
+-- 저장함 ─ 사용자가 만드는 짤 묶음
 CREATE TABLE IF NOT EXISTS boards (
   id         BIGSERIAL   PRIMARY KEY,
   user_id    BIGINT      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -47,15 +47,18 @@ CREATE TABLE IF NOT EXISTS boards (
 );
 CREATE INDEX IF NOT EXISTS boards_user_idx ON boards (user_id, updated_at DESC);
 
--- 저장한 짤 ─ 어느 보드에 담았는지까지.
--- 같은 짤을 여러 보드에 담을 수 있으므로 board_id가 PK에 들어갑니다.
+-- 저장한 짤 ─ 어느 저장함에 담았는지까지.
+-- board_id가 NULL이면 저장함에 넣지 않고 저장만 해둔 것입니다.
+-- 같은 짤을 여러 저장함에 담을 수 있어 (user, meme) 만으로는 유일하지 않고,
+-- NULL은 PK에 넣을 수 없어 표현식 유니크 인덱스로 중복을 막습니다.
 CREATE TABLE IF NOT EXISTS saves (
   user_id    BIGINT      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  board_id   BIGINT      NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
+  board_id   BIGINT      REFERENCES boards(id) ON DELETE CASCADE,
   meme_id    BIGINT      NOT NULL REFERENCES memes(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (user_id, board_id, meme_id)
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+CREATE UNIQUE INDEX IF NOT EXISTS saves_uniq_idx
+  ON saves (user_id, meme_id, COALESCE(board_id, 0));
 CREATE INDEX IF NOT EXISTS saves_user_idx  ON saves (user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS saves_board_idx ON saves (board_id, created_at DESC);
 
