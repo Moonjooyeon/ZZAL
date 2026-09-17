@@ -1,7 +1,7 @@
 // features/moderation.js — 확인 다이얼로그 · 짤 삭제 · 신고 · 숨김 해제.
 import { $, esc, toast } from '../core/dom.js';
 import { state } from '../core/state.js';
-import { store } from '../core/api.js';
+import { store, refreshSaved } from '../core/api.js';
 import { byId } from '../core/catalog.js';
 import { requireAuth } from './auth.js';
 import { render } from './feed.js';
@@ -42,9 +42,10 @@ export function askDelete(id) {
     danger: true,
     onOk: async () => {
       state.mine = state.mine.filter(x => x.id !== id);
-      state.saved.delete(id);
+      state.pins = state.pins.filter(p => p.m !== id);   // 담아둔 보드에서도 빠집니다
+      refreshSaved();
       await store.removeUpload(id);
-      await store.setSaved(id, false);
+      await store.removePin(id, null);
       if ($('modal').open) $('modal').close();
       render();
       toast('짤을 삭제했어요');

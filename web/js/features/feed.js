@@ -4,6 +4,7 @@ import { state } from '../core/state.js';
 import { all, visible, title, CATEGORIES } from '../core/catalog.js';
 import { rank } from './search.js';
 import { adCard, adSlot, adIndex } from './ads.js';
+import { renderBoards, renderBoardDetail } from './boards.js';
 
 // ── 카드 ──────────────────────────────────────────────────────────────────
 export function card(z) {
@@ -29,6 +30,8 @@ const GATE = '<div class="gate"><h3>로그인하면 여기에 모여요</h3><p>�
 
 // ── 화면 전환 ─────────────────────────────────────────────────────────────
 export function navigate(page) {
+  // 내 짤로 (다시) 들어오면 항상 보드 목록부터. 열어뒀던 보드가 따라오지 않게.
+  if (page !== 'saved' || state.page !== 'saved') state.openBoard = null;
   state.page = page;
   ['explore', 'saved', 'upload'].forEach(x => { $(x).hidden = x !== page; });
   document.querySelectorAll('[data-page]').forEach(b => {
@@ -72,12 +75,19 @@ function renderExplore() {
 }
 
 function renderSaved() {
-  const rows = visible().filter(z => state.saved.has(z.id));
-  $('savedheading').textContent = state.session ? '저장한 짤 ' + rows.length : '저장한 짤';
-  $('savedboard').classList.toggle('board', !!(state.session && rows.length));
-  $('savedboard').innerHTML = !state.session ? GATE
-    : rows.length ? rows.map(card).join('')
-    : empty('다시 보고 싶은 짤을 저장해보세요', '짤 아래 책갈피 버튼을 누르면 여기에 모여요.');
+  const inBoard = state.session && state.openBoard;
+
+  $('savedintro').hidden = !!inBoard;
+  $('boardsgate').hidden = !!state.session;
+  $('boardsview').hidden = !state.session || !!inBoard;
+  $('boardview').hidden = !inBoard;
+
+  if (!state.session) { $('boardsgate').innerHTML = GATE; return; }
+  if (inBoard) renderBoardDetail();
+  else {
+    $('savedheading').textContent = '보드 ' + state.boards.length;
+    renderBoards();
+  }
 }
 
 /** 신고해서 숨긴 짤 — 내 짤 화면 아래에 되돌릴 수 있게 남겨둡니다 */

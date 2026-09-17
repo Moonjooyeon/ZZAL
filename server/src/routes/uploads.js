@@ -47,7 +47,6 @@ export function uploadRoutes(router) {
       owner_id: u.id,
       visibility: 'private',
     });
-    await db.saves.add(u.id, meme.id);
     created(res, { meme: { id: meme.id, name: meme.name, src: meme.image_path, cat: meme.cat, tags: meme.tags, why: meme.why, mine: true } });
   });
 

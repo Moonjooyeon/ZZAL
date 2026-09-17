@@ -1,18 +1,10 @@
-// features/saves.js — 짤 저장(내 짤에 담기). 로그인이 필요합니다.
-import { $, toast } from '../core/dom.js';
-import { state } from '../core/state.js';
-import { store } from '../core/api.js';
+// features/saves.js — 카드와 상세의 저장 버튼.
+// 누르면 어느 보드에 담을지 고르는 창이 열립니다. 같은 짤을 여러 보드에
+// 담을 수 있어야 해서, 저장된 상태에서도 바로 빼지 않고 창을 엽니다.
 import { requireAuth } from './auth.js';
-import { render } from './feed.js';
-import { renderDetail } from './detail.js';
+import { openPicker } from './boards.js';
 
-export async function toggle(id) {
+export function toggle(id) {
   if (!requireAuth('짤을 저장하려면 로그인이 필요해요.')) return;
-
-  const on = !state.saved.has(id);
-  on ? state.saved.add(id) : state.saved.delete(id);
-  await store.setSaved(id, on);
-  render();
-  if ($('modal').open) renderDetail(id);   // 상세가 열려 있으면 버튼 문구도 갱신
-  toast(state.saved.has(id) ? '내 짤에 저장했어요' : '저장을 취소했어요');
+  openPicker(id);
 }

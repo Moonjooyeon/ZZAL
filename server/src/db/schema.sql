@@ -36,14 +36,28 @@ CREATE INDEX IF NOT EXISTS memes_search_idx ON memes
 CREATE INDEX IF NOT EXISTS memes_cat_idx   ON memes (cat);
 CREATE INDEX IF NOT EXISTS memes_owner_idx ON memes (owner_id);
 
--- 저장한 짤
+-- 보드 ─ 사용자가 만드는 짤 묶음
+CREATE TABLE IF NOT EXISTS boards (
+  id         BIGSERIAL   PRIMARY KEY,
+  user_id    BIGINT      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name       TEXT        NOT NULL,
+  is_private BOOLEAN     NOT NULL DEFAULT false,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS boards_user_idx ON boards (user_id, updated_at DESC);
+
+-- 저장한 짤 ─ 어느 보드에 담았는지까지.
+-- 같은 짤을 여러 보드에 담을 수 있으므로 board_id가 PK에 들어갑니다.
 CREATE TABLE IF NOT EXISTS saves (
   user_id    BIGINT      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  board_id   BIGINT      NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
   meme_id    BIGINT      NOT NULL REFERENCES memes(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (user_id, meme_id)
+  PRIMARY KEY (user_id, board_id, meme_id)
 );
-CREATE INDEX IF NOT EXISTS saves_user_idx ON saves (user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS saves_user_idx  ON saves (user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS saves_board_idx ON saves (board_id, created_at DESC);
 
 -- 신고 ─ 신고한 사람의 피드에서 바로 숨기고, 운영자가 나중에 확인합니다
 CREATE TABLE IF NOT EXISTS reports (

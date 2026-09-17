@@ -3,8 +3,12 @@
 //   getSession()                 → 로그인 정보 또는 null
 //   signIn(provider)             → 세션. null이면 공급자 화면으로 넘어간 것
 //   signOut()
-//   load()                       → { saved:number[], mine:[], reported:{} }
-//   setSaved(id, on)             → 저장/취소
+//   load()                       → { boards:[], pins:[], mine:[], reported:{} }
+//   createBoard({name,private})  → 만들어진 보드
+//   renameBoard(id, name)
+//   deleteBoard(id)              → 보드와 그 안의 핀을 같이 지웁니다
+//   addPin(memeId, boardId)      → 보드에 담기
+//   removePin(memeId, boardId)   → boardId가 null이면 모든 보드에서 빼기
 //   addUpload({name, image})     → 만들어진 짤. null이면 실패
 //   removeUpload(id)
 //   setReport(id, reason|null)   → 신고/숨김 해제
@@ -45,6 +49,27 @@ const ls = {
 
 const uid = () => (state.session ? state.session.id : 'guest');
 
+const touchBoard = (u, boardId) => ls.write('boards', u,
+  ls.read('boards', u, []).map(b => b.id === boardId ? { ...b, updatedAt: Date.now() } : b));
+
+/** 보드가 없던 시절의 평평한 saved 목록을 기본 보드 하나로 옮깁니다 */
+function migrateFlatSaves(u) {
+  const old = ls.read('saved', u, null);
+  if (!Array.isArray(old)) return;
+  if (old.length) {
+    const board = {
+      id: 'b-default', name: '저장한 짤', private: false,
+      at: Date.now(), updatedAt: Date.now(),
+    };
+    const boards = ls.read('boards', u, []);
+    if (!boards.some(b => b.id === board.id)) ls.write('boards', u, [...boards, board]);
+    const pins = ls.read('pins', u, []);
+    const have = new Set(pins.filter(p => p.b === board.id).map(p => p.m));
+    ls.write('pins', u, [...pins, ...old.filter(m => !have.has(m)).map(m => ({ m, b: board.id, at: Date.now() }))]);
+  }
+  try { localStorage.removeItem(ls.key('saved', u)); } catch {}
+}
+
 const localStore = {
   mode: 'local',
 
@@ -68,16 +93,51 @@ const localStore = {
 
   async load() {
     const u = uid();
+    migrateFlatSaves(u);
     return {
-      saved: ls.read('saved', u, []),
+      boards: ls.read('boards', u, []),
+      pins: ls.read('pins', u, []),
       mine: ls.read('mine', u, []),
       reported: ls.read('reported', u, {}),
     };
   },
-  async setSaved(id, on) {
-    const next = new Set(ls.read('saved', uid(), []));
-    on ? next.add(id) : next.delete(id);
-    return ls.write('saved', uid(), [...next]);
+
+  async createBoard({ name, private: isPrivate }) {
+    const u = uid();
+    const board = {
+      id: 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      name, private: !!isPrivate, at: Date.now(), updatedAt: Date.now(),
+    };
+    if (!ls.write('boards', u, [...ls.read('boards', u, []), board])) return null;
+    return board;
+  },
+  async renameBoard(id, name) {
+    const u = uid();
+    const boards = ls.read('boards', u, []).map(b =>
+      b.id === id ? { ...b, name, updatedAt: Date.now() } : b);
+    return ls.write('boards', u, boards);
+  },
+  async deleteBoard(id) {
+    const u = uid();
+    ls.write('pins', u, ls.read('pins', u, []).filter(p => p.b !== id));
+    return ls.write('boards', u, ls.read('boards', u, []).filter(b => b.id !== id));
+  },
+
+  async addPin(memeId, boardId) {
+    const u = uid();
+    const pins = ls.read('pins', u, []);
+    if (pins.some(p => p.m === memeId && p.b === boardId)) return true;
+    if (!ls.write('pins', u, [...pins, { m: memeId, b: boardId, at: Date.now() }])) return false;
+    touchBoard(u, boardId);
+    return true;
+  },
+  async removePin(memeId, boardId) {
+    const u = uid();
+    const pins = ls.read('pins', u, []);
+    const left = pins.filter(p => !(p.m === memeId && (boardId === null || p.b === boardId)));
+    if (!ls.write('pins', u, left)) return false;
+    if (boardId) touchBoard(u, boardId);
+    return true;
   },
   async addUpload(z) {
     const mine = ls.read('mine', uid(), []);
@@ -126,21 +186,42 @@ const remoteStore = {
   async signOut() { await send('POST', '/api/auth/logout'); },
 
   async load() {
-    if (!state.session) return { saved: [], mine: [], reported: {} };
-    const [saves, uploads, reports] = await Promise.all([
-      call('/api/me/saves'), call('/api/me/uploads'), call('/api/me/reports'),
+    const none = { boards: [], pins: [], mine: [], reported: {} };
+    if (!state.session) return none;
+    const [boards, uploads, reports] = await Promise.all([
+      call('/api/me/boards'), call('/api/me/uploads'), call('/api/me/reports'),
     ]);
-    if (!saves) return { saved: [], mine: [], reported: {} };   // 그 사이 세션이 끊긴 경우
+    if (!boards) return none;   // 그 사이 세션이 끊긴 경우
     const reported = {};
     (reports.reports || []).forEach(r => { reported[r.meme_id] = { reason: r.reason, at: r.at }; });
     return {
-      saved: saves.saved,
+      boards: (boards.boards || []).map(toBoard),
+      pins: (boards.pins || []).map(p => ({ m: p.meme_id, b: String(p.board_id), at: p.at })),
       mine: (uploads.uploads || []).map(toMeme),
       reported,
     };
   },
-  async setSaved(id, on) {
-    await send(on ? 'PUT' : 'DELETE', `/api/me/saves/${id}`);
+
+  async createBoard({ name, private: isPrivate }) {
+    const r = await send('POST', '/api/me/boards', { name, private: !!isPrivate });
+    return r ? toBoard(r.board) : null;
+  },
+  async renameBoard(id, name) {
+    await send('PATCH', `/api/me/boards/${id}`, { name });
+    return true;
+  },
+  async deleteBoard(id) {
+    await send('DELETE', `/api/me/boards/${id}`);
+    return true;
+  },
+  async addPin(memeId, boardId) {
+    await send('PUT', `/api/me/boards/${boardId}/pins/${memeId}`);
+    return true;
+  },
+  async removePin(memeId, boardId) {
+    await (boardId === null
+      ? send('DELETE', `/api/me/pins/${memeId}`)
+      : send('DELETE', `/api/me/boards/${boardId}/pins/${memeId}`));
     return true;
   },
   async addUpload(z) {
@@ -158,6 +239,15 @@ const remoteStore = {
     return true;
   },
 };
+
+/** 서버 응답 → 화면이 쓰는 보드 객체 */
+const toBoard = b => ({
+  id: String(b.id),
+  name: b.name,
+  private: !!b.is_private,
+  at: new Date(b.created_at || Date.now()).getTime(),
+  updatedAt: new Date(b.updated_at || b.created_at || Date.now()).getTime(),
+});
 
 /** 서버 응답 → 화면이 쓰는 짤 객체 */
 const toMeme = m => ({
@@ -178,9 +268,16 @@ export const store = USE_API ? remoteStore : localStore;
 /** 내 데이터를 다시 읽어 상태에 싣습니다 (로그인/로그아웃 직후) */
 export async function reloadData() {
   const d = await store.load();
-  state.saved = new Set(d.saved);
+  state.boards = d.boards;
+  state.pins = d.pins;
   state.mine = d.mine;
   state.reported = d.reported;
+  refreshSaved();
+}
+
+/** pins를 바꾼 뒤에는 반드시 불러야 합니다 — 카드의 저장 표시가 여기서 나옵니다 */
+export function refreshSaved() {
+  state.saved = new Set(state.pins.map(p => p.m));
 }
 
 /** 로그인 개념이 없던 시절의 zzal.saved / zzal.mine / zzal.reported 를 guest 칸으로 */
@@ -201,26 +298,33 @@ export function migrateLegacy() {
 /** 로그인 안 한 채로 담아둔 것을 계정으로 옮깁니다. 옮긴 개수를 돌려줍니다. */
 export function mergeGuest(accountId) {
   if (USE_API) return 0;   // 서버를 쓰면 게스트 칸 자체가 없습니다
+  migrateFlatSaves('guest');
   const g = {
-    saved: ls.read('saved', 'guest', []),
+    boards: ls.read('boards', 'guest', []),
+    pins: ls.read('pins', 'guest', []),
     mine: ls.read('mine', 'guest', []),
     reported: ls.read('reported', 'guest', {}),
   };
-  const moved = g.saved.length + g.mine.length + Object.keys(g.reported).length;
+  const moved = g.pins.length + g.mine.length + Object.keys(g.reported).length;
   if (!moved) return 0;
 
   const a = {
-    saved: ls.read('saved', accountId, []),
+    boards: ls.read('boards', accountId, []),
+    pins: ls.read('pins', accountId, []),
     mine: ls.read('mine', accountId, []),
     reported: ls.read('reported', accountId, {}),
   };
-  ls.write('saved', accountId, [...new Set([...a.saved, ...g.saved])]);
+  const haveBoard = new Set(a.boards.map(b => b.id));
+  ls.write('boards', accountId, [...a.boards, ...g.boards.filter(b => !haveBoard.has(b.id))]);
+
+  const havePin = new Set(a.pins.map(p => p.m + '@' + p.b));
+  ls.write('pins', accountId, [...a.pins, ...g.pins.filter(p => !havePin.has(p.m + '@' + p.b))]);
 
   const have = new Set(a.mine.map(m => m.id));
   ls.write('mine', accountId, [...a.mine, ...g.mine.filter(m => !have.has(m.id))]);
   ls.write('reported', accountId, { ...g.reported, ...a.reported });
 
-  ['saved', 'mine', 'reported'].forEach(k => {
+  ['boards', 'pins', 'mine', 'reported'].forEach(k => {
     try { localStorage.removeItem(ls.key(k, 'guest')); } catch {}
   });
   return moved;

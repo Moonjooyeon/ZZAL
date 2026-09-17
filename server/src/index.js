@@ -11,7 +11,7 @@ import { json, HttpError } from './http/respond.js';
 
 import { authRoutes } from './routes/auth.js';
 import { memeRoutes } from './routes/memes.js';
-import { saveRoutes } from './routes/saves.js';
+import { boardRoutes } from './routes/boards.js';
 import { uploadRoutes } from './routes/uploads.js';
 import { reportRoutes } from './routes/reports.js';
 
@@ -22,7 +22,7 @@ const router = createRouter();
 router.get('/api/health', (req, res) => json(res, 200, { ok: true, db: config.db.driver }));
 authRoutes(router);
 memeRoutes(router);
-saveRoutes(router);
+boardRoutes(router);
 uploadRoutes(router);
 reportRoutes(router);
 

@@ -56,17 +56,50 @@ export async function createPostgresDb(url) {
       },
     },
 
+    boards: {
+      async list(userId) {
+        return many('SELECT * FROM boards WHERE user_id = $1 ORDER BY updated_at DESC', [userId]);
+      },
+      async byId(id, userId) {
+        return one('SELECT * FROM boards WHERE id = $1 AND user_id = $2', [id, userId]);
+      },
+      async create(userId, { name, isPrivate }) {
+        return one(`INSERT INTO boards (user_id, name, is_private)
+                    VALUES ($1,$2,$3) RETURNING *`, [userId, name, !!isPrivate]);
+      },
+      async rename(id, userId, name) {
+        const r = await pool.query(
+          'UPDATE boards SET name = $3, updated_at = now() WHERE id = $1 AND user_id = $2',
+          [id, userId, name]);
+        return r.rowCount > 0;
+      },
+      async remove(id, userId) {
+        // saves는 board_id에 ON DELETE CASCADE가 걸려 있어 같이 지워집니다
+        const r = await pool.query('DELETE FROM boards WHERE id = $1 AND user_id = $2', [id, userId]);
+        return r.rowCount > 0;
+      },
+      async touch(id) {
+        await pool.query('UPDATE boards SET updated_at = now() WHERE id = $1', [id]);
+      },
+    },
+
     saves: {
       async list(userId) {
-        return (await many('SELECT meme_id FROM saves WHERE user_id = $1 ORDER BY created_at DESC', [userId]))
-          .map(r => Number(r.meme_id));
+        return (await many(
+          `SELECT meme_id, board_id, created_at AS at FROM saves
+           WHERE user_id = $1 ORDER BY created_at DESC`, [userId]))
+          .map(r => ({ meme_id: Number(r.meme_id), board_id: Number(r.board_id), at: r.at }));
       },
-      async add(userId, memeId) {
+      async add(userId, boardId, memeId) {
         await pool.query(
-          'INSERT INTO saves (user_id, meme_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [userId, memeId]);
+          `INSERT INTO saves (user_id, board_id, meme_id) VALUES ($1,$2,$3)
+           ON CONFLICT DO NOTHING`, [userId, boardId, memeId]);
       },
-      async remove(userId, memeId) {
-        await pool.query('DELETE FROM saves WHERE user_id = $1 AND meme_id = $2', [userId, memeId]);
+      async remove(userId, boardId, memeId) {
+        await (boardId === null
+          ? pool.query('DELETE FROM saves WHERE user_id = $1 AND meme_id = $2', [userId, memeId])
+          : pool.query('DELETE FROM saves WHERE user_id = $1 AND board_id = $2 AND meme_id = $3',
+              [userId, boardId, memeId]));
       },
     },
 

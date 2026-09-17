@@ -294,3 +294,30 @@
     padding: 0 14px;
   }
 }
+
+@media(max-width:760px) {
+  .boardgrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 12px;
+  }
+  .boardcard .cover {
+    height: 116px;
+  }
+  .boardcard .bname {
+    font-size: 13px;
+    margin-top: 9px;
+  }
+  .backlink {
+    margin-top: 18px;
+  }
+  .boardacts button {
+    padding: 8px 11px;
+    font-size: 12px;
+  }
+  #boardview .sectionhead {
+    display: block;
+  }
+  .boardacts {
+    margin-top: 14px;
+  }
+}

@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="web/styles/upload.css">
 <link rel="stylesheet" href="web/styles/detail.css">
 <link rel="stylesheet" href="web/styles/share.css">
+<link rel="stylesheet" href="web/styles/boards.css">
 <link rel="stylesheet" href="web/styles/moderation.css">
 <link rel="stylesheet" href="web/styles/auth.css">
 <link rel="stylesheet" href="web/styles/responsive.css">
@@ -83,12 +84,38 @@
 
   <!-- 내 짤 -->
   <section id="saved" hidden>
-    <div class="pageintro">
+    <div class="pageintro" id="savedintro">
       <h1>내 짤</h1>
-      <p>다시 쓰고 싶은 짤을 한곳에.<br>이 브라우저에 저장되어 다음에 와도 꺼내 볼 수 있어요.</p>
+      <p>주제별로 보드를 만들어 짤을 모아보세요.<br>계정에 저장되어 다른 기기에서도 그대로 꺼내 볼 수 있어요.</p>
     </div>
-    <div class="sectionhead"><h2 id="savedheading">저장한 짤</h2></div>
-    <div id="savedboard" class="board"></div>
+    <!-- 로그인 전 -->
+    <div id="boardsgate"></div>
+
+    <!-- 보드 목록 -->
+    <div id="boardsview" hidden>
+      <div class="sectionhead">
+        <div><h2 id="savedheading">보드</h2></div>
+        <button class="primary" onclick="openBoardForm()">＋ 보드 만들기</button>
+      </div>
+      <div id="boardgrid" class="boardgrid"></div>
+    </div>
+
+    <!-- 보드 하나 -->
+    <div id="boardview" hidden>
+      <button class="backlink" onclick="closeBoard()">← 보드 전체</button>
+      <div class="sectionhead">
+        <div>
+          <h2 id="boardtitle"></h2>
+          <p id="boardmeta"></p>
+        </div>
+        <div class="boardacts" id="boardacts">
+          <button onclick="openBoardForm({edit:zzalOpenBoard()})">이름 바꾸기</button>
+          <button class="danger" onclick="askDeleteBoard(zzalOpenBoard())">보드 삭제</button>
+        </div>
+      </div>
+      <div id="boardboard" class="board"></div>
+    </div>
+
     <div id="reportedbox" class="reportedbox" hidden></div>
   </section>
 
@@ -150,6 +177,32 @@
     <button onclick="copyShareUrl()">복사</button>
   </div>
   <p class="sharenote" id="sharenote"></p>
+</dialog>
+
+<!-- 어디에 담을지 고르기 -->
+<dialog id="pick" aria-labelledby="picktitle">
+  <div class="pickhead">
+    <h3 id="picktitle">어디에 담을까요?</h3>
+    <p id="picksub"></p>
+  </div>
+  <div class="picklist" id="picklist"></div>
+  <button class="newboard" onclick="openBoardForm({pin:zzalPicking()})">＋ 새 보드 만들기</button>
+  <button class="pickclear" id="pickclear" onclick="unpinAll()" hidden></button>
+  <button class="cancel" onclick="document.getElementById('pick').close()">닫기</button>
+</dialog>
+
+<!-- 보드 만들기 · 이름 바꾸기 -->
+<dialog id="boardform" aria-labelledby="boardformtitle">
+  <form id="boardformform">
+    <h3 id="boardformtitle">새 보드</h3>
+    <label class="field" for="boardname">보드 이름</label>
+    <input class="textinput" id="boardname" maxlength="30" placeholder="예: 웃긴 짤, 연성 소재" required>
+    <label class="check" id="boardprivaterow"><input type="checkbox" id="boardprivate">나만 보기</label>
+    <div class="askrow">
+      <button type="button" onclick="document.getElementById('boardform').close()">취소</button>
+      <button type="submit" class="go" id="boardsave">만들기</button>
+    </div>
+  </form>
 </dialog>
 
 <!-- 삭제·신고 확인 -->

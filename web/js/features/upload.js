@@ -66,12 +66,12 @@ async function submit(e) {
     return;
   }
   state.mine.push(saved);
-  state.saved.add(saved.id);
-  await store.setSaved(saved.id, true);
 
   cancelDraft();
   $('uploadform').reset();
   navigate('saved');
+  // 올린 짤은 '내가 올린 짤'에 자동으로 모입니다. 보드에 담을지는
+  // 나중에 책갈피로 고르면 되므로 여기서 창을 띄우지 않습니다.
   toast('내 짤에 추가했어요');
 }
 

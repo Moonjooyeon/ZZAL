@@ -16,6 +16,7 @@ export function createRouter() {
     get: (p, h) => add('GET', p, h),
     post: (p, h) => add('POST', p, h),
     put: (p, h) => add('PUT', p, h),
+    patch: (p, h) => add('PATCH', p, h),
     delete: (p, h) => add('DELETE', p, h),
 
     /** 맞는 라우트를 찾아 실행. 없으면 false */

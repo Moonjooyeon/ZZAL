@@ -1,0 +1,293 @@
+/* boards.css — 보드 목록 · 보드 하나 · 담을 곳 고르기 */
+
+.boardgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 26px 22px;
+}
+
+/* ── 보드 카드 ─────────────────────────────────────────────────────────── */
+.boardcard {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+}
+
+.boardcard .cover {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3px;
+  height: 152px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #eeede7;
+  transition: transform .18s;
+}
+
+.boardcard:hover .cover {
+  transform: translateY(-3px);
+}
+
+.boardcard .side {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 3px;
+}
+
+.boardcard .cell {
+  overflow: hidden;
+  background: #e9eae2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boardcard .cell.empty {
+  background: #edece5;
+}
+
+.boardcard .cell img,
+.boardcard .cell > div {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  max-height: none;
+}
+
+.boardcard .bname {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 11px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -.045em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boardcard .bmeta {
+  display: block;
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+svg.lock {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  color: var(--muted);
+}
+
+/* ── 보드 하나 ─────────────────────────────────────────────────────────── */
+.backlink {
+  margin-top: 26px;
+  padding: 7px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.backlink:hover {
+  color: var(--ink);
+}
+
+#boardtitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.boardacts {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+.boardacts button {
+  border: 1px solid #d9dbcf;
+  background: #fff;
+  border-radius: 8px;
+  padding: 9px 13px;
+  font-size: 12.5px;
+}
+
+.boardacts button:hover {
+  background: #f1f1ea;
+}
+
+.boardacts button.danger {
+  border-color: #e4b4b4;
+  color: #a33a3a;
+}
+
+.boardacts button.danger:hover {
+  background: #fbeeee;
+}
+
+/* ── 담을 곳 고르기 ────────────────────────────────────────────────────── */
+#pick {
+  width: min(420px, calc(100% - 32px));
+  padding: 24px 20px 18px;
+}
+
+.pickhead {
+  margin-bottom: 16px;
+}
+
+.pickhead h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.pickhead p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picklist {
+  display: grid;
+  gap: 2px;
+  max-height: 46dvh;
+  overflow: auto;
+  margin-bottom: 8px;
+}
+
+.pickrow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.pickrow:hover {
+  background: #f1f1ea;
+}
+
+.pickrow .thumb {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #eeede7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pickrow .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  max-height: none;
+}
+
+.pickrow .pname {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13.5px;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pickrow .pstate {
+  flex: none;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pickrow.on .pstate {
+  color: #6b6a2a;
+  font-weight: 700;
+}
+
+.newboard {
+  width: 100%;
+  margin-top: 6px;
+  padding: 13px;
+  border: 1px dashed #c9cabd;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.newboard:hover {
+  background: #f1f1ea;
+}
+
+#pick .cancel {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ── 보드 만들기 폼 ────────────────────────────────────────────────────── */
+#boardform {
+  width: min(400px, calc(100% - 32px));
+  padding: 26px 24px 20px;
+}
+
+#boardform h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+#boardform .field {
+  margin-top: 18px;
+}
+
+#boardform .check {
+  margin: 14px 0 22px;
+}
+
+#boardform .askrow {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+#boardform .askrow button {
+  border: 1px solid #d9dbcf;
+  background: #fff;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 13px;
+}
+
+#boardform .askrow button.go {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.pickclear {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  color: #a33a3a;
+}
+
+.pickclear:hover {
+  background: #fbeeee;
+}

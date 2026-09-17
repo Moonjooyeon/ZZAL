@@ -8,10 +8,13 @@ export function createJsonDb(file) {
   const abs = path.resolve(file);
   fs.mkdirSync(path.dirname(abs), { recursive: true });
 
-  let data = { users: [], memes: [], saves: [], reports: [], seq: { users: 1, memes: 1 } };
+  let data = { users: [], memes: [], boards: [], saves: [], reports: [],
+               seq: { users: 1, memes: 1, boards: 1 } };
   if (fs.existsSync(abs)) {
     try { data = JSON.parse(fs.readFileSync(abs, 'utf8')); } catch {}
   }
+  data.boards = data.boards || [];
+  data.seq.boards = data.seq.boards || 1;
 
   // 기본 카탈로그 심기 (한 번만)
   if (!data.memes.length) {
@@ -80,18 +83,66 @@ export function createJsonDb(file) {
       },
     },
 
-    saves: {
+    boards: {
       async list(userId) {
-        return data.saves.filter(s => s.user_id === userId).map(s => s.meme_id);
+        return data.boards.filter(b => b.user_id === userId)
+          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
       },
-      async add(userId, memeId) {
-        if (!data.saves.some(s => s.user_id === userId && s.meme_id === memeId)) {
-          data.saves.push({ user_id: userId, meme_id: memeId, created_at: new Date().toISOString() });
+      async byId(id, userId) {
+        return data.boards.find(b => b.id === id && b.user_id === userId) || null;
+      },
+      async create(userId, { name, isPrivate }) {
+        const now = new Date().toISOString();
+        const b = {
+          id: data.seq.boards++, user_id: userId, name,
+          is_private: !!isPrivate, created_at: now, updated_at: now,
+        };
+        data.boards.push(b);
+        save();
+        return b;
+      },
+      async rename(id, userId, name) {
+        const b = data.boards.find(x => x.id === id && x.user_id === userId);
+        if (!b) return false;
+        b.name = name;
+        b.updated_at = new Date().toISOString();
+        save();
+        return true;
+      },
+      async remove(id, userId) {
+        const i = data.boards.findIndex(b => b.id === id && b.user_id === userId);
+        if (i < 0) return false;
+        data.boards.splice(i, 1);
+        data.saves = data.saves.filter(s => s.board_id !== id);   // 보드와 함께 핀도
+        save();
+        return true;
+      },
+      touch(id) {
+        const b = data.boards.find(x => x.id === id);
+        if (b) { b.updated_at = new Date().toISOString(); save(); }
+      },
+    },
+
+    saves: {
+      /** 이 사람이 담아둔 것 전부 — 어느 보드에 담았는지까지 */
+      async list(userId) {
+        return data.saves.filter(s => s.user_id === userId)
+          .map(s => ({ meme_id: s.meme_id, board_id: s.board_id, at: s.created_at }));
+      },
+      async add(userId, boardId, memeId) {
+        if (!data.saves.some(s => s.user_id === userId && s.board_id === boardId && s.meme_id === memeId)) {
+          data.saves.push({
+            user_id: userId, board_id: boardId, meme_id: memeId,
+            created_at: new Date().toISOString(),
+          });
           save();
         }
       },
-      async remove(userId, memeId) {
-        data.saves = data.saves.filter(s => !(s.user_id === userId && s.meme_id === memeId));
+      /** boardId가 null이면 모든 보드에서 뺍니다 */
+      async remove(userId, boardId, memeId) {
+        data.saves = data.saves.filter(s => !(
+          s.user_id === userId && s.meme_id === memeId &&
+          (boardId === null || s.board_id === boardId)));
         save();
       },
     },
