@@ -49,6 +49,7 @@ export const config = {
       id: process.env.APPLE_CLIENT_ID || '',
       teamId: process.env.APPLE_TEAM_ID || '',
       keyId: process.env.APPLE_KEY_ID || '',
+      privateKeyPem: process.env.APPLE_PRIVATE_KEY || '',
       privateKeyPath: process.env.APPLE_PRIVATE_KEY_PATH || '',
       privateKeyBase64: process.env.APPLE_PRIVATE_KEY_BASE64 || '',
     },

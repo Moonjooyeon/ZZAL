@@ -20,7 +20,7 @@ test('Apple code exchange signs its client secret and verifies the identity toke
     email: 'private@example.com' };
   let identity = jwt(claims);
   try {
-    Object.assign(config.auth.apple, { id: 'com.example.zzal', teamId: 'TEAM123456', keyId: 'KEY123456',
+    Object.assign(config.auth.apple, { id: 'com.example.zzal', teamId: 'TEAM123456', keyId: 'KEY123456', privateKeyPem: '',
       privateKeyPath: '', privateKeyBase64: Buffer.from(signing.privateKey.export({ type: 'pkcs8', format: 'pem' })).toString('base64') });
     assert.equal(isConfigured('apple'), true);
     const authorization = new URL(authorizeUrl('apple', 'state-value'));
@@ -41,6 +41,8 @@ test('Apple code exchange signs its client secret and verifies the identity toke
     const user = await exchange('apple', 'code-value', { name: { firstName: 'Kim', lastName: 'J' } });
     assert.deepEqual(user, { provider: 'apple', providerId: 'apple-user-1', name: 'Kim J',
       email: 'private@example.com', avatarUrl: null });
+    config.auth.apple.privateKeyPem = signing.privateKey.export({ type: 'pkcs8', format: 'pem' }).replace(/\n/g, '\\n');
+    assert.equal((await exchange('apple', 'code-value', null)).providerId, 'apple-user-1');
     identity = jwt({ ...claims, aud: 'another-service' });
     await assert.rejects(exchange('apple', 'code-value', null), /Apple 인증 정보가 올바르지 않습니다/);
   } finally {

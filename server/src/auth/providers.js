@@ -12,7 +12,7 @@ let appleKeysUntil = 0;
 
 export const isConfigured = provider => provider === 'apple'
   ? !!(config.auth.apple.id && config.auth.apple.teamId && config.auth.apple.keyId &&
-      (config.auth.apple.privateKeyPath || config.auth.apple.privateKeyBase64))
+      (config.auth.apple.privateKeyPem || config.auth.apple.privateKeyPath || config.auth.apple.privateKeyBase64))
   : !!(config.auth.google.id && config.auth.google.secret);
 
 export const makeState = () => crypto.randomBytes(24).toString('hex');
@@ -30,9 +30,10 @@ export function authorizeUrl(provider, state) {
 }
 
 function appleClientSecret() {
-  const { id, teamId, keyId, privateKeyPath, privateKeyBase64 } = config.auth.apple;
-  const key = privateKeyPath ? fs.readFileSync(privateKeyPath, 'utf8')
-    : Buffer.from(privateKeyBase64, 'base64').toString('utf8');
+  const { id, teamId, keyId, privateKeyPem, privateKeyPath, privateKeyBase64 } = config.auth.apple;
+  const key = privateKeyPem ? privateKeyPem.replace(/\\n/g, '\n')
+    : privateKeyPath ? fs.readFileSync(privateKeyPath, 'utf8')
+      : Buffer.from(privateKeyBase64, 'base64').toString('utf8');
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'ES256', kid: keyId, typ: 'JWT' };
   const payload = { iss: teamId, iat: now, exp: now + 3600, aud: appleIssuer, sub: id };
