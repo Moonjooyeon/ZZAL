@@ -1,7 +1,4 @@
-// features/auth.js — 로그인/로그아웃. 카카오·구글 소셜 로그인.
-//
-// 지금은 core/api.js 의 store.signIn 이 데모 세션을 만듭니다.
-// 실제 연동은 server/src/auth/ 의 OAuth 라우트로 리다이렉트하도록 store만 바꾸면 됩니다.
+// features/auth.js — 로그인/로그아웃. Apple·Google 소셜 로그인.
 import { $, esc, toast } from '../core/dom.js';
 import { state } from '../core/state.js';
 import { store, reloadData, mergeGuest, PROVIDERS, PROVIDER_NAME } from '../core/api.js';

@@ -42,7 +42,8 @@ export async function setSession(res, db, userId) {
     'Path=/', 'HttpOnly', 'SameSite=Lax', `Max-Age=${MAX_AGE}`,
   ];
   if (config.cookieSecure) bits.push('Secure');
-  res.setHeader('set-cookie', bits.join('; '));
+  const existing = res.getHeader?.('set-cookie');
+  res.setHeader('set-cookie', existing ? [...(Array.isArray(existing) ? existing : [existing]), bits.join('; ')] : bits.join('; '));
 }
 
 export async function clearSession(req, res, db) {

@@ -26,16 +26,11 @@ PostgreSQL 컨테이너가 준비되면 스키마와 기본 짤 카탈로그를 
 
 ## 로그인
 
-`KAKAO_CLIENT_ID` / `GOOGLE_CLIENT_ID` 가 비어 있으면 `DEMO_AUTH=1` 로
+Apple / Google 설정이 비어 있으면 `DEMO_AUTH=1` 로
 임시 계정에 바로 로그인시킵니다. 프론트를 끝까지 눌러볼 수 있게 하기 위한 것이고,
 **배포에서는 `DEMO_AUTH=0` 으로 꺼야 합니다.**
 
-앱 키를 받으면 각 공급자 콘솔에 아래 주소를 리다이렉트 URI로 등록하세요.
-
-```
-{PUBLIC_ORIGIN}/api/auth/kakao/callback
-{PUBLIC_ORIGIN}/api/auth/google/callback
-```
+운영 키와 리다이렉트 URI 등록 방법은 [로그인 설정 안내](../docs/AUTH_SETUP.md)에 있습니다.
 
 세션은 HMAC으로 서명한 httpOnly 쿠키입니다(`SameSite=Lax`, 30일).
 `SESSION_SECRET` 은 배포 전에 반드시 바꾸세요 — `openssl rand -hex 32`.
@@ -77,7 +72,7 @@ Cafe24 LLM Router는 OpenAI 호환 API입니다. 기본 주소는
 |---|---|---|
 | GET | `/api/health` | 상태 확인 |
 | GET | `/api/auth/me` | 내 정보 (없으면 `{user:null}`) |
-| GET | `/api/auth/:provider` | 카카오·구글 로그인 화면으로 |
+| GET | `/api/auth/:provider` | Apple·Google 로그인 화면으로 |
 | GET | `/api/auth/:provider/callback` | 공급자 복귀 지점 |
 | POST | `/api/auth/logout` | 로그아웃 |
 | GET | `/api/memes?cat=&q=&limit=&offset=` | 짤 목록 |

@@ -56,6 +56,8 @@ export function createJsonDb(file) {
           };
           data.users.push(u);
         }
+        if (!(provider === 'apple' && name === 'Apple 사용자')) u.name = name;
+        if (email) u.email = email;
         u.last_seen_at = new Date().toISOString();
         save();
         return u;

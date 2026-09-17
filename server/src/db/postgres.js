@@ -47,7 +47,9 @@ export async function createPostgresDb(url) {
           INSERT INTO users (provider, provider_id, name, email, avatar_url)
           VALUES ($1,$2,$3,$4,$5)
           ON CONFLICT (provider, provider_id) DO UPDATE
-            SET name = EXCLUDED.name, last_seen_at = now()
+            SET name = CASE WHEN EXCLUDED.provider = 'apple' AND EXCLUDED.name = 'Apple 사용자'
+              THEN users.name ELSE EXCLUDED.name END,
+              email = COALESCE(EXCLUDED.email, users.email), last_seen_at = now()
           RETURNING *`, [provider, providerId, name, email || null, avatarUrl || null]);
       },
       async byId(id) { return one('SELECT * FROM users WHERE id = $1', [id]); },

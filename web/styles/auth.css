@@ -50,16 +50,15 @@
   font-weight: 800;
 }
 
-.pv-kakao {
-  background: #fae100;
-  border-color: #fae100;
-  color: #181600;
+.pv-apple {
+  background: #000;
+  border-color: #000;
+  color: #fff;
 }
 
-.pv-kakao i {
-  background: #181600;
-  color: #fae100;
-  font-size: 9px;
+.pv-apple i {
+  color: #fff;
+  font-size: 16px;
 }
 
 .pv-google i {

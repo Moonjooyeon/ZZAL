@@ -1,7 +1,7 @@
 # 이짤이이짤
 
 상황이나 기억나는 대사로 짤을 찾고, 자주 쓰는 짤을 저장하는 웹 서비스입니다.
-짤 806개가 들어 있고, 카카오·구글 소셜 로그인을 붙였습니다.
+짤 806개가 들어 있고, Apple·Google 소셜 로그인 코드를 제공합니다.
 
 ## 폴더 구조
 
@@ -38,7 +38,7 @@
         ├── config.js       환경변수
         ├── http/           라우터 · 응답 · 정적 파일
         ├── db/             저장소 (json / postgres) + schema.sql
-        ├── auth/           카카오·구글 OAuth + 세션 쿠키
+        ├── auth/           Apple·Google OAuth + 세션 쿠키
         ├── ai/             검색 2차 검증 · 올린 짤 분류 · 주기 보강
         └── routes/         auth · memes · boards · uploads · reports · search
 ```
@@ -85,7 +85,7 @@ sh deploy/start-on-lightsail.sh
 ```
 
 이 명령이 `.env`를 만들며 DB·세션 비밀값을 자동 생성하고, 공용 네트워크와
-컨테이너를 시작한 뒤 로컬 API를 확인합니다. Cafe24 키와 카카오/구글 OAuth 키는
+컨테이너를 시작한 뒤 로컬 API를 확인합니다. Cafe24 키와 Apple/Google OAuth 키는
 서버의 `.env`에 직접 입력하세요. 키가 없어도 짤 열람과 DB는 동작하며, AI와
 소셜 로그인만 비활성화됩니다. 키를 넣은 뒤에는 `docker compose up -d`를
 다시 실행합니다.
@@ -98,9 +98,8 @@ sh deploy/start-on-lightsail.sh
 Certbot 자동 갱신 후 Nginx가 새 인증서를 읽도록
 `sudo install -m 755 deploy/reload-nginx-after-renewal.sh /etc/letsencrypt/renewal-hooks/deploy/reload-levelup-nginx.sh`
 를 한 번 실행합니다.
-카카오·구글 개발자 콘솔의 redirect URI는 각각
-`https://zzal.ashwoodfriends.com/api/auth/kakao/callback`,
-`https://zzal.ashwoodfriends.com/api/auth/google/callback`입니다.
+Apple·Google 개발자 콘솔의 redirect URI와 키 설정은
+[로그인 설정 안내](docs/AUTH_SETUP.md)를 따르세요.
 
 첫 실행 때 PostgreSQL이 `server/src/db/schema.sql`을 적용하고 기본 짤
 카탈로그를 자동으로 심습니다. 백엔드는 시작할 때 아직 적용되지 않은
@@ -128,7 +127,7 @@ docker compose exec -T db psql -U zzal -d zzal -Atc "SELECT count(*) FROM memes"
 
 - 상황·대사·유행어로 검색 (조사와 형용사 어미를 떼고 찾습니다)
 - 카테고리 6종 필터 · 짤 상세 · 문구 복사 · 이미지 내려받기
-- 카카오·구글 로그인, 계정별로 나뉘는 저장 공간
+- Apple·Google 로그인, 계정별로 나뉘는 저장 공간
 - 내 짤 저장 / 직접 올리기 / 삭제 / 신고 후 숨김
 - 링크·X·페이스북·이메일·카카오톡 공유 (`?z=<id>` 딥링크)
 - 주제별 저장함, 저장함 없이 저장

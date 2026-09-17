@@ -24,10 +24,10 @@ import { toast } from './dom.js';
 import { API_BASE, USE_API } from './config.js';
 
 export const PROVIDERS = [
-  { id: 'kakao', label: '카카오로 시작하기', cls: 'pv-kakao', mark: 'K' },
+  { id: 'apple', label: '애플로 시작하기', cls: 'pv-apple', mark: '' },
   { id: 'google', label: 'Google로 시작하기', cls: 'pv-google', mark: 'G' },
 ];
-export const PROVIDER_NAME = { kakao: '카카오', google: 'Google' };
+export const PROVIDER_NAME = { apple: 'Apple', google: 'Google', kakao: '카카오' };
 
 // ── 브라우저 저장 ──────────────────────────────────────────────────────────
 /** 사용자별로 키를 나눈 localStorage 래퍼 */

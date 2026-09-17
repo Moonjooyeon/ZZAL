@@ -5,6 +5,7 @@ cd "$(dirname "$0")/.."
 if [ ! -f .env ]; then
   sh deploy/init-env.sh
 fi
+mkdir -p secrets
 
 docker network inspect levelup-net >/dev/null 2>&1 || docker network create levelup-net
 docker compose config --quiet

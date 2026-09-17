@@ -1,10 +1,10 @@
 -- schema.sql — 이짤이이짤 테이블 정의 (PostgreSQL)
 -- 적용: psql "$DATABASE_URL" -f server/src/db/schema.sql
 
--- 사용자 ─ 카카오·구글 소셜 로그인으로만 만들어집니다. 비밀번호를 보관하지 않습니다.
+-- 사용자 ─ 소셜 로그인으로만 만들어집니다. 비밀번호를 보관하지 않습니다.
 CREATE TABLE IF NOT EXISTS users (
   id           BIGSERIAL PRIMARY KEY,
-  provider     TEXT        NOT NULL CHECK (provider IN ('kakao','google')),
+  provider     TEXT        NOT NULL CHECK (provider IN ('kakao','google','apple')),
   provider_id  TEXT        NOT NULL,          -- 공급자가 준 고유 id
   name         TEXT        NOT NULL,
   email        TEXT,

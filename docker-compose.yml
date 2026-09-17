@@ -38,6 +38,8 @@ services:
       PORT: "8080"
     expose:
       - "8080"
+    volumes:
+      - ./secrets:/run/secrets:ro
     depends_on:
       db:
         condition: service_healthy

@@ -44,8 +44,14 @@ export const config = {
 
   auth: {
     demo: bool(process.env.DEMO_AUTH, true),
-    kakao: { id: process.env.KAKAO_CLIENT_ID || '', secret: process.env.KAKAO_CLIENT_SECRET || '' },
     google: { id: process.env.GOOGLE_CLIENT_ID || '', secret: process.env.GOOGLE_CLIENT_SECRET || '' },
+    apple: {
+      id: process.env.APPLE_CLIENT_ID || '',
+      teamId: process.env.APPLE_TEAM_ID || '',
+      keyId: process.env.APPLE_KEY_ID || '',
+      privateKeyPath: process.env.APPLE_PRIVATE_KEY_PATH || '',
+      privateKeyBase64: process.env.APPLE_PRIVATE_KEY_BASE64 || '',
+    },
   },
 };
 
