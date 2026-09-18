@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ashwoodfriends.zzal",
+      "sha256_cert_fingerprints": [
+        "E5:A3:E0:87:B7:E0:95:E6:63:1D:70:DB:5C:9C:E6:EB:21:3A:83:C4:07:73:5C:63:29:39:96:DD:2A:55:52:EE"
+      ]
+    }
+  }
+]

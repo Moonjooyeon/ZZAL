@@ -14,6 +14,8 @@ CMD ["node", "server/src/index.js"]
 FROM nginx:1.27-alpine AS web
 COPY deploy/nginx/web.conf /etc/nginx/conf.d/default.conf
 COPY index.html /usr/share/nginx/html/index.html
+COPY manifest.webmanifest /usr/share/nginx/html/manifest.webmanifest
+COPY .well-known /usr/share/nginx/html/.well-known
 COPY web /usr/share/nginx/html/web
 COPY assets /usr/share/nginx/html/assets
 EXPOSE 80

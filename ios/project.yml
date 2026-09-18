@@ -1,0 +1,37 @@
+name: ZZAL
+options:
+  bundleIdPrefix: com.ashwoodfriends
+  deploymentTarget:
+    iOS: "16.0"
+  developmentLanguage: ko
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+targets:
+  ZZAL:
+    type: application
+    platform: iOS
+    sources:
+      - ZZAL
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ashwoodfriends.zzal
+        PRODUCT_NAME: 이짤이이짤
+        DEVELOPMENT_TEAM: LRLSLC2RMQ
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+    info:
+      path: ZZAL/Info.plist
+      properties:
+        CFBundleDisplayName: 이짤이이짤
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
+        ITSAppUsesNonExemptEncryption: false
+        NSPhotoLibraryUsageDescription: 짤을 업로드할 때 사진을 선택하는 데 사용합니다.
+        CFBundleURLTypes:
+          - CFBundleURLSchemes: [izzal]
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight

@@ -5,3 +5,11 @@ server/data/
 server/node_modules/
 backups/
 secrets/
+android/.gradle/
+android/build/
+android/app/build/
+android/secrets/
+android/*.aab
+android/*.apk
+ios/build/
+dist/

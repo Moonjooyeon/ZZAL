@@ -4,4 +4,9 @@
 server/.env
 server/data
 server/node_modules
+android
+ios
+dist
+backups
+secrets
 **/.DS_Store

@@ -68,6 +68,10 @@ export async function createPostgresDb(url) {
       async remove(tokenHash) {
         await pool.query('DELETE FROM auth_sessions WHERE token_hash = $1', [tokenHash]);
       },
+      async consume(tokenHash) {
+        const row = await one('DELETE FROM auth_sessions WHERE token_hash = $1 AND expires_at > now() RETURNING user_id', [tokenHash]);
+        return row?.user_id ?? null;
+      },
     },
 
     memes: {

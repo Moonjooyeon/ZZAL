@@ -79,6 +79,13 @@ export function createJsonDb(file) {
         data.sessions = data.sessions.filter(s => s.token_hash !== tokenHash);
         save();
       },
+      async consume(tokenHash) {
+        const session = data.sessions.find(s => s.token_hash === tokenHash && Date.parse(s.expires_at) > Date.now());
+        if (!session) return null;
+        data.sessions = data.sessions.filter(s => s !== session);
+        save();
+        return session.user_id;
+      },
     },
 
     memes: {

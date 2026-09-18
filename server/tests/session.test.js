@@ -30,3 +30,19 @@ test('session exists in DB, is unique per login, and logout revokes only its coo
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('mobile login ticket can be consumed only once', async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'zzal-mobile-ticket-'));
+  try {
+    const db = createJsonDb(path.join(dir, 'db.json'));
+    const user = await db.users.findOrCreate({ provider: 'apple', providerId: 'mobile', name: 'Mobile' });
+    await db.sessions.create('ticket-hash', user.id, new Date(Date.now() + 120000));
+    assert.equal(await db.sessions.consume('ticket-hash'), user.id);
+    assert.equal(await db.sessions.consume('ticket-hash'), null);
+    await db.sessions.create('expired-ticket', user.id, new Date(Date.now() - 1000));
+    assert.equal(await db.sessions.consume('expired-ticket'), null);
+  } finally {
+    await new Promise(resolve => setTimeout(resolve, 450));
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
