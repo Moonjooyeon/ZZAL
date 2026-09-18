@@ -29,9 +29,11 @@ targets:
         CFBundleVersion: "1"
         ITSAppUsesNonExemptEncryption: false
         NSPhotoLibraryUsageDescription: 짤을 업로드할 때 사진을 선택하는 데 사용합니다.
+        UILaunchScreen: {}
         CFBundleURLTypes:
           - CFBundleURLSchemes: [izzal]
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
