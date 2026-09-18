@@ -12,7 +12,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4DFAC71BF08E3C144BF00720 /* ZZAL.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZZAL.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DFAC71BF08E3C144BF00720 /* ZZAL.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; name = ZZAL.app; path = "이짤이이짤.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EC8FBDFB300E879F7183C00 /* ZZALApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZZALApp.swift; sourceTree = "<group>"; };
 		580DC8A6DAC86294B409A4F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B735DA8317DA0877E9DF4CF2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -192,7 +192,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ashwoodfriends.zzal;
-				PRODUCT_NAME = "이짤이이짤";
+				PRODUCT_NAME = ZZAL;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -211,7 +211,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ashwoodfriends.zzal;
-				PRODUCT_NAME = "이짤이이짤";
+				PRODUCT_NAME = ZZAL;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
