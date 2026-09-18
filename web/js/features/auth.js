@@ -47,7 +47,7 @@ export function initAuth() {
 export function openLogin(msg) {
   $('loginsub').textContent = msg || DEFAULT_SUB;
   $('loginbtns').innerHTML = PROVIDERS
-    .map(p => `<button class="pvbtn ${p.cls}" onclick="signIn('${p.id}')"><i>${p.mark}</i>${p.label}</button>`)
+    .map(p => `<button type="button" class="pvbtn ${p.cls}" onclick="signIn('${p.id}')">${p.icon ? `<img class="pv-logo" src="${p.icon}" alt="" aria-hidden="true">` : `<i aria-hidden="true">${p.mark}</i>`}<span>${p.label}</span></button>`)
     .join('');
   $('login').showModal();
 }

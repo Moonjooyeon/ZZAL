@@ -25,7 +25,7 @@ import { API_BASE, USE_API } from './config.js';
 
 export const PROVIDERS = [
   { id: 'apple', label: '애플로 시작하기', cls: 'pv-apple', mark: '' },
-  { id: 'google', label: 'Google로 시작하기', cls: 'pv-google', mark: 'G' },
+  { id: 'google', label: 'Google 계정으로 계속', cls: 'pv-google', icon: '/assets/app/google-g.svg' },
 ];
 export const PROVIDER_NAME = { apple: 'Apple', google: 'Google', kakao: '카카오' };
 

@@ -61,11 +61,34 @@
   font-size: 16px;
 }
 
-.pv-google i {
+@font-face {
+  font-family: 'Roboto Login';
+  src: url('/assets/app/Roboto-Medium.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+.pv-google {
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #747775;
   background: #fff;
-  color: #4285f4;
-  border: 1px solid var(--line);
-  font-size: 13px;
+  color: #1f1f1f;
+  font: 500 14px/20px 'Roboto Login', Roboto, Arial, sans-serif;
+}
+
+.pv-google .pv-logo {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.pv-google span {
+  flex: 1;
+  text-align: center;
+  padding-right: 30px;
 }
 
 #login .cancel {
@@ -73,17 +96,6 @@
   font-size: 13px;
   color: var(--muted);
   padding: 8px;
-}
-
-#login .mocknote {
-  margin: 18px 0 0;
-  font-size: 11px;
-  line-height: 1.7;
-  color: var(--muted);
-  background: #f3f3ec;
-  border-radius: 9px;
-  padding: 11px 12px;
-  text-align: left;
 }
 
 /* ── 헤더 계정 영역 ──────────────────────────────────────────────────────
