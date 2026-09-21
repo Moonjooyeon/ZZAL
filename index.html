@@ -167,6 +167,18 @@
   <button class="cancel" onclick="document.getElementById('login').close()">나중에 할게요</button>
 </dialog>
 
+<!-- 계정 영구 삭제 -->
+<dialog id="deleteaccount" aria-labelledby="deleteaccounttitle">
+  <form id="deleteaccountform">
+    <h3 id="deleteaccounttitle">계정을 삭제할까요?</h3>
+    <p class="sub">계정 정보와 저장한 짤, 저장함, 직접 올린 짤이 모두 영구 삭제됩니다. 삭제한 뒤에는 복구할 수 없어요.</p>
+    <div class="askrow">
+      <button type="button" onclick="document.getElementById('deleteaccount').close()">취소</button>
+      <button type="submit" class="danger" id="deleteaccountsubmit">계정 영구 삭제</button>
+    </div>
+  </form>
+</dialog>
+
 <!-- 공유 -->
 <dialog id="share" aria-labelledby="sharetitle">
   <div class="sharehead">

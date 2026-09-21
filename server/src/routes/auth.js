@@ -3,8 +3,9 @@
 //   GET  /api/auth/:provider         공급자 로그인 화면으로
 //   GET  /api/auth/:provider/callback  공급자가 되돌려 보내는 곳
 //   POST /api/auth/logout
+//   DELETE /api/auth/account          계정과 연결된 데이터 영구 삭제
 import crypto from 'node:crypto';
-import { ok, redirect, noContent, notFound, badRequest, readJson } from '../http/respond.js';
+import { ok, redirect, noContent, notFound, badRequest, unauthorized, readJson } from '../http/respond.js';
 import { setSession, clearSession, currentUser } from '../auth/session.js';
 import { PROVIDERS, isConfigured, authorizeUrl, makeState, exchange, demoProfile } from '../auth/providers.js';
 import { config } from '../config.js';
@@ -112,6 +113,14 @@ export function authRoutes(router) {
     await clearSession(req, res, db);
     if (user) await recordAudit(db, { userId: user.id, action: 'auth.logout',
       targetType: 'user', targetId: user.id });
+    noContent(res);
+  });
+
+  router.delete('/api/auth/account', async (req, res, { db }) => {
+    const user = await currentUser(req, db);
+    if (!user) throw unauthorized('로그인이 필요합니다');
+    await clearSession(req, res, db);
+    await db.users.remove(user.id);
     noContent(res);
   });
 }

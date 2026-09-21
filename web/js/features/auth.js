@@ -22,12 +22,17 @@ export function renderMe() {
   }
   const name = esc(state.session.name);
   const provider = esc(PROVIDER_NAME[state.session.provider] || state.session.provider);
-  $('me').innerHTML = `<details class="acct" id="acct"><summary aria-label="내 계정 메뉴"><span class="avatar" aria-hidden="true">${name.slice(0, 1)}</span><span class="who">${name}</span>${CARET}</summary><div class="acctmenu"><span class="name"><b>${name}</b>${provider} 계정</span><button onclick="closeAcct();navigate('saved')">내 짤</button><button class="out" onclick="closeAcct();signOut()">로그아웃</button></div></details>`;
+  $('me').innerHTML = `<details class="acct" id="acct"><summary aria-label="내 계정 메뉴"><span class="avatar" aria-hidden="true">${name.slice(0, 1)}</span><span class="who">${name}</span>${CARET}</summary><div class="acctmenu"><span class="name"><b>${name}</b>${provider} 계정</span><button onclick="closeAcct();navigate('saved')">내 짤</button><button class="out" onclick="closeAcct();signOut()">로그아웃</button><button class="delete-account" onclick="openDeleteAccount()">계정 삭제</button></div></details>`;
 }
 
 export function closeAcct() {
   const el = $('acct');
   if (el) el.open = false;
+}
+
+export function openDeleteAccount() {
+  closeAcct();
+  $('deleteaccount').showModal();
 }
 
 /** 바깥을 누르거나 ESC를 누르면 계정 메뉴를 닫습니다 */
@@ -40,6 +45,28 @@ export function initAuth() {
     if (e.key !== 'Escape') return;
     const el = $('acct');
     if (el && el.open) { el.open = false; el.querySelector('summary').focus(); }
+  });
+  $('deleteaccountform').addEventListener('submit', async e => {
+    e.preventDefault();
+    const button = $('deleteaccountsubmit');
+    button.disabled = true;
+    button.textContent = '삭제 중…';
+    try {
+      const removed = await store.deleteAccount();
+      if (!removed) throw new Error('계정을 삭제하지 못했어요');
+      state.session = null;
+      await reloadData();
+      $('deleteaccount').close();
+      renderMe();
+      render();
+      navigate('explore');
+      toast('계정과 저장된 데이터가 삭제됐어요');
+    } catch (error) {
+      toast(error.message || '계정을 삭제하지 못했어요. 다시 시도해 주세요.');
+    } finally {
+      button.disabled = false;
+      button.textContent = '계정 영구 삭제';
+    }
   });
 }
 

@@ -63,6 +63,23 @@ export function createJsonDb(file) {
         return u;
       },
       async byId(id) { return data.users.find(u => u.id === id) || null; },
+      async remove(id) {
+        if (!data.users.some(u => u.id === id)) return false;
+        const owned = new Set(data.memes.filter(m => m.owner_id === id).map(m => m.id));
+        data.users = data.users.filter(u => u.id !== id);
+        data.sessions = data.sessions.filter(s => s.user_id !== id);
+        data.memes = data.memes.filter(m => m.owner_id !== id);
+        data.boards = data.boards.filter(b => b.user_id !== id);
+        data.saves = data.saves.filter(s => s.user_id !== id && !owned.has(s.meme_id));
+        data.reports = data.reports.filter(r => r.user_id !== id && !owned.has(r.meme_id));
+        data.meme_revisions = data.meme_revisions
+          .filter(r => !owned.has(r.meme_id))
+          .map(r => r.actor_user_id === id ? { ...r, actor_user_id: null } : r);
+        data.audit_events = data.audit_events
+          .map(e => e.actor_user_id === id ? { ...e, actor_user_id: null } : e);
+        save();
+        return true;
+      },
     },
 
     sessions: {

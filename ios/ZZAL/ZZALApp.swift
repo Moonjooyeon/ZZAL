@@ -9,7 +9,8 @@ struct ZZALApp: App {
     var body: some Scene {
         WindowGroup {
             WebsiteView()
-                .ignoresSafeArea(edges: .bottom)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
         }
     }
 }
@@ -24,24 +25,29 @@ private final class WebsiteController: UIViewController, WKNavigationDelegate,
     private var webView: WKWebView!
     private var authSession: ASWebAuthenticationSession?
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func loadView() {
+        view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = .white
         let configuration = WKWebViewConfiguration()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
-        webView = WKWebView(frame: .zero, configuration: configuration)
+        webView = WKWebView(frame: view.bounds, configuration: configuration)
         webView.navigationDelegate = self
         webView.uiDelegate = self
         webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(webView)
-        NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
         webView.load(URLRequest(url: website))
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // iPad split view, rotation and authentication-sheet dismissal can all
+        // change the host controller size. Always fill the current window.
+        webView.frame = view.bounds
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,

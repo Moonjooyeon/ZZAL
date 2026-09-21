@@ -2,7 +2,7 @@
 import { store, reloadData, migrateLegacy } from './core/api.js';
 import { state } from './core/state.js';
 
-import { renderMe, openLogin, signIn, signOut, closeAcct, initAuth } from './features/auth.js';
+import { renderMe, openLogin, signIn, signOut, closeAcct, openDeleteAccount, initAuth } from './features/auth.js';
 import { render, navigate, query, resetFeed, initFeed } from './features/feed.js';
 import { openDetail, openFromUrl, download, copyText, initDetail } from './features/detail.js';
 import { toggle } from './features/saves.js';
@@ -21,7 +21,7 @@ Object.assign(window, {
   toggle,
   openShare, openWin, nativeShare, copyShareUrl,
   askDelete, askReport, unreport,
-  openLogin, signIn, signOut, closeAcct,
+  openLogin, signIn, signOut, closeAcct, openDeleteAccount,
   cancelDraft,
   openBoard, closeBoard, openBoardForm, askDeleteBoard, openPicker, unpinFrom, unpinAll, onPickChange,
   // 인라인 핸들러가 지금 상태를 물어볼 때 쓰는 작은 창구

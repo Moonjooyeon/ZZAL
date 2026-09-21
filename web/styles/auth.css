@@ -98,6 +98,33 @@
   padding: 8px;
 }
 
+#deleteaccount {
+  width: min(430px, calc(100% - 32px));
+  padding: 28px 26px 24px;
+}
+
+#deleteaccount h3 {
+  margin: 0 0 10px;
+  font-size: 19px;
+}
+
+#deleteaccount .sub {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+#deleteaccount .danger {
+  background: #a21e1e;
+  color: #fff;
+  font-weight: 700;
+}
+
+#deleteaccount .danger:disabled {
+  opacity: .55;
+}
+
 /* ── 헤더 계정 영역 ──────────────────────────────────────────────────────
    헤더의 맨 오른쪽 끝. 로그인 전에는 진한 '로그인' 버튼, 로그인 후에는
    아바타 칩 하나로 줄이고 로그아웃은 칩을 눌러 나오는 메뉴에 둡니다.    */
@@ -238,6 +265,18 @@
 
 .acctmenu button.out:hover {
   background: #fbeeee;
+}
+
+.acctmenu button.delete-account {
+  margin-top: 3px;
+  border-top: 1px solid var(--line);
+  border-radius: 0 0 8px 8px;
+  color: #a21e1e;
+  font-weight: 700;
+}
+
+.acctmenu button.delete-account:hover {
+  background: #fde8e8;
 }
 
 .gate {

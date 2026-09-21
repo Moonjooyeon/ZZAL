@@ -3,6 +3,7 @@
 //   getSession()                 → 로그인 정보 또는 null
 //   signIn(provider)             → 세션. null이면 공급자 화면으로 넘어간 것
 //   signOut()
+//   deleteAccount()               → 계정과 연결된 데이터 영구 삭제
 //   load()                       → { boards:[], pins:[], mine:[], reported:{} }
 //   createBoard({name,private})  → 만들어진 저장함
 //   renameBoard(id, name)
@@ -88,6 +89,17 @@ const localStore = {
   },
   async signOut() {
     try { localStorage.removeItem('zzal.session'); } catch {}
+  },
+  async deleteAccount() {
+    const u = uid();
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(`zzal.u.${u}.`)) localStorage.removeItem(key);
+      }
+      localStorage.removeItem('zzal.session');
+      return true;
+    } catch { return false; }
   },
 
   async load() {
@@ -188,6 +200,7 @@ const remoteStore = {
     return null;
   },
   async signOut() { await send('POST', '/api/auth/logout'); },
+  async deleteAccount() { return send('DELETE', '/api/auth/account'); },
 
   async load() {
     const none = { boards: [], pins: [], mine: [], reported: {} };

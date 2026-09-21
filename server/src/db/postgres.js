@@ -53,6 +53,10 @@ export async function createPostgresDb(url) {
           RETURNING *`, [provider, providerId, name, email || null, avatarUrl || null]);
       },
       async byId(id) { return one('SELECT * FROM users WHERE id = $1', [id]); },
+      async remove(id) {
+        const result = await pool.query('DELETE FROM users WHERE id = $1', [id]);
+        return result.rowCount > 0;
+      },
     },
 
     sessions: {
