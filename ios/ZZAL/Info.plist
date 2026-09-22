@@ -28,7 +28,9 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>3</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-6168104800079733~5641086286</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>

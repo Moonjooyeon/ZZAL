@@ -9,14 +9,26 @@
 /* Begin PBXBuildFile section */
 		808544C36211EC96C18F48E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B735DA8317DA0877E9DF4CF2 /* Assets.xcassets */; };
 		92A9F457ACE2F754D19B1F81 /* ZZALApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC8FBDFB300E879F7183C00 /* ZZALApp.swift */; };
+		D22CD2EF17ECF6F7E2FCDD47 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B055A137D3CA30E9D803068D /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4DFAC71BF08E3C144BF00720 /* ZZAL.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; name = ZZAL.app; path = "이짤이이짤.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DFAC71BF08E3C144BF00720 /* ZZAL.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZZAL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EC8FBDFB300E879F7183C00 /* ZZALApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZZALApp.swift; sourceTree = "<group>"; };
 		580DC8A6DAC86294B409A4F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B735DA8317DA0877E9DF4CF2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		726615956FEDB686B4729167 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D22CD2EF17ECF6F7E2FCDD47 /* GoogleMobileAds in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		6BC2F9D8493D0BA72E3DAA46 /* ZZAL */ = {
@@ -54,6 +66,7 @@
 			buildPhases = (
 				E96F39C7C6E97181F6EF2EAA /* Sources */,
 				4BB0AD233362B03913EFEE1C /* Resources */,
+				726615956FEDB686B4729167 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -61,6 +74,7 @@
 			);
 			name = ZZAL;
 			packageProductDependencies = (
+				B055A137D3CA30E9D803068D /* GoogleMobileAds */,
 			);
 			productName = ZZAL;
 			productReference = 4DFAC71BF08E3C144BF00720 /* ZZAL.app */;
@@ -90,6 +104,9 @@
 			);
 			mainGroup = EC492E880372B51C5E8009D8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				13A94281E7C54AFDDA5E4B09 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B4650B40CD338C045116B11E /* Products */;
 			projectDirPath = "";
@@ -302,6 +319,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		13A94281E7C54AFDDA5E4B09 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B055A137D3CA30E9D803068D /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13A94281E7C54AFDDA5E4B09 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EFBBD2E83F52F503EB52C674 /* Project object */;
 }

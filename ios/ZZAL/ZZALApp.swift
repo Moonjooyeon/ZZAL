@@ -1,8 +1,12 @@
 import SwiftUI
 import WebKit
 import AuthenticationServices
+import GoogleMobileAds
+import UserMessagingPlatform
 
 private let website = URL(string: "https://zzal.ashwoodfriends.com/")!
+private let productionBannerID = "ca-app-pub-6168104800079733/8964806517"
+private let testBannerID = "ca-app-pub-3940256099942544/2435281174"
 
 @main
 struct ZZALApp: App {
@@ -21,8 +25,13 @@ private struct WebsiteView: UIViewControllerRepresentable {
 }
 
 private final class WebsiteController: UIViewController, WKNavigationDelegate,
-    WKUIDelegate, ASWebAuthenticationPresentationContextProviding {
+    WKUIDelegate, ASWebAuthenticationPresentationContextProviding, BannerViewDelegate {
     private var webView: WKWebView!
+    private let adContainer = UIView()
+    private var adHeight: NSLayoutConstraint!
+    private var bannerView: BannerView?
+    private var lastBannerWidth: CGFloat = 0
+    private var adsStarted = false
     private var authSession: ASWebAuthenticationSession?
 
     override func loadView() {
@@ -30,24 +39,93 @@ private final class WebsiteController: UIViewController, WKNavigationDelegate,
         view.backgroundColor = .white
         let configuration = WKWebViewConfiguration()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
-        webView = WKWebView(frame: view.bounds, configuration: configuration)
+        webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = self
         webView.uiDelegate = self
         webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        adContainer.translatesAutoresizingMaskIntoConstraints = false
+        adContainer.backgroundColor = .white
         view.addSubview(webView)
+        view.addSubview(adContainer)
+        adHeight = adContainer.heightAnchor.constraint(equalToConstant: 0)
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: view.topAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            webView.bottomAnchor.constraint(equalTo: adContainer.topAnchor),
+            adContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            adContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            adContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            adHeight,
+        ])
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         webView.load(URLRequest(url: website))
+        requestConsentAndStartAds()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // iPad split view, rotation and authentication-sheet dismissal can all
-        // change the host controller size. Always fill the current window.
-        webView.frame = view.bounds
+        let width = view.safeAreaLayoutGuide.layoutFrame.width
+        if adsStarted, width > 0, abs(width - lastBannerWidth) > 1 {
+            loadBanner(width: width)
+        }
+    }
+
+    private func requestConsentAndStartAds() {
+        let parameters = RequestParameters()
+        ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                try? await ConsentForm.loadAndPresentIfRequired(from: self)
+                if ConsentInformation.shared.canRequestAds { self.startAds() }
+            }
+        }
+    }
+
+    private func startAds() {
+        guard !adsStarted else { return }
+        adsStarted = true
+        MobileAds.shared.start()
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        loadBanner(width: view.safeAreaLayoutGuide.layoutFrame.width)
+    }
+
+    private func loadBanner(width: CGFloat) {
+        guard width > 0 else { return }
+        lastBannerWidth = width
+        bannerView?.removeFromSuperview()
+        let size = largeAnchoredAdaptiveBanner(width: width)
+        let banner = BannerView(adSize: size)
+#if DEBUG
+        banner.adUnitID = testBannerID
+#else
+        banner.adUnitID = productionBannerID
+#endif
+        banner.rootViewController = self
+        banner.delegate = self
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        adContainer.addSubview(banner)
+        NSLayoutConstraint.activate([
+            banner.centerXAnchor.constraint(equalTo: adContainer.centerXAnchor),
+            banner.centerYAnchor.constraint(equalTo: adContainer.centerYAnchor),
+        ])
+        bannerView = banner
+        banner.load(Request())
+    }
+
+    func bannerViewDidReceiveAd(_ bannerView: BannerView) {
+        adHeight.constant = bannerView.adSize.size.height
+        UIView.animate(withDuration: 0.2) { self.view.layoutIfNeeded() }
+    }
+
+    func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
+        adHeight.constant = 0
+        view.layoutIfNeeded()
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,

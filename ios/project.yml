@@ -7,12 +7,19 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
+packages:
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
+    from: 13.0.0
 targets:
   ZZAL:
     type: application
     platform: iOS
     sources:
       - ZZAL
+    dependencies:
+      - package: GoogleMobileAds
+        product: GoogleMobileAds
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ashwoodfriends.zzal
@@ -26,7 +33,8 @@ targets:
       properties:
         CFBundleDisplayName: 이짤이이짤
         CFBundleShortVersionString: "1.0.0"
-        CFBundleVersion: "2"
+        CFBundleVersion: "3"
+        GADApplicationIdentifier: ca-app-pub-6168104800079733~5641086286
         ITSAppUsesNonExemptEncryption: false
         NSPhotoLibraryUsageDescription: 짤을 업로드할 때 사진을 선택하는 데 사용합니다.
         UILaunchScreen: {}
