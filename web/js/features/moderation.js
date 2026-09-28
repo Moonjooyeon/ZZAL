@@ -1,7 +1,7 @@
 // features/moderation.js — 확인 다이얼로그 · 짤 삭제 · 신고 · 숨김 해제.
 import { $, esc, toast } from '../core/dom.js';
 import { state } from '../core/state.js';
-import { store, refreshSaved } from '../core/api.js';
+import { store, refreshSaved, reloadData } from '../core/api.js';
 import { byId } from '../core/catalog.js';
 import { requireAuth } from './auth.js';
 import { render } from './feed.js';
@@ -91,6 +91,29 @@ export function askBlock(id) {
       toast('게시자를 차단하고 운영자에게 신고했어요');
     },
   });
+}
+
+export function openBlockedUsers() {
+  const groups = new Map();
+  Object.entries(state.blocked).forEach(([rawId, block]) => {
+    const id = Number(rawId);
+    const key = block.blockedUserId ? `user:${block.blockedUserId}` : `meme:${id}`;
+    if (!groups.has(key)) groups.set(key, { id, name: byId(id)?.name || `콘텐츠 #${id}` });
+  });
+  $('blockeduserslist').innerHTML = groups.size
+    ? [...groups.values()].map(item => `<div class="blocked-user"><span>${esc(item.name)} 게시자</span><button type="button" onclick="unblockCreator(${item.id})">차단 해제</button></div>`).join('')
+    : '<p class="blocked-empty">차단한 게시자가 없습니다.</p>';
+  const acct = $('acct');
+  if (acct) acct.open = false;
+  $('blockedusers').showModal();
+}
+
+export async function unblockCreator(id) {
+  await store.unblockCreator(id);
+  await reloadData();
+  render();
+  openBlockedUsers();
+  toast('게시자 차단을 해제했어요');
 }
 
 export async function unreport(id) {

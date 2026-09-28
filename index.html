@@ -184,6 +184,14 @@
   </div>
 </dialog>
 
+<!-- 차단한 게시자 관리 -->
+<dialog id="blockedusers" aria-labelledby="blockeduserstitle">
+  <h3 id="blockeduserstitle">차단한 게시자 관리</h3>
+  <p class="sub">차단을 해제하면 해당 게시자의 콘텐츠가 피드에 다시 표시됩니다.</p>
+  <div id="blockeduserslist" class="blocked-users-list"></div>
+  <div class="askrow"><button type="button" onclick="document.getElementById('blockedusers').close()">닫기</button></div>
+</dialog>
+
 <!-- 계정 영구 삭제 -->
 <dialog id="deleteaccount" aria-labelledby="deleteaccounttitle">
   <form id="deleteaccountform">

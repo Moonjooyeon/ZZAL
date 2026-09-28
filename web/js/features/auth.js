@@ -22,7 +22,7 @@ export function renderMe() {
   }
   const name = esc(state.session.name);
   const provider = esc(PROVIDER_NAME[state.session.provider] || state.session.provider);
-  $('me').innerHTML = `<details class="acct" id="acct"><summary aria-label="내 계정 메뉴"><span class="avatar" aria-hidden="true">${name.slice(0, 1)}</span><span class="who">${name}</span>${CARET}</summary><div class="acctmenu"><span class="name"><b>${name}</b>${provider} 계정</span><button onclick="closeAcct();navigate('saved')">내 짤</button><button class="out" onclick="closeAcct();signOut()">로그아웃</button><button class="delete-account" onclick="openDeleteAccount()">계정 삭제</button></div></details>`;
+  $('me').innerHTML = `<details class="acct" id="acct"><summary aria-label="내 계정 메뉴"><span class="avatar" aria-hidden="true">${name.slice(0, 1)}</span><span class="who">${name}</span>${CARET}</summary><div class="acctmenu"><span class="name"><b>${name}</b>${provider} 계정</span><button onclick="closeAcct();navigate('saved')">내 짤</button><button onclick="openBlockedUsers()">차단한 게시자 관리</button><button class="out" onclick="closeAcct();signOut()">로그아웃</button><button class="delete-account" onclick="openDeleteAccount()">계정 삭제</button></div></details>`;
 }
 
 export function closeAcct() {

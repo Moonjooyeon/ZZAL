@@ -135,3 +135,8 @@
 .reportedrow button:hover {
   background: #f1f1ea;
 }
+
+.blocked-users-list { display: grid; gap: 10px; margin: 18px 0; min-width: min(420px, 72vw); }
+.blocked-user { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
+.blocked-user button { border: 1px solid var(--line); border-radius: 9px; background: #fff; padding: 8px 11px; cursor: pointer; }
+.blocked-empty { color: var(--muted); text-align: center; padding: 18px 0; }

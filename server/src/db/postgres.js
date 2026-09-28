@@ -226,8 +226,8 @@ export async function createPostgresDb(url) {
 
     blocks: {
       async list(userId) {
-        return (await many('SELECT meme_id, created_at AS at FROM user_blocks WHERE user_id = $1', [userId]))
-          .map(row => ({ meme_id: Number(row.meme_id), at: row.at }));
+        return (await many('SELECT meme_id, blocked_user_id, created_at AS at FROM user_blocks WHERE user_id = $1', [userId]))
+          .map(row => ({ meme_id: Number(row.meme_id), blocked_user_id: row.blocked_user_id, at: row.at }));
       },
       async add(userId, memeId, blockedUserId) {
         if (blockedUserId) {
@@ -238,6 +238,12 @@ export async function createPostgresDb(url) {
           await pool.query(`INSERT INTO user_blocks (user_id, blocked_user_id, meme_id)
             VALUES ($1,NULL,$2) ON CONFLICT (user_id, meme_id) DO NOTHING`, [userId, memeId]);
         }
+      },
+      async remove(userId, memeId) {
+        await pool.query(`DELETE FROM user_blocks
+          WHERE user_id = $1 AND (meme_id = $2 OR blocked_user_id = (
+            SELECT blocked_user_id FROM user_blocks WHERE user_id = $1 AND meme_id = $2
+          ))`, [userId, memeId]);
       },
     },
 

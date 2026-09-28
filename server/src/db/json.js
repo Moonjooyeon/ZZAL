@@ -249,7 +249,7 @@ export function createJsonDb(file) {
     blocks: {
       async list(userId) {
         return data.blocks.filter(b => b.user_id === userId)
-          .map(b => ({ meme_id: b.meme_id, at: b.created_at }));
+          .map(b => ({ meme_id: b.meme_id, blocked_user_id: b.blocked_user_id, at: b.created_at }));
       },
       async add(userId, memeId, blockedUserId) {
         const ids = blockedUserId
@@ -262,6 +262,13 @@ export function createJsonDb(file) {
               blocked_user_id: blockedUserId || null, created_at: now });
           }
         });
+        save();
+      },
+      async remove(userId, memeId) {
+        const target = data.blocks.find(b => b.user_id === userId && b.meme_id === memeId);
+        data.blocks = data.blocks.filter(b => b.user_id !== userId || (
+          target?.blocked_user_id ? b.blocked_user_id !== target.blocked_user_id : b.meme_id !== memeId
+        ));
         save();
       },
     },

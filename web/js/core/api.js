@@ -176,6 +176,14 @@ const localStore = {
     ls.write('blocked', uid(), blocked);
     return this.setReport(id, '게시자 차단');
   },
+  async unblockCreator(id) {
+    const blocked = ls.read('blocked', uid(), {});
+    delete blocked[id];
+    ls.write('blocked', uid(), blocked);
+    const reported = ls.read('reported', uid(), {});
+    if (reported[id]?.reason === '게시자 차단') delete reported[id];
+    return ls.write('reported', uid(), reported);
+  },
 };
 
 // ── 서버 저장 ─────────────────────────────────────────────────────────────
@@ -227,7 +235,7 @@ const remoteStore = {
       })),
       mine: (uploads.uploads || []).map(toMeme),
       reported,
-      blocked: Object.fromEntries(((blocks && blocks.blocks) || []).map(b => [b.meme_id, { at: b.at }])),
+      blocked: Object.fromEntries(((blocks && blocks.blocks) || []).map(b => [b.meme_id, { at: b.at, blockedUserId: b.blocked_user_id || null }])),
     };
   },
 
@@ -281,6 +289,10 @@ const remoteStore = {
   },
   async blockCreator(id) {
     await send('PUT', `/api/me/blocks/${id}`);
+    return true;
+  },
+  async unblockCreator(id) {
+    await send('DELETE', `/api/me/blocks/${id}`);
     return true;
   },
 };

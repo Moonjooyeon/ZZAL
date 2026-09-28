@@ -26,4 +26,18 @@ export function blockRoutes(router) {
       metadata: { blockedOwnerId: meme.owner_id || null, reported: true } });
     noContent(res);
   });
+
+  router.delete('/api/me/blocks/:memeId', async (req, res, { db, params }) => {
+    const user = await requireUser(req, db);
+    const memeId = Number(params.memeId);
+    const blocks = await db.blocks.list(user.id);
+    const target = blocks.find(block => block.meme_id === memeId);
+    const affected = target?.blocked_user_id
+      ? blocks.filter(block => block.blocked_user_id === target.blocked_user_id).map(block => block.meme_id)
+      : [memeId];
+    await db.blocks.remove(user.id, memeId);
+    await Promise.all(affected.map(id => db.reports.remove(user.id, id)));
+    await recordAudit(db, { userId: user.id, action: 'user.unblock', targetType: 'meme', targetId: memeId });
+    noContent(res);
+  });
 }
