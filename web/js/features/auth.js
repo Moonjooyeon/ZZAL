@@ -74,9 +74,29 @@ export function initAuth() {
 export function openLogin(msg) {
   $('loginsub').textContent = msg || DEFAULT_SUB;
   $('loginbtns').innerHTML = PROVIDERS
-    .map(p => `<button type="button" class="pvbtn ${p.cls}" onclick="signIn('${p.id}')">${p.icon ? `<img class="pv-logo" src="${p.icon}" alt="" aria-hidden="true">` : `<i aria-hidden="true">${p.mark}</i>`}<span>${p.label}</span></button>`)
+    .map(p => `<button type="button" class="pvbtn ${p.cls}" data-provider="${p.id}" disabled>${p.icon ? `<img class="pv-logo" src="${p.icon}" alt="" aria-hidden="true">` : `<i aria-hidden="true">${p.mark}</i>`}<span>${p.label}</span></button>`)
     .join('');
+  $('termsagree').checked = false;
+  $('termsagree').onchange = updateLoginButtons;
+  $('loginbtns').querySelectorAll('[data-provider]').forEach(button => {
+    button.onclick = () => signIn(button.dataset.provider);
+  });
   $('login').showModal();
+}
+
+function updateLoginButtons() {
+  const agreed = $('termsagree').checked;
+  $('loginbtns').querySelectorAll('[data-provider]').forEach(button => { button.disabled = !agreed; });
+}
+
+export function openTerms() {
+  $('terms').showModal();
+}
+
+export function acceptTerms() {
+  $('termsagree').checked = true;
+  updateLoginButtons();
+  $('terms').close();
 }
 
 /**

@@ -164,8 +164,24 @@
 <dialog id="login" aria-labelledby="logintitle">
   <h3 id="logintitle">이짤이이짤 로그인</h3>
   <p class="sub" id="loginsub">저장한 짤과 올린 짤을 어느 기기에서든 그대로 꺼내 볼 수 있어요.</p>
+  <label class="terms-consent"><input type="checkbox" id="termsagree"> <button type="button" class="terms-link" onclick="openTerms()">이용약관 및 커뮤니티 운영정책</button>에 동의합니다.</label>
+  <p class="terms-summary">불쾌한 콘텐츠와 타인을 괴롭히는 사용자는 허용하지 않습니다.</p>
   <div id="loginbtns"></div>
   <button class="cancel" onclick="document.getElementById('login').close()">나중에 할게요</button>
+</dialog>
+
+<!-- 로그인 전 필수 이용약관 -->
+<dialog id="terms" aria-labelledby="termstitle">
+  <h3 id="termstitle">이용약관 및 커뮤니티 운영정책</h3>
+  <div class="terms-body">
+    <p><strong>이짤이이짤은 불쾌한 콘텐츠와 악성 사용자를 용납하지 않습니다.</strong></p>
+    <p>음란물, 혐오·차별, 폭력·위협, 괴롭힘, 불법 콘텐츠, 스팸 및 타인의 권리를 침해하는 콘텐츠를 게시하거나 공유해서는 안 됩니다.</p>
+    <p>위반 콘텐츠는 신고할 수 있으며 신고 즉시 내 피드에서 사라집니다. 악성 게시자를 차단하면 해당 게시자의 콘텐츠가 즉시 숨겨지고 운영자에게 함께 신고됩니다.</p>
+    <p>운영자는 신고 내용을 검토해 콘텐츠 삭제, 게시 제한 또는 계정 정지 등의 조치를 할 수 있습니다.</p>
+  </div>
+  <div class="askrow">
+    <button type="button" class="go" onclick="acceptTerms()">동의하고 계속</button>
+  </div>
 </dialog>
 
 <!-- 계정 영구 삭제 -->

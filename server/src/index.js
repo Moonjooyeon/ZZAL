@@ -14,6 +14,7 @@ import { memeRoutes } from './routes/memes.js';
 import { boardRoutes } from './routes/boards.js';
 import { uploadRoutes } from './routes/uploads.js';
 import { reportRoutes } from './routes/reports.js';
+import { blockRoutes } from './routes/blocks.js';
 import { searchRoutes } from './routes/search.js';
 import { startEnricher } from './ai/enrich.js';
 import { aiEnabled } from './ai/client.js';
@@ -29,6 +30,7 @@ memeRoutes(router);
 boardRoutes(router);
 uploadRoutes(router);
 reportRoutes(router);
+blockRoutes(router);
 searchRoutes(router);
 
 const db = await getDb();

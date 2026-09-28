@@ -28,7 +28,7 @@ export const CATEGORIES = ['전체', '리액션', '동물', '그림', '대화·S
 export const all = () => [...CATALOG, ...state.mine];
 
 /** 신고해서 숨긴 짤을 뺀 목록 — 화면에 보이는 것은 전부 이걸 씁니다 */
-export const visible = () => all().filter(z => !state.reported[z.id]);
+export const visible = () => all().filter(z => !state.reported[z.id] && !state.blocked[z.id]);
 
 export const byId = id => all().find(z => z.id === id);
 export const title = z => z.name;

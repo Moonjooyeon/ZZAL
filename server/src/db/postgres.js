@@ -224,6 +224,23 @@ export async function createPostgresDb(url) {
       },
     },
 
+    blocks: {
+      async list(userId) {
+        return (await many('SELECT meme_id, created_at AS at FROM user_blocks WHERE user_id = $1', [userId]))
+          .map(row => ({ meme_id: Number(row.meme_id), at: row.at }));
+      },
+      async add(userId, memeId, blockedUserId) {
+        if (blockedUserId) {
+          await pool.query(`INSERT INTO user_blocks (user_id, blocked_user_id, meme_id)
+            SELECT $1, $2, id FROM memes WHERE owner_id = $2
+            ON CONFLICT (user_id, meme_id) DO NOTHING`, [userId, blockedUserId]);
+        } else {
+          await pool.query(`INSERT INTO user_blocks (user_id, blocked_user_id, meme_id)
+            VALUES ($1,NULL,$2) ON CONFLICT (user_id, meme_id) DO NOTHING`, [userId, memeId]);
+        }
+      },
+    },
+
     audit: {
       async record({ userId = null, action, targetType, targetId = null, metadata = {} }) {
         await pool.query(`INSERT INTO audit_events

@@ -2,12 +2,12 @@
 import { store, reloadData, migrateLegacy } from './core/api.js';
 import { state } from './core/state.js';
 
-import { renderMe, openLogin, signIn, signOut, closeAcct, openDeleteAccount, initAuth } from './features/auth.js';
+import { renderMe, openLogin, openTerms, acceptTerms, signIn, signOut, closeAcct, openDeleteAccount, initAuth } from './features/auth.js';
 import { render, navigate, query, resetFeed, initFeed } from './features/feed.js';
 import { openDetail, openFromUrl, download, copyText, initDetail } from './features/detail.js';
 import { toggle } from './features/saves.js';
 import { openShare, openWin, nativeShare, copyShareUrl } from './features/share.js';
-import { askDelete, askReport, unreport } from './features/moderation.js';
+import { askDelete, askReport, askBlock, unreport } from './features/moderation.js';
 import { cancelDraft, initUpload } from './features/upload.js';
 import { openBoard, closeBoard, openBoardForm, askDeleteBoard, openPicker, unpinFrom, unpinAll, onPickChange, currentPick, initBoards } from './features/boards.js';
 
@@ -20,8 +20,8 @@ Object.assign(window, {
   openDetail, download, copyText,
   toggle,
   openShare, openWin, nativeShare, copyShareUrl,
-  askDelete, askReport, unreport,
-  openLogin, signIn, signOut, closeAcct, openDeleteAccount,
+  askDelete, askReport, askBlock, unreport,
+  openLogin, openTerms, acceptTerms, signIn, signOut, closeAcct, openDeleteAccount,
   cancelDraft,
   openBoard, closeBoard, openBoardForm, askDeleteBoard, openPicker, unpinFrom, unpinAll, onPickChange,
   // 인라인 핸들러가 지금 상태를 물어볼 때 쓰는 작은 창구

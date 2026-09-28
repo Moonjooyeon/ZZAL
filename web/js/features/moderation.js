@@ -73,6 +73,26 @@ export function askReport(id) {
   });
 }
 
+export function askBlock(id) {
+  if (!requireAuth('게시자를 차단하려면 로그인이 필요해요.')) return;
+  const z = byId(id);
+  if (!z) return;
+  ask({
+    title: '이 게시자를 차단할까요?',
+    desc: '이 게시자의 콘텐츠가 내 피드에서 즉시 사라지고, 해당 콘텐츠가 운영자에게 함께 신고됩니다.',
+    go: '차단 및 신고',
+    danger: true,
+    onOk: async () => {
+      state.blocked[id] = { at: Date.now() };
+      state.reported[id] = { reason: '게시자 차단', at: Date.now() };
+      await store.blockCreator(id);
+      if ($('modal').open) $('modal').close();
+      render();
+      toast('게시자를 차단하고 운영자에게 신고했어요');
+    },
+  });
+}
+
 export async function unreport(id) {
   delete state.reported[id];
   await store.setReport(id, null);

@@ -98,6 +98,14 @@
   padding: 8px;
 }
 
+.terms-consent { display:flex; align-items:center; gap:7px; margin:16px 0 4px; font-size:14px; }
+.terms-consent input { width:18px; height:18px; flex:0 0 auto; }
+.terms-link { padding:0; border:0; background:none; color:#4d6400; text-decoration:underline; font:inherit; font-weight:700; }
+.terms-summary { margin:0 0 14px; font-size:12px; color:#6b6b62; }
+.pvbtn:disabled { opacity:.42; cursor:not-allowed; }
+#terms { max-width:560px; }
+.terms-body { line-height:1.65; color:#414139; }
+
 #deleteaccount {
   width: min(430px, calc(100% - 32px));
   padding: 28px 26px 24px;

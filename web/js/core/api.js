@@ -110,6 +110,7 @@ const localStore = {
       pins: ls.read('pins', u, []),
       mine: ls.read('mine', u, []),
       reported: ls.read('reported', u, {}),
+      blocked: ls.read('blocked', u, {}),
     };
   },
 
@@ -169,6 +170,12 @@ const localStore = {
     else all[id] = { reason, at: Date.now() };
     return ls.write('reported', uid(), all);
   },
+  async blockCreator(id) {
+    const blocked = ls.read('blocked', uid(), {});
+    blocked[id] = { at: Date.now() };
+    ls.write('blocked', uid(), blocked);
+    return this.setReport(id, '게시자 차단');
+  },
 };
 
 // ── 서버 저장 ─────────────────────────────────────────────────────────────
@@ -203,10 +210,10 @@ const remoteStore = {
   async deleteAccount() { return send('DELETE', '/api/auth/account'); },
 
   async load() {
-    const none = { boards: [], pins: [], mine: [], reported: {} };
+    const none = { boards: [], pins: [], mine: [], reported: {}, blocked: {} };
     if (!state.session) return none;
-    const [boards, uploads, reports] = await Promise.all([
-      call('/api/me/boards'), call('/api/me/uploads'), call('/api/me/reports'),
+    const [boards, uploads, reports, blocks] = await Promise.all([
+      call('/api/me/boards'), call('/api/me/uploads'), call('/api/me/reports'), call('/api/me/blocks'),
     ]);
     if (!boards) return none;   // 그 사이 세션이 끊긴 경우
     const reported = {};
@@ -220,6 +227,7 @@ const remoteStore = {
       })),
       mine: (uploads.uploads || []).map(toMeme),
       reported,
+      blocked: Object.fromEntries(((blocks && blocks.blocks) || []).map(b => [b.meme_id, { at: b.at }])),
     };
   },
 
@@ -271,6 +279,10 @@ const remoteStore = {
       : send('PUT', `/api/me/reports/${id}`, { reason }));
     return true;
   },
+  async blockCreator(id) {
+    await send('PUT', `/api/me/blocks/${id}`);
+    return true;
+  },
 };
 
 /** 서버 응답 → 화면이 쓰는 저장함 객체 */
@@ -305,6 +317,7 @@ export async function reloadData() {
   state.pins = d.pins;
   state.mine = d.mine;
   state.reported = d.reported;
+  state.blocked = d.blocked || {};
   refreshSaved();
 }
 

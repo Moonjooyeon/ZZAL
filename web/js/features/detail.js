@@ -18,7 +18,7 @@ export function renderDetail(id) {
           : `<button onclick="copyText(${id})">문구 복사</button>`,
     `<button onclick="openShare(${id})">공유</button>`,
     own ? `<button class="danger" onclick="askDelete(${id})">삭제</button>`
-        : `<button class="report" onclick="askReport(${id})">신고</button>`,
+        : `<button class="report" onclick="askReport(${id})">신고</button><button class="danger" onclick="askBlock(${id})">게시자 차단</button>`,
   ].join('');
 
   $('detail').innerHTML = `<div class="detail"><div class="art">${z.art}</div><div class="detailcopy"><p>${esc(z.cat)}${own ? ' · 내가 추가한 짤' : ''}</p><h2>${esc(title(z))}</h2><p>${z.why}</p><p>${z.tags.map(t => '#' + esc(t)).join(' ')}</p><div class="actions">${actions}</div>${own ? MINE_NOTE : ''}</div></div>`;

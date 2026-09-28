@@ -8,7 +8,7 @@ export function createJsonDb(file) {
   const abs = path.resolve(file);
   fs.mkdirSync(path.dirname(abs), { recursive: true });
 
-  let data = { users: [], memes: [], boards: [], saves: [], reports: [],
+  let data = { users: [], memes: [], boards: [], saves: [], reports: [], blocks: [],
                seq: { users: 1, memes: 1, boards: 1 } };
   if (fs.existsSync(abs)) {
     try { data = JSON.parse(fs.readFileSync(abs, 'utf8')); } catch {}
@@ -18,6 +18,7 @@ export function createJsonDb(file) {
   data.meme_revisions = data.meme_revisions || [];
   data.audit_events = data.audit_events || [];
   data.ai_requests = data.ai_requests || [];
+  data.blocks = data.blocks || [];
   data.seq.boards = data.seq.boards || 1;
 
   // 기본 카탈로그 심기 (한 번만)
@@ -72,6 +73,7 @@ export function createJsonDb(file) {
         data.boards = data.boards.filter(b => b.user_id !== id);
         data.saves = data.saves.filter(s => s.user_id !== id && !owned.has(s.meme_id));
         data.reports = data.reports.filter(r => r.user_id !== id && !owned.has(r.meme_id));
+        data.blocks = data.blocks.filter(b => b.user_id !== id && b.blocked_user_id !== id && !owned.has(b.meme_id));
         data.meme_revisions = data.meme_revisions
           .filter(r => !owned.has(r.meme_id))
           .map(r => r.actor_user_id === id ? { ...r, actor_user_id: null } : r);
@@ -240,6 +242,26 @@ export function createJsonDb(file) {
       },
       async remove(userId, memeId) {
         data.reports = data.reports.filter(r => !(r.user_id === userId && r.meme_id === memeId));
+        save();
+      },
+    },
+
+    blocks: {
+      async list(userId) {
+        return data.blocks.filter(b => b.user_id === userId)
+          .map(b => ({ meme_id: b.meme_id, at: b.created_at }));
+      },
+      async add(userId, memeId, blockedUserId) {
+        const ids = blockedUserId
+          ? data.memes.filter(m => m.owner_id === blockedUserId).map(m => m.id)
+          : [memeId];
+        const now = new Date().toISOString();
+        ids.forEach(id => {
+          if (!data.blocks.some(b => b.user_id === userId && b.meme_id === id)) {
+            data.blocks.push({ user_id: userId, meme_id: id,
+              blocked_user_id: blockedUserId || null, created_at: now });
+          }
+        });
         save();
       },
     },
