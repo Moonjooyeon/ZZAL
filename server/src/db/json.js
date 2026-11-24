@@ -43,6 +43,12 @@ export function createJsonDb(file) {
         present.cat = row[3];
         dirty = true;
       }
+      const { name, tags, keywords } = catalogMeme(row);
+      if (present.name !== name || JSON.stringify(present.tags) !== JSON.stringify(tags)
+          || JSON.stringify(present.keywords) !== JSON.stringify(keywords)) {
+        Object.assign(present, { name, tags, keywords });
+        dirty = true;
+      }
       continue;
     }
     data.memes.push(catalogMeme(row));
