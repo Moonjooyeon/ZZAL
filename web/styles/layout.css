@@ -101,6 +101,24 @@ main {
   gap: 20px;
 }
 
+.note .contact-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d9dad1;
+  border-radius: 9px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.note .contact-link:hover {
+  background: #efeee7;
+}
+
 .pageintro {
   padding-top: 44px;
 }

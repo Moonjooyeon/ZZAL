@@ -142,7 +142,9 @@
   }
   .note {
     line-height: 1.7;
-    display: block;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
   }
   .mobile {
     display: flex;
