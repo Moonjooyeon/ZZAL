@@ -12,8 +12,9 @@ export function renderDetail(id) {
   const z = byId(id);
   if (!z) return;
   const own = isMine(z);
+  const sourceLabel = z.sourceUrl?.startsWith('https://www.pinterest.com/') ? 'Pinterest' : 'X';
   const source = z.sourceUrl
-    ? `<p><a href="${esc(z.sourceUrl)}" target="_blank" rel="noopener noreferrer">X 원문 보기</a></p>`
+    ? `<p><a href="${esc(z.sourceUrl)}" target="_blank" rel="noopener noreferrer">${sourceLabel} 원문 보기</a></p>`
     : '';
   const actions = [
     `<button onclick="toggle(${id})">${state.saved.has(id) ? '저장됨 ✓' : '내 짤에 저장'}</button>`,

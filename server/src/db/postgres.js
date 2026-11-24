@@ -96,13 +96,13 @@ export async function createPostgresDb(url) {
         args.push(limit, offset);
         const rows = await many(
           `SELECT m.*, s.source_url FROM memes m
-           LEFT JOIN meme_sources s ON s.meme_id = m.id AND s.platform = 'x'
+           LEFT JOIN meme_sources s ON s.meme_id = m.id AND m.id >= 1000000000
            ${clause} ORDER BY m.id LIMIT $${args.length - 1} OFFSET $${args.length}`, args);
         return { total, rows };
       },
       async byId(id) {
         return one(`SELECT m.*, s.source_url FROM memes m
-                    LEFT JOIN meme_sources s ON s.meme_id = m.id AND s.platform = 'x'
+                    LEFT JOIN meme_sources s ON s.meme_id = m.id AND m.id >= 1000000000
                     WHERE m.id = $1`, [id]);
       },
       async create(row) {
