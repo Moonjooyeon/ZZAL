@@ -39,7 +39,7 @@ export function createJsonDb(file) {
       if (present.owner_id !== null || present.image_path !== row[2]) {
         throw new Error(`Catalog meme ID already in use: ${row[0]}`);
       }
-      if (present.cat === '핀터레스트' && present.cat !== row[3]) {
+      if (['핀터레스트', '밈 해명봇'].includes(present.cat) && present.cat !== row[3]) {
         present.cat = row[3];
         dirty = true;
       }
