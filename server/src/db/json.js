@@ -33,16 +33,19 @@ export function createJsonDb(file) {
     dirty = true;
   }
   const byCatalogId = new Map(data.memes.map(m => [m.id, m]));
-  for (const row of IMPORTED_MEME_ROWS) {
+  for (const row of [...BASE_MEME_ROWS, ...IMPORTED_MEME_ROWS]) {
+    const imported = row[7] != null;
     const present = byCatalogId.get(row[0]);
     if (present) {
       if (present.owner_id !== null || present.image_path !== row[2]) {
-        throw new Error(`Catalog meme ID already in use: ${row[0]}`);
+        if (imported) throw new Error(`Catalog meme ID already in use: ${row[0]}`);
+        continue;
       }
-      if (['핀터레스트', '밈 해명봇'].includes(present.cat) && present.cat !== row[3]) {
+      if (imported && ['핀터레스트', '밈 해명봇'].includes(present.cat) && present.cat !== row[3]) {
         present.cat = row[3];
         dirty = true;
       }
+      if (!imported && present.visibility === 'private') continue;
       const { name, tags, keywords } = catalogMeme(row);
       if (present.name !== name || JSON.stringify(present.tags) !== JSON.stringify(tags)
           || JSON.stringify(present.keywords) !== JSON.stringify(keywords)) {
@@ -51,6 +54,7 @@ export function createJsonDb(file) {
       }
       continue;
     }
+    if (!imported) continue;
     data.memes.push(catalogMeme(row));
     dirty = true;
   }
