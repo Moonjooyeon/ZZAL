@@ -12,6 +12,9 @@ export function renderDetail(id) {
   const z = byId(id);
   if (!z) return;
   const own = isMine(z);
+  const source = z.sourceUrl
+    ? `<p><a href="${esc(z.sourceUrl)}" target="_blank" rel="noopener noreferrer">X 원문 보기</a></p>`
+    : '';
   const actions = [
     `<button onclick="toggle(${id})">${state.saved.has(id) ? '저장됨 ✓' : '내 짤에 저장'}</button>`,
     z.src ? `<button onclick="download(${id})">이미지 내려받기</button>`
@@ -21,7 +24,7 @@ export function renderDetail(id) {
         : `<button class="report" onclick="askReport(${id})">신고</button><button class="danger" onclick="askBlock(${id})">게시자 차단</button>`,
   ].join('');
 
-  $('detail').innerHTML = `<div class="detail"><div class="art">${z.art}</div><div class="detailcopy"><p>${esc(z.cat)}${own ? ' · 내가 추가한 짤' : ''}</p><h2>${esc(title(z))}</h2><p>${z.why}</p><p>${z.tags.map(t => '#' + esc(t)).join(' ')}</p><div class="actions">${actions}</div>${own ? MINE_NOTE : ''}</div></div>`;
+  $('detail').innerHTML = `<div class="detail"><div class="art">${z.art}</div><div class="detailcopy"><p>${esc(z.cat)}${own ? ' · 내가 추가한 짤' : ''}</p><h2>${esc(title(z))}</h2>${z.why ? `<p>${z.why}</p>` : ''}<p>${z.tags.map(t => '#' + esc(t)).join(' ')}</p>${source}<div class="actions">${actions}</div>${own ? MINE_NOTE : ''}</div></div>`;
 }
 
 export function openDetail(id) {
