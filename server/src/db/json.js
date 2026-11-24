@@ -21,6 +21,7 @@ export function createJsonDb(file) {
   data.sessions = data.sessions || [];
   data.meme_revisions = data.meme_revisions || [];
   data.audit_events = data.audit_events || [];
+  data.ad_events = data.ad_events || {};
   data.ai_requests = data.ai_requests || [];
   data.blocks = data.blocks || [];
   data.seq.boards = data.seq.boards || 1;
@@ -74,6 +75,16 @@ export function createJsonDb(file) {
 
   return {
     driver: 'json',
+
+    adEvents: {
+      async record(group, action, visit) {
+        const key = [group, action, visit].join(':');
+        if (!data.ad_events[key]) {
+          data.ad_events[key] = new Date().toISOString();
+          save();
+        }
+      },
+    },
 
     users: {
       async findOrCreate({ provider, providerId, name, email, avatarUrl }) {

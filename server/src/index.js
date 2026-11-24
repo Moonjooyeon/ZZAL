@@ -16,6 +16,7 @@ import { uploadRoutes } from './routes/uploads.js';
 import { reportRoutes } from './routes/reports.js';
 import { blockRoutes } from './routes/blocks.js';
 import { searchRoutes } from './routes/search.js';
+import { adEventRoutes } from './routes/ad-events.js';
 import { startEnricher } from './ai/enrich.js';
 import { aiEnabled } from './ai/client.js';
 
@@ -32,6 +33,7 @@ uploadRoutes(router);
 reportRoutes(router);
 blockRoutes(router);
 searchRoutes(router);
+adEventRoutes(router);
 
 const db = await getDb();
 const enriching = startEnricher(db);

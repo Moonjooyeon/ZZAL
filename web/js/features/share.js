@@ -1,6 +1,7 @@
 // features/share.js — 짤 하나를 SNS로 공유. 카카오톡은 SDK 없이 기기 공유 시트를 씁니다.
 import { $, esc, toast } from '../core/dom.js';
 import { byId, title, isMine } from '../core/catalog.js';
+import { recordAdEvent } from '../core/ad-events.js';
 
 const ICONS = {
   link: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg>',
@@ -54,7 +55,11 @@ export async function nativeShare(id, kakao) {
   const url = shareUrl(id);
   const text = shareText(z);
   if (navigator.share) {
-    try { await navigator.share({ title: title(z), text, url }); return; }
+    try {
+      await navigator.share({ title: title(z), text, url });
+      recordAdEvent('share');
+      return;
+    }
     catch (e) { if (e && e.name === 'AbortError') return; }
   }
   await copyShareUrl(kakao ? '링크를 복사했어요. 카카오톡에 붙여넣어 보내주세요' : '링크를 복사했어요');
@@ -64,6 +69,7 @@ export async function copyShareUrl(msg) {
   const url = $('shareurl').value;
   try {
     await navigator.clipboard.writeText(url);
+    recordAdEvent('share');
     toast(msg || '링크를 복사했어요');
   } catch {
     const a = $('shareurl');
@@ -71,6 +77,7 @@ export async function copyShareUrl(msg) {
     a.select();
     const ok = document.execCommand('copy');
     a.setAttribute('readonly', '');
+    if (ok) recordAdEvent('share');
     toast(ok ? (msg || '링크를 복사했어요') : '복사하지 못했어요. 주소를 직접 선택해주세요');
   }
 }
