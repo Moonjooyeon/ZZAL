@@ -8,7 +8,9 @@ import { ROWS as b04 } from './memes-04.js';
 import { ROWS as b05 } from './memes-05.js';
 import { ROWS as b06 } from './memes-06.js';
 import { ROWS as notMememy } from './memes-not-mememy.js';
+import { ROWS as pinterestBoards } from './memes-pinterest-boards.js';
 
 /** @type {Array} [id, 제목, 파일경로, 카테고리, [태그], [숨은 키워드], 설명, 원문 URL?] */
 export const BASE_MEME_ROWS = [...core, ...b01, ...b02, ...b03, ...b04, ...b05, ...b06];
-export const MEME_ROWS = [...BASE_MEME_ROWS, ...notMememy];
+export const IMPORTED_MEME_ROWS = [...notMememy, ...pinterestBoards];
+export const MEME_ROWS = [...BASE_MEME_ROWS, ...IMPORTED_MEME_ROWS];

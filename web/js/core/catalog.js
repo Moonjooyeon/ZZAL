@@ -24,7 +24,7 @@ export const meme = (id, name, file, cat, tags, kw, why, sourceUrl) => ({
 /** 카탈로그는 한 번만 만들어 재사용합니다. */
 const CATALOG = MEME_ROWS.map(row => meme(...row));
 
-export const CATEGORIES = ['전체', '리액션', '동물', '그림', '대화·SNS', '글·댓글', '방송·자막', '밈 해명봇'];
+export const CATEGORIES = ['전체', '리액션', '동물', '그림', '대화·SNS', '글·댓글', '방송·자막', '밈 해명봇', '핀터레스트'];
 
 /** 기본 카탈로그 + 내가 올린 짤 */
 export const all = () => [...CATALOG, ...state.mine];

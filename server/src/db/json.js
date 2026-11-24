@@ -2,8 +2,7 @@
 // 개발과 시연용입니다. 실서비스는 DB_DRIVER=postgres 로 바꾸세요.
 import fs from 'node:fs';
 import path from 'node:path';
-import { BASE_MEME_ROWS } from '../../../web/js/data/index.js';
-import { ROWS as notMememy } from '../../../web/js/data/memes-not-mememy.js';
+import { BASE_MEME_ROWS, IMPORTED_MEME_ROWS } from '../../../web/js/data/index.js';
 
 const catalogMeme = ([id, name, image_path, cat, tags, keywords, why, source_url]) => ({
   id, name, image_path, cat, tags, keywords, why, source_url, owner_id: null, visibility: 'public',
@@ -34,7 +33,7 @@ export function createJsonDb(file) {
     dirty = true;
   }
   const byCatalogId = new Map(data.memes.map(m => [m.id, m]));
-  for (const row of notMememy) {
+  for (const row of IMPORTED_MEME_ROWS) {
     const present = byCatalogId.get(row[0]);
     if (present) {
       if (present.owner_id !== null || present.image_path !== row[2]) {
