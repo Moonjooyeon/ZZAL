@@ -19,4 +19,6 @@ COPY manifest.webmanifest /usr/share/nginx/html/manifest.webmanifest
 COPY .well-known /usr/share/nginx/html/.well-known
 COPY web /usr/share/nginx/html/web
 COPY assets /usr/share/nginx/html/assets
+# Imported public images may arrive in directories created with a restrictive umask.
+RUN chmod -R a+rX /usr/share/nginx/html/assets
 EXPOSE 80
