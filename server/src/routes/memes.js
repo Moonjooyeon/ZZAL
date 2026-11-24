@@ -14,6 +14,7 @@ const publicMeme = m => ({
   tags: m.tags,
   why: m.why,
   mine: m.owner_id !== null,
+  ...(m.source_url ? { sourceUrl: m.source_url } : {}),
 });
 
 export function memeRoutes(router) {

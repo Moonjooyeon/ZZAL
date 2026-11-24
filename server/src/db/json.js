@@ -2,7 +2,12 @@
 // 개발과 시연용입니다. 실서비스는 DB_DRIVER=postgres 로 바꾸세요.
 import fs from 'node:fs';
 import path from 'node:path';
-import { MEME_ROWS } from '../../../web/js/data/index.js';
+import { BASE_MEME_ROWS } from '../../../web/js/data/index.js';
+import { ROWS as notMememy } from '../../../web/js/data/memes-not-mememy.js';
+
+const catalogMeme = ([id, name, image_path, cat, tags, keywords, why, source_url]) => ({
+  id, name, image_path, cat, tags, keywords, why, source_url, owner_id: null, visibility: 'public',
+});
 
 export function createJsonDb(file) {
   const abs = path.resolve(file);
@@ -22,14 +27,25 @@ export function createJsonDb(file) {
   data.seq.boards = data.seq.boards || 1;
 
   // 기본 카탈로그 심기 (한 번만)
+  let dirty = false;
   if (!data.memes.length) {
-    data.memes = MEME_ROWS.map(([id, name, image_path, cat, tags, keywords, why]) => ({
-      id, name, image_path, cat, tags, keywords, why, owner_id: null, visibility: 'public',
-    }));
+    data.memes = BASE_MEME_ROWS.map(catalogMeme);
     data.seq.memes = Math.max(...data.memes.map(m => m.id)) + 1;
+    dirty = true;
+  }
+  const byCatalogId = new Map(data.memes.map(m => [m.id, m]));
+  for (const row of notMememy) {
+    const present = byCatalogId.get(row[0]);
+    if (present) {
+      if (present.owner_id !== null || present.image_path !== row[2]) {
+        throw new Error(`Catalog meme ID already in use: ${row[0]}`);
+      }
+      continue;
+    }
+    data.memes.push(catalogMeme(row));
+    dirty = true;
   }
 
-  let dirty = false;
   const save = () => { dirty = true; };
   setInterval(() => {
     if (!dirty) return;

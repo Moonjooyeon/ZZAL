@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const migrationsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'migrations');
 
 export async function migrate(pool) {
-  const files = (await fs.readdir(migrationsDir)).filter(name => /^\d+_[\w-]+\.sql$/.test(name)).sort();
+  const files = (await fs.readdir(migrationsDir)).filter(name => /^\d+_[\w-]+\.(sql|js)$/.test(name)).sort();
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -18,7 +18,12 @@ export async function migrate(pool) {
     const applied = new Set((await client.query('SELECT name FROM schema_migrations')).rows.map(row => row.name));
     for (const name of files) {
       if (applied.has(name)) continue;
-      await client.query(await fs.readFile(path.join(migrationsDir, name), 'utf8'));
+      if (name.endsWith('.sql')) {
+        await client.query(await fs.readFile(path.join(migrationsDir, name), 'utf8'));
+      } else {
+        const { default: apply } = await import(new URL(`./migrations/${name}`, import.meta.url));
+        await apply(client);
+      }
       await client.query('INSERT INTO schema_migrations (name) VALUES ($1)', [name]);
       console.log(`[db] migration applied: ${name}`);
     }

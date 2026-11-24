@@ -1,16 +1,17 @@
 // db/postgres.js — 운영용 저장소. json.js와 같은 인터페이스를 구현합니다.
 // 쓰려면: npm i pg  + DB_DRIVER=postgres + DATABASE_URL
 // 첫 설치는 schema.sql, 이후 변경은 migrations/*.sql 을 부팅 시 적용합니다.
-import { MEME_ROWS } from '../../../web/js/data/index.js';
+import { BASE_MEME_ROWS } from '../../../web/js/data/index.js';
 import { migrate } from './migrate.js';
 
 async function seedCatalog(pool) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    await client.query('SELECT pg_advisory_xact_lock(90821401)');
     const { rows } = await client.query('SELECT count(*)::int AS n FROM memes');
     if (rows[0].n === 0) {
-      for (const [id, name, image_path, cat, tags, keywords, why] of MEME_ROWS) {
+      for (const [id, name, image_path, cat, tags, keywords, why] of BASE_MEME_ROWS) {
         await client.query(`INSERT INTO memes
           (id, name, image_path, cat, tags, keywords, why, owner_id, visibility)
           VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,'public')`,
@@ -94,10 +95,16 @@ export async function createPostgresDb(url) {
         const total = Number((await one(`SELECT count(*)::int AS n FROM memes ${clause}`, args)).n);
         args.push(limit, offset);
         const rows = await many(
-          `SELECT * FROM memes ${clause} ORDER BY id LIMIT $${args.length - 1} OFFSET $${args.length}`, args);
+          `SELECT m.*, s.source_url FROM memes m
+           LEFT JOIN meme_sources s ON s.meme_id = m.id AND s.platform = 'x'
+           ${clause} ORDER BY m.id LIMIT $${args.length - 1} OFFSET $${args.length}`, args);
         return { total, rows };
       },
-      async byId(id) { return one('SELECT * FROM memes WHERE id = $1', [id]); },
+      async byId(id) {
+        return one(`SELECT m.*, s.source_url FROM memes m
+                    LEFT JOIN meme_sources s ON s.meme_id = m.id AND s.platform = 'x'
+                    WHERE m.id = $1`, [id]);
+      },
       async create(row) {
         return one(`
           INSERT INTO memes (name, image_path, cat, tags, keywords, why, owner_id, visibility,
