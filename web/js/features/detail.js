@@ -2,6 +2,7 @@
 import { $, esc, toast } from '../core/dom.js';
 import { state } from '../core/state.js';
 import { store } from '../core/api.js';
+import { recordAdEvent } from '../core/ad-events.js';
 import { all, byId, title, isMine } from '../core/catalog.js';
 import { render } from './feed.js';
 
@@ -51,11 +52,12 @@ export function openFromUrl() {
 
 export function download(id) {
   const z = byId(id);
-  if (!z) return;
+  if (!z?.src) return;
   const a = document.createElement('a');
   a.href = z.src;
   a.download = z.filename || '내짤.png';
   a.click();
+  recordAdEvent('download');
 }
 
 /** 이미지가 없는 목업 짤(.z-chat 등)은 문구만 복사합니다 */

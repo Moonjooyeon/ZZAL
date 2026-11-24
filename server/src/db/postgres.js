@@ -42,6 +42,14 @@ export async function createPostgresDb(url) {
     driver: 'postgres',
     pool,
 
+    adEvents: {
+      async record(group, action, visit) {
+        await pool.query(
+          'INSERT INTO ad_events (ad_group, action, visit_id) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING',
+          [group, action, visit]);
+      },
+    },
+
     users: {
       async findOrCreate({ provider, providerId, name, email, avatarUrl }) {
         return one(`
