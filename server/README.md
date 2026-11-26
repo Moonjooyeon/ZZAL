@@ -98,3 +98,22 @@ Cafe24 LLM Router는 OpenAI 호환 API입니다. 기본 주소는
 - AI 호출에 사용자별 한도 걸기 (지금은 0건 검색마다 한 번씩 나갑니다)
 - 누적 신고 수로 `memes.visibility` 를 내리는 운영 처리
 - 요청 수 제한(rate limit)과 접근 로그
+## 검색 광고 성과 집계
+
+운영 DB의 `ad_events` 뷰에는 점검용으로 제외된 기록을 걸러낸 광고 이벤트가 표시됩니다.
+광고그룹별 다운로드와 공유를 조회할 때 조회 기간에 맞춰 아래 날짜를 바꾸세요.
+
+```sql
+SELECT ad_group,
+  count(*) FILTER (WHERE action = 'download') AS downloads,
+  count(DISTINCT visit_id) FILTER (WHERE action <> 'download') AS sharing_visits,
+  count(*) FILTER (WHERE action = 'share_x') AS x_clicks,
+  count(*) FILTER (WHERE action = 'share_facebook') AS facebook_clicks,
+  count(*) FILTER (WHERE action = 'share_email') AS email_clicks
+FROM ad_events
+WHERE created_at >= TIMESTAMPTZ '2026-11-25 00:00:00+09'
+GROUP BY ad_group;
+```
+
+외부 공유는 버튼 클릭을 기록합니다. 같은 방문에서 같은 버튼을 여러 번 눌러도 1건이며,
+공유 방문 수는 여러 공유 수단을 사용해도 같은 방문을 한 번만 셉니다.

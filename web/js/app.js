@@ -6,7 +6,7 @@ import { renderMe, openLogin, openTerms, acceptTerms, signIn, signOut, closeAcct
 import { render, navigate, query, resetFeed, initFeed } from './features/feed.js';
 import { openDetail, openFromUrl, download, copyText, initDetail } from './features/detail.js';
 import { toggle } from './features/saves.js';
-import { openShare, openWin, nativeShare, copyShareUrl } from './features/share.js';
+import { openShare, openExternalShare, nativeShare, copyShareUrl } from './features/share.js';
 import { askDelete, askReport, askBlock, openBlockedUsers, unblockCreator, unreport } from './features/moderation.js';
 import { cancelDraft, initUpload } from './features/upload.js';
 import { openBoard, closeBoard, openBoardForm, askDeleteBoard, openPicker, unpinFrom, unpinAll, onPickChange, currentPick, initBoards } from './features/boards.js';
@@ -19,7 +19,7 @@ Object.assign(window, {
   navigate, query, resetFeed,
   openDetail, download, copyText,
   toggle,
-  openShare, openWin, nativeShare, copyShareUrl,
+  openShare, openExternalShare, nativeShare, copyShareUrl,
   askDelete, askReport, askBlock, openBlockedUsers, unblockCreator, unreport,
   openLogin, openTerms, acceptTerms, signIn, signOut, closeAcct, openDeleteAccount,
   cancelDraft,

@@ -1,7 +1,7 @@
 import { badRequest, forbidden, noContent, readJson } from '../http/respond.js';
 
 const groups = new Set(['funny-memes', 'cats-dogs']);
-const actions = new Set(['download', 'share']);
+const actions = new Set(['download', 'share', 'share_x', 'share_facebook', 'share_email']);
 const visitId = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export function adEventRoutes(router) {
