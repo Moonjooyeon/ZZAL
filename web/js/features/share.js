@@ -23,14 +23,17 @@ export function openShare(id) {
   if (!z) return;
   const url = shareUrl(id);
   const txt = shareText(z);
-  const q = JSON.stringify;   // onclick 문자열에 안전하게 끼워 넣기
+  const xUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt) + '&url=' + encodeURIComponent(url);
+  const facebookUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+  const emailUrl = 'mailto:?subject=' + encodeURIComponent(txt) + '&body=' + encodeURIComponent(txt + '\n' + url);
+  const externalShare = (destination, action) => `openExternalShare(${JSON.stringify(destination)}, '${action}')`;
   $('shareurl').value = url;
 
   const buttons = [
     ['ic-link', ICONS.link, '링크 복사', 'copyShareUrl()'],
-    ['ic-x', '𝕏', 'X(트위터)', `openWin('https://twitter.com/intent/tweet?text='+encodeURIComponent(${q(txt)})+'&url='+encodeURIComponent(${q(url)}))`],
-    ['ic-fb', 'f', '페이스북', `openWin('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(${q(url)}))`],
-    ['ic-mail', ICONS.mail, '이메일', `location.href='mailto:?subject='+encodeURIComponent(${q(txt)})+'&body='+encodeURIComponent(${q(txt + '\n' + url)})`],
+    ['ic-x', '𝕏', 'X(트위터)', externalShare(xUrl, 'share_x')],
+    ['ic-fb', 'f', '페이스북', externalShare(facebookUrl, 'share_facebook')],
+    ['ic-mail', ICONS.mail, '이메일', externalShare(emailUrl, 'share_email')],
     ['ic-kakao', 'TALK', '카카오톡', `nativeShare(${id},true)`],
     ['ic-more', ICONS.more, '더보기', `nativeShare(${id},false)`],
   ];
@@ -44,7 +47,12 @@ export function openShare(id) {
   $('share').showModal();
 }
 
-export function openWin(url) {
+export function openExternalShare(url, action) {
+  recordAdEvent(action);
+  if (action === 'share_email') {
+    location.href = url;
+    return;
+  }
   window.open(url, '_blank', 'noopener,noreferrer,width=600,height=520');
 }
 

@@ -45,7 +45,7 @@ export async function createPostgresDb(url) {
     adEvents: {
       async record(group, action, visit) {
         await pool.query(
-          'INSERT INTO ad_events (ad_group, action, visit_id) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING',
+          'INSERT INTO ad_event_log (ad_group, action, visit_id) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING',
           [group, action, visit]);
       },
     },
